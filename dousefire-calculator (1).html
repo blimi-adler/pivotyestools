@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Profit Calculator — DouseFire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #F7F5F1;
+    color: #1A1A18;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 3rem 1rem 4rem;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 620px;
+    padding: 2.5rem 2.5rem 3rem;
+    border: 1px solid #E8E4DC;
+  }
+
+  .brand {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #9C9488;
+    margin-bottom: 0.5rem;
+  }
+
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1.2;
+    color: #1A1A18;
+    margin-bottom: 2rem;
+  }
+
+  .input-group {
+    margin-bottom: 2rem;
+  }
+
+  .input-group label {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #9C9488;
+    margin-bottom: 8px;
+  }
+
+  .sales-input-wrap {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid #D4CFC6;
+    border-radius: 10px;
+    background: #FAFAF8;
+    padding: 0 16px;
+    transition: border-color 0.2s;
+  }
+
+  .sales-input-wrap:focus-within {
+    border-color: #1A1A18;
+    background: #fff;
+  }
+
+  .sales-input-wrap span {
+    font-size: 20px;
+    color: #9C9488;
+    font-weight: 300;
+    margin-right: 4px;
+  }
+
+  .sales-input-wrap input {
+    border: none;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 24px;
+    font-weight: 500;
+    color: #1A1A18;
+    width: 100%;
+    padding: 14px 0;
+    outline: none;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #E8E4DC;
+    margin: 0 0 1.5rem;
+  }
+
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #B0AA9F;
+    margin-bottom: 1rem;
+  }
+
+  .cost-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 1.5rem;
+  }
+
+  .cost-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-radius: 8px;
+    transition: background 0.15s;
+  }
+
+  .cost-row:hover { background: #F7F5F1; }
+
+  .cost-row .label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #4A4843;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .cost-row .pct {
+    font-size: 12px;
+    color: #B0AA9F;
+    margin-left: 4px;
+  }
+
+  .cost-row .amount {
+    font-size: 15px;
+    font-weight: 500;
+    color: #1A1A18;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bar-wrap {
+    height: 8px;
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    gap: 2px;
+    margin-bottom: 1.5rem;
+  }
+
+  .bar-seg { transition: flex 0.35s cubic-bezier(.4,0,.2,1); border-radius: 2px; }
+
+  .profit-block {
+    background: #1A1A18;
+    border-radius: 14px;
+    padding: 1.5rem 1.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .profit-block .plabel {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #8A867E;
+    margin-bottom: 6px;
+  }
+
+  .profit-block .pamount {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px;
+    color: #fff;
+    font-weight: 400;
+  }
+
+  .profit-block .pmargin {
+    text-align: right;
+  }
+
+  .profit-block .pmargin .plabel { text-align: right; }
+
+  .pct-big {
+    font-size: 42px;
+    font-family: 'DM Serif Display', serif;
+    color: #C8F060;
+    font-weight: 400;
+    line-height: 1;
+  }
+
+  .pct-big.negative { color: #FF8A7A; }
+
+  .footnote {
+    margin-top: 1.5rem;
+    font-size: 11px;
+    color: #C0BAB0;
+    text-align: center;
+    letter-spacing: 0.03em;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <p class="brand">PivotYes · Profit Snapshot</p>
+  <h1>What does your revenue<br>actually leave you?</h1>
+
+  <div class="input-group">
+    <label>Annual sales revenue</label>
+    <div class="sales-input-wrap">
+      <span>$</span>
+      <input type="number" id="sales" value="3000000" min="0" step="10000" />
+    </div>
+  </div>
+
+  <hr class="divider" />
+  <p class="section-label">Cost breakdown</p>
+
+  <div class="cost-rows">
+    <div class="cost-row">
+      <span class="label"><span class="dot" style="background:#6B8CFF;"></span>Cost of goods<span class="pct">60%</span></span>
+      <span class="amount" id="v-cogs">$1,800,000</span>
+    </div>
+    <div class="cost-row">
+      <span class="label"><span class="dot" style="background:#B59CF7;"></span>Overhead<span class="pct">20%</span></span>
+      <span class="amount" id="v-overhead">$600,000</span>
+    </div>
+    <div class="cost-row">
+      <span class="label"><span class="dot" style="background:#F7C97E;"></span>Insurance<span class="pct">5%</span></span>
+      <span class="amount" id="v-insurance">$150,000</span>
+    </div>
+    <div class="cost-row">
+      <span class="label"><span class="dot" style="background:#5DD6B0;"></span>Commission<span class="pct">5%</span></span>
+      <span class="amount" id="v-commission">$150,000</span>
+    </div>
+    <div class="cost-row">
+      <span class="label"><span class="dot" style="background:#F7956E;"></span>Salary<span class="pct">fixed</span></span>
+      <span class="amount" id="v-salary">$150,000</span>
+    </div>
+  </div>
+
+  <div class="bar-wrap">
+    <div class="bar-seg" id="bar-cogs"       style="background:#6B8CFF;"></div>
+    <div class="bar-seg" id="bar-overhead"   style="background:#B59CF7;"></div>
+    <div class="bar-seg" id="bar-insurance"  style="background:#F7C97E;"></div>
+    <div class="bar-seg" id="bar-commission" style="background:#5DD6B0;"></div>
+    <div class="bar-seg" id="bar-salary"     style="background:#F7956E;"></div>
+    <div class="bar-seg" id="bar-profit"     style="background:#C8F060;"></div>
+  </div>
+
+  <div class="profit-block">
+    <div>
+      <p class="plabel">Net profit</p>
+      <p class="pamount" id="v-profit">$150,000</p>
+    </div>
+    <div class="pmargin">
+      <p class="plabel">Margin</p>
+      <p class="pct-big" id="v-margin">5%</p>
+    </div>
+  </div>
+
+  <p class="footnote">Powered by PivotYes · pivotyes.com</p>
+</div>
+
+<script>
+const SALARY = 150000;
+const fmt = n => '$' + Math.round(n).toLocaleString();
+
+function calc() {
+  const sales = parseFloat(document.getElementById('sales').value) || 0;
+  const cogs       = sales * 0.60;
+  const overhead   = sales * 0.20;
+  const insurance  = sales * 0.05;
+  const commission = sales * 0.05;
+  const salary     = SALARY;
+  const profit     = sales - cogs - overhead - insurance - commission - salary;
+  const margin     = sales > 0 ? (profit / sales * 100).toFixed(1) : '0.0';
+
+  document.getElementById('v-cogs').textContent       = fmt(cogs);
+  document.getElementById('v-overhead').textContent   = fmt(overhead);
+  document.getElementById('v-insurance').textContent  = fmt(insurance);
+  document.getElementById('v-commission').textContent = fmt(commission);
+  document.getElementById('v-salary').textContent     = fmt(salary);
+  document.getElementById('v-profit').textContent     = fmt(profit);
+  document.getElementById('v-margin').textContent     = margin + '%';
+
+  const marginEl = document.getElementById('v-margin');
+  marginEl.className = 'pct-big' + (profit < 0 ? ' negative' : '');
+
+  if (sales > 0) {
+    document.getElementById('bar-cogs').style.flex       = cogs / sales;
+    document.getElementById('bar-overhead').style.flex   = overhead / sales;
+    document.getElementById('bar-insurance').style.flex  = insurance / sales;
+    document.getElementById('bar-commission').style.flex = commission / sales;
+    document.getElementById('bar-salary').style.flex     = salary / sales;
+    document.getElementById('bar-profit').style.flex     = Math.max(profit, 0) / sales;
+  }
+}
+
+document.getElementById('sales').addEventListener('input', calc);
+calc();
+</script>
+</body>
+</html>
