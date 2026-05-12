@@ -1,0 +1,613 @@
+
+<h2 class="sr-only">PivotYes Financial Health Tracker v2 — checklist, key numbers, overhead, break-even, projections, cash flow, collections, issues, pricing, dashboard</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.app{max-width:700px;padding:.75rem 0}
+.header{margin-bottom:.75rem}
+.header h1{font-size:17px;font-weight:500;color:var(--color-text-primary)}
+.header p{font-size:12px;color:var(--color-text-secondary);margin-top:3px}
+.pbar{height:4px;background:var(--color-background-secondary);border-radius:2px;margin:8px 0 0;overflow:hidden}
+.pfill{height:100%;background:#1D9E75;border-radius:2px;transition:width .4s}
+.plabel{font-size:11px;color:var(--color-text-secondary);margin-top:4px}
+.tabs{display:flex;border-bottom:0.5px solid var(--color-border-tertiary);overflow-x:auto;margin-bottom:1rem;gap:0}
+.tab{font-size:11px;padding:6px 10px;border:none;background:transparent;color:var(--color-text-secondary);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-0.5px;font-family:var(--font-sans);white-space:nowrap}
+.tab.active{color:var(--color-text-primary);border-bottom:2px solid #1D9E75;font-weight:500}
+.sec{margin-bottom:1.1rem}
+.stitle{font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px;display:flex;align-items:center;gap:5px}
+.bdg{font-size:10px;background:var(--color-background-secondary);color:var(--color-text-secondary);padding:1px 6px;border-radius:8px;font-weight:400;letter-spacing:0}
+.ci{display:flex;align-items:flex-start;gap:9px;padding:7px 9px;border-radius:6px;border:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);margin-bottom:4px;cursor:pointer;transition:background .12s}
+.ci:hover{background:var(--color-background-secondary)}
+.ci.done{background:var(--color-background-secondary)}
+.ci.done .cil{color:var(--color-text-secondary);text-decoration:line-through}
+.cb{width:16px;height:16px;min-width:16px;border-radius:3px;border:1.5px solid var(--color-border-secondary);display:flex;align-items:center;justify-content:center;margin-top:2px;flex-shrink:0}
+.ci.done .cb{background:#1D9E75;border-color:#1D9E75}
+.ci.done .cb::after{content:'';width:4px;height:7px;border:1.5px solid white;border-top:none;border-left:none;transform:rotate(45deg) translate(-1px,-1px);display:block}
+.cil{font-size:13px;color:var(--color-text-primary);line-height:1.35}
+.cin{font-size:11px;color:var(--color-text-secondary);margin-top:1px}
+.ir{display:flex;align-items:center;gap:8px;padding:6px 9px;border-radius:6px;border:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);margin-bottom:4px}
+.ir label{font-size:12px;color:var(--color-text-secondary);min-width:185px;flex-shrink:0}
+.ir input,.ir select{border:0.5px solid var(--color-border-secondary);border-radius:6px;padding:4px 7px;font-size:12px;font-family:var(--font-sans);background:var(--color-background-secondary);color:var(--color-text-primary);flex:1;min-width:0}
+.ir input:focus,.ir select:focus{outline:none;border-color:#1D9E75}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:1rem}
+.met{background:var(--color-background-secondary);border-radius:6px;padding:10px 12px}
+.met .ml{font-size:10px;color:var(--color-text-secondary);margin-bottom:2px}
+.met .mv{font-size:19px;font-weight:500;color:var(--color-text-primary)}
+.met .ms{font-size:10px;color:var(--color-text-secondary);margin-top:1px}
+.met.good .mv{color:#1D9E75}
+.met.bad .mv{color:#E24B4A}
+.met.warn .mv{color:#BA7517}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:10px;padding:.9rem 1.1rem;margin-bottom:9px}
+.card h3{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:7px}
+.kv{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.kv:last-child{border-bottom:none}
+.kk{font-size:12px;color:var(--color-text-secondary)}
+.kv2{font-size:12px;font-weight:500;color:var(--color-text-primary)}
+.kv2.good{color:#1D9E75}.kv2.bad{color:#E24B4A}.kv2.warn{color:#BA7517}
+.flags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.fl{display:inline-flex;align-items:center;gap:3px;font-size:11px;padding:3px 7px;border-radius:8px}
+.fl.red{background:#FCEBEB;color:#A32D2D}
+.fl.amber{background:#FAEEDA;color:#854F0B}
+.fl.green{background:#EAF3DE;color:#3B6D11}
+.pill{display:inline-block;font-size:10px;padding:2px 7px;border-radius:8px}
+.pill.red{background:#FCEBEB;color:#A32D2D}
+.pill.amber{background:#FAEEDA;color:#854F0B}
+.pill.green{background:#EAF3DE;color:#3B6D11}
+.pill.blue{background:#E6F1FB;color:#185FA5}
+.pill.gray{background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.ar{display:flex;gap:5px;margin-bottom:7px;flex-wrap:wrap}
+.ar input,.ar select{border:0.5px solid var(--color-border-secondary);border-radius:6px;padding:4px 7px;font-size:12px;font-family:var(--font-sans);background:var(--color-background-secondary);color:var(--color-text-primary)}
+.ar input:focus,.ar select:focus{outline:none;border-color:#1D9E75}
+.dt{width:100%;border-collapse:collapse;font-size:12px}
+.dt th{text-align:left;font-size:10px;font-weight:500;color:var(--color-text-secondary);padding:5px 7px;border-bottom:0.5px solid var(--color-border-secondary);text-transform:uppercase;letter-spacing:.04em}
+.dt td{padding:6px 7px;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary);vertical-align:middle}
+.dt tr:last-child td{border-bottom:none}
+.dt tr:hover td{background:var(--color-background-secondary)}
+.er td{text-align:center;color:var(--color-text-secondary);font-size:11px;padding:14px}
+.db{display:inline-flex;align-items:center;gap:4px;padding:6px 13px;border-radius:6px;border:0.5px solid var(--color-border-secondary);background:transparent;font-size:12px;font-family:var(--font-sans);color:var(--color-text-primary);cursor:pointer;transition:background .12s}
+.db:hover{background:var(--color-background-secondary)}
+.db.p{background:#1D9E75;border-color:#1D9E75;color:white}
+.db.p:hover{background:#0F6E56}
+.br{display:flex;gap:7px;flex-wrap:wrap;margin-top:.9rem}
+.delb{background:none;border:none;cursor:pointer;color:var(--color-text-secondary);font-size:13px;padding:1px 3px}
+.delb:hover{color:#E24B4A}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.price-result{background:var(--color-background-secondary);border-radius:8px;padding:12px 14px;text-align:center}
+.price-result .pr-label{font-size:11px;color:var(--color-text-secondary);margin-bottom:4px}
+.price-result .pr-val{font-size:22px;font-weight:500}
+.price-result .pr-sub{font-size:11px;color:var(--color-text-secondary);margin-top:3px}
+.price-result.good .pr-val{color:#1D9E75}
+.price-result.warn .pr-val{color:#BA7517}
+.price-result.bad .pr-val{color:#E24B4A}
+.month-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:6px}
+.mcard{background:var(--color-background-secondary);border-radius:6px;padding:8px 10px;text-align:center}
+.mcard .mn{font-size:10px;color:var(--color-text-secondary);margin-bottom:2px}
+.mcard .mv{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.mcard.pos .mv{color:#1D9E75}
+.mcard.neg .mv{color:#E24B4A}
+.divider{height:0.5px;background:var(--color-border-tertiary);margin:10px 0}
+</style>
+
+<div class="app">
+<div class="header">
+  <h1>PivotYes — financial health tracker</h1>
+  <p>Checklist · Overhead · Break-even · Projections · Cash flow · Collections · Issues · Pricing · Dashboard</p>
+  <div class="pbar"><div class="pfill" id="prog"></div></div>
+  <div class="plabel" id="plabel">0 of 0 steps complete</div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="T('checklist')">Checklist</button>
+  <button class="tab" onclick="T('overhead')">Overhead</button>
+  <button class="tab" onclick="T('breakeven')">Break-even</button>
+  <button class="tab" onclick="T('projections')">Projections</button>
+  <button class="tab" onclick="T('cashflow')">Cash flow</button>
+  <button class="tab" onclick="T('collections')">Collections</button>
+  <button class="tab" onclick="T('issues')">Issues</button>
+  <button class="tab" onclick="T('pricing')">Pricing</button>
+  <button class="tab" onclick="T('dashboard')">Dashboard</button>
+</div>
+
+<!-- CHECKLIST -->
+<div id="tab-checklist">
+  <div class="sec"><div class="stitle">Phase 1 — QB review <span class="bdg" id="b1"></span></div><div id="phase1"></div></div>
+  <div class="sec"><div class="stitle">Phase 2 — balance sheet <span class="bdg" id="b2"></span></div><div id="phase2"></div></div>
+  <div class="sec"><div class="stitle">Phase 3 — P&L analysis <span class="bdg" id="b3"></span></div><div id="phase3"></div></div>
+  <div class="sec"><div class="stitle">Phase 4 — overhead & projections <span class="bdg" id="b4"></span></div><div id="phase4"></div></div>
+  <div class="sec"><div class="stitle">Phase 5 — goals & scorecard <span class="bdg" id="b5"></span></div><div id="phase5"></div></div>
+  <div class="br">
+    <button class="db" onclick="resetCL()"><i class="ti ti-refresh" aria-hidden="true"></i> Reset</button>
+    <button class="db p" onclick="T('overhead')">Overhead ↗</button>
+  </div>
+</div>
+
+<!-- OVERHEAD -->
+<div id="tab-overhead" style="display:none">
+  <div class="sec"><div class="stitle">1. Operations</div>
+    <div class="ir"><label>Rent</label><input type="number" placeholder="$/mo" id="oh_rent" oninput="ohCalc()"></div>
+    <div class="ir"><label>Utilities / phone</label><input type="number" placeholder="$/mo" id="oh_util" oninput="ohCalc()"></div>
+    <div class="ir"><label>Office expenses</label><input type="number" placeholder="$/mo" id="oh_office" oninput="ohCalc()"></div>
+  </div>
+  <div class="sec"><div class="stitle">2. Staffing</div>
+    <div class="ir"><label>Total payroll (monthly)</label><input type="number" placeholder="$/mo" id="oh_payroll" oninput="ohCalc()"></div>
+    <div class="ir"><label>Payroll tax (monthly)</label><input type="number" placeholder="$/mo" id="oh_tax" oninput="ohCalc()"></div>
+    <div class="ir"><label>Insurance</label><input type="number" placeholder="$/mo" id="oh_ins" oninput="ohCalc()"></div>
+  </div>
+  <div class="sec"><div class="stitle">3. Professional services</div>
+    <div class="ir"><label>Legal / accounting</label><input type="number" placeholder="$/mo" id="oh_legal" oninput="ohCalc()"></div>
+    <div class="ir"><label>Bank charges / interest</label><input type="number" placeholder="$/mo" id="oh_bank" oninput="ohCalc()"></div>
+    <div class="ir"><label>Pension / retirement</label><input type="number" placeholder="$/mo" id="oh_pension" oninput="ohCalc()"></div>
+  </div>
+  <div class="sec"><div class="stitle">4. General business</div>
+    <div class="ir"><label>Marketing / advertising</label><input type="number" placeholder="$/mo" id="oh_mkt" oninput="ohCalc()"></div>
+    <div class="ir"><label>Software / subscriptions</label><input type="number" placeholder="$/mo" id="oh_sw" oninput="ohCalc()"></div>
+    <div class="ir"><label>Auto / fuel</label><input type="number" placeholder="$/mo" id="oh_auto" oninput="ohCalc()"></div>
+    <div class="ir"><label>Other recurring</label><input type="number" placeholder="$/mo" id="oh_other" oninput="ohCalc()"></div>
+  </div>
+  <div class="sec"><div class="stitle">Owner</div>
+    <div class="ir"><label>Owner monthly draw</label><input type="number" placeholder="$/mo" id="oh_draw" oninput="ohCalc()"></div>
+    <div class="ir"><label>Loan / liability payments</label><input type="number" placeholder="$/mo" id="oh_liab" oninput="ohCalc()"></div>
+  </div>
+  <div id="oh-summary"></div>
+  <div class="br"><button class="db p" onclick="T('breakeven')">Break-even ↗</button></div>
+</div>
+
+<!-- BREAK-EVEN -->
+<div id="tab-breakeven" style="display:none">
+  <div class="sec"><div class="stitle">Inputs</div>
+    <div class="ir"><label>Monthly overhead (auto from overhead tab)</label><input type="number" placeholder="$" id="be_oh" oninput="beCalc()"></div>
+    <div class="ir"><label>Allowance for unexpected expenses</label><input type="number" placeholder="$" id="be_allow" oninput="beCalc()"></div>
+    <div class="ir"><label>Owner annual distribution</label><input type="number" placeholder="$" id="be_draw" oninput="beCalc()"></div>
+    <div class="ir"><label>Gross profit margin %</label><input type="number" placeholder="e.g. 50" id="be_gpm" oninput="beCalc()"></div>
+    <div class="ir"><label>Average sale per client / job</label><input type="number" placeholder="$" id="be_avg_sale" oninput="beCalc()"></div>
+    <div class="ir"><label>Target net income (leave blank for break-even only)</label><input type="number" placeholder="$" id="be_target" oninput="beCalc()"></div>
+  </div>
+  <div id="be-results"></div>
+  <div class="br"><button class="db p" onclick="T('projections')">Projections ↗</button></div>
+</div>
+
+<!-- PROJECTIONS -->
+<div id="tab-projections" style="display:none">
+  <div class="sec"><div class="stitle">Assumptions</div>
+    <div class="ir"><label>Annual revenue target</label><input type="number" placeholder="$" id="pr_rev" oninput="prCalc()"></div>
+    <div class="ir"><label>Annual COGS</label><input type="number" placeholder="$" id="pr_cogs" oninput="prCalc()"></div>
+    <div class="ir"><label>Monthly growth rate %</label><input type="number" placeholder="e.g. 2" id="pr_growth" oninput="prCalc()"></div>
+    <div class="ir"><label>Starting cash</label><input type="number" placeholder="$" id="pr_cash" oninput="prCalc()"></div>
+  </div>
+  <div id="proj-results"></div>
+  <div class="br"><button class="db p" onclick="T('cashflow')">Cash flow ↗</button></div>
+</div>
+
+<!-- CASH FLOW -->
+<div id="tab-cashflow" style="display:none">
+  <div class="sec"><div class="stitle">Cash position</div>
+    <div class="ir"><label>Cash in bank</label><input type="number" placeholder="$" id="cf_cash" oninput="cfCalc()"></div>
+  </div>
+  <div class="sec"><div class="stitle">Credit cards</div>
+    <div class="ar">
+      <input type="text" placeholder="Card name" id="cc_n" style="flex:1;min-width:90px">
+      <input type="number" placeholder="Balance $" id="cc_b" style="width:100px">
+      <input type="number" placeholder="Limit $" id="cc_l" style="width:100px">
+      <input type="text" placeholder="Due date" id="cc_d" style="width:85px">
+      <button class="db" onclick="addCC()"><i class="ti ti-plus" aria-hidden="true"></i></button>
+    </div>
+    <table class="dt"><thead><tr><th>Card</th><th>Balance</th><th>Limit</th><th>Available</th><th>Due</th><th></th></tr></thead><tbody id="cc-tb"></tbody></table>
+  </div>
+  <div class="sec"><div class="stitle">Loans</div>
+    <div class="ar">
+      <input type="text" placeholder="Lender" id="ln_n" style="flex:1;min-width:90px">
+      <input type="number" placeholder="Balance $" id="ln_b" style="width:100px">
+      <input type="text" placeholder="Pmt $/mo" id="ln_p" style="width:90px">
+      <input type="text" placeholder="Rate %" id="ln_r" style="width:70px">
+      <button class="db" onclick="addLoan()"><i class="ti ti-plus" aria-hidden="true"></i></button>
+    </div>
+    <table class="dt"><thead><tr><th>Lender</th><th>Balance</th><th>Monthly pmt</th><th>Rate</th><th></th></tr></thead><tbody id="ln-tb"></tbody></table>
+  </div>
+  <div class="sec"><div class="stitle">Expected cash in this month</div>
+    <div class="ar">
+      <input type="text" placeholder="Customer / source" id="ci_n" style="flex:1;min-width:110px">
+      <input type="number" placeholder="Amount $" id="ci_a" style="width:110px">
+      <input type="text" placeholder="Expected date" id="ci_d" style="width:100px">
+      <button class="db" onclick="addCI()"><i class="ti ti-plus" aria-hidden="true"></i></button>
+    </div>
+    <table class="dt"><thead><tr><th>Source</th><th>Amount</th><th>Expected</th><th></th></tr></thead><tbody id="ci-tb"></tbody></table>
+  </div>
+  <div class="sec"><div class="stitle">Expected cash out this month</div>
+    <div class="ar">
+      <input type="text" placeholder="Vendor / payee" id="co_n" style="flex:1;min-width:110px">
+      <input type="number" placeholder="Amount $" id="co_a" style="width:110px">
+      <input type="text" placeholder="Due date" id="co_d" style="width:90px">
+      <select id="co_t" style="width:100px"><option>Recurring</option><option>One-time</option><option>Payroll</option><option>Loan</option><option>Sub</option></select>
+      <button class="db" onclick="addCO()"><i class="ti ti-plus" aria-hidden="true"></i></button>
+    </div>
+    <table class="dt"><thead><tr><th>Payee</th><th>Amount</th><th>Due</th><th>Type</th><th></th></tr></thead><tbody id="co-tb"></tbody></table>
+  </div>
+  <div id="cf-summary"></div>
+  <div class="br"><button class="db p" onclick="T('collections')">Collections ↗</button></div>
+</div>
+
+<!-- COLLECTIONS -->
+<div id="tab-collections" style="display:none">
+  <div class="sec"><div class="stitle">AR aging tracker</div>
+    <div class="ar">
+      <input type="text" placeholder="Customer" id="col_n" style="flex:1;min-width:110px">
+      <input type="number" placeholder="Amount $" id="col_a" style="width:100px">
+      <select id="col_age" style="width:110px"><option>0–30 days</option><option>31–60 days</option><option>61–90 days</option><option>90+ days</option></select>
+      <select id="col_st" style="width:110px"><option>Open</option><option>Contacted</option><option>Promise to pay</option><option>Dispute</option><option>Write off</option></select>
+      <button class="db" onclick="addCol()"><i class="ti ti-plus" aria-hidden="true"></i></button>
+    </div>
+    <table class="dt"><thead><tr><th>Customer</th><th>Amount</th><th>Age</th><th>Status</th><th></th></tr></thead><tbody id="col-tb"></tbody></table>
+  </div>
+  <div id="col-summary"></div>
+  <div class="br"><button class="db p" onclick="T('issues')">Issues ↗</button></div>
+</div>
+
+<!-- ISSUES -->
+<div id="tab-issues" style="display:none">
+  <div class="sec"><div class="stitle">QB & financial issues</div>
+    <div class="ar">
+      <select id="is_area" style="width:130px"><option>Banking</option><option>Balance sheet</option><option>P&L — sales</option><option>P&L — expenses</option><option>COGS</option><option>AR</option><option>AP</option><option>Chart of accounts</option><option>Payroll</option><option>Other</option></select>
+      <input type="text" placeholder="Describe the issue" id="is_desc" style="flex:1;min-width:130px">
+      <select id="is_pri" style="width:85px"><option>High</option><option>Medium</option><option>Low</option></select>
+      <select id="is_st" style="width:100px"><option>Open</option><option>In progress</option><option>Fixed</option></select>
+      <button class="db" onclick="addIss()"><i class="ti ti-plus" aria-hidden="true"></i></button>
+    </div>
+    <table class="dt"><thead><tr><th>Area</th><th>Issue</th><th>Priority</th><th>Status</th><th></th></tr></thead><tbody id="is-tb"></tbody></table>
+  </div>
+  <div id="is-summary"></div>
+  <div class="br">
+    <button class="db p" onclick="T('pricing')">Pricing ↗</button>
+    <button class="db" onclick="sendPrompt('Summarize all open QB issues and collections for my client and suggest next steps')"><i class="ti ti-file-text" aria-hidden="true"></i> Summarize ↗</button>
+  </div>
+</div>
+
+<!-- PRICING -->
+<div id="tab-pricing" style="display:none">
+  <div class="sec"><div class="stitle">Cost inputs</div>
+    <div class="ir"><label>Direct labor cost per job / unit</label><input type="number" placeholder="$" id="px_labor" oninput="pxCalc()"></div>
+    <div class="ir"><label>Materials / COGS per job / unit</label><input type="number" placeholder="$" id="px_mat" oninput="pxCalc()"></div>
+    <div class="ir"><label>Overhead allocation per job</label><input type="number" placeholder="$ (auto-fill if known)" id="px_oh" oninput="pxCalc()"></div>
+    <div class="ir"><label>Jobs / sales per month</label><input type="number" placeholder="#" id="px_jobs" oninput="pxCalc()"></div>
+  </div>
+  <div class="sec"><div class="stitle">Margin targets</div>
+    <div class="ir"><label>Target gross margin %</label><input type="number" placeholder="e.g. 40" id="px_tgm" oninput="pxCalc()"></div>
+    <div class="ir"><label>Target net margin %</label><input type="number" placeholder="e.g. 15" id="px_tnm" oninput="pxCalc()"></div>
+  </div>
+  <div class="sec"><div class="stitle">Industry comparison</div>
+    <div class="ir"><label>Industry average price</label><input type="number" placeholder="$" id="px_ind" oninput="pxCalc()"></div>
+    <div class="ir"><label>Your current price</label><input type="number" placeholder="$" id="px_curr" oninput="pxCalc()"></div>
+  </div>
+  <div id="px-results"></div>
+  <div class="sec"><div class="stitle">Package builder</div>
+    <div class="ar">
+      <input type="text" placeholder="Package name" id="pkg_n" style="flex:1;min-width:110px">
+      <input type="number" placeholder="Cost to deliver $" id="pkg_c" style="width:130px">
+      <input type="number" placeholder="Price charged $" id="pkg_p" style="width:120px">
+      <button class="db" onclick="addPkg()"><i class="ti ti-plus" aria-hidden="true"></i></button>
+    </div>
+    <table class="dt"><thead><tr><th>Package</th><th>Cost</th><th>Price</th><th>Margin $</th><th>Margin %</th><th></th></tr></thead><tbody id="pkg-tb"></tbody></table>
+  </div>
+  <div class="br"><button class="db p" onclick="T('dashboard')">Dashboard ↗</button></div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="tab-dashboard" style="display:none">
+  <div id="dash-content"><div style="text-align:center;padding:2rem;color:var(--color-text-secondary);font-size:13px"><i class="ti ti-chart-bar" style="font-size:26px;display:block;margin-bottom:7px" aria-hidden="true"></i>Fill in the tabs to see your full dashboard.</div></div>
+</div>
+</div>
+
+<script>
+const steps={
+  phase1:[
+    {l:'Get QB access, save login to client sheet',n:''},
+    {l:'Review banking & credit card accounts',n:'Check last reconciliation date'},
+    {l:'Review checking accounts for uncleared transactions',n:'Flag anything 3–6 months uncleared'},
+    {l:'Check for old transactions in bank reconciliation window',n:'QB Desktop: Banking > Reconcile | QB Online: Transactions > Register'},
+    {l:'Review AR — flag negative balances',n:''},
+    {l:'Review AR — flag balances over 90 days',n:''},
+    {l:'Review AP — flag negative vendor balances',n:''},
+    {l:'Review AP — flag balances over 90 days',n:''},
+  ],
+  phase2:[
+    {l:'Run balance sheet comparison (2-year)',n:'Reports > Company & Financial > Balance Sheet Standard'},
+    {l:'Review for negative balances',n:''},
+    {l:'Review undeposited funds for old transactions',n:''},
+    {l:'Review asset classifications (furniture/equipment vs expense)',n:'Items under $2,000 → expenses'},
+    {l:"Review owner's compensation / equity classification",n:''},
+    {l:'Review payroll tax liability — correctly categorized?',n:''},
+  ],
+  phase3:[
+    {l:'Run P&L — last 2 years, side by side + % of income',n:''},
+    {l:'Run P&L by month for last few months',n:''},
+    {l:'Review sales — properly recorded, no uncategorized income',n:''},
+    {l:'Review expenses — COGS vs expense miscategorizations',n:''},
+    {l:'Check for uncategorized expenses, personal charges in P&L',n:''},
+    {l:'Review COGS classification',n:''},
+    {l:'Review chart of accounts for duplicates or wrong accounts',n:''},
+  ],
+  phase4:[
+    {l:'Get employee list, pay rates, hours from bookkeeper',n:''},
+    {l:'Get recurring expenses from QB (P&L by month)',n:'Fixed, fluctuating, liability payments'},
+    {l:'Complete Monthly Transaction Overhead sheet',n:'Fill in order of P&L; average fluctuating over 6 months'},
+    {l:'Build 1-year projection by month',n:''},
+    {l:'Build Actual vs Budget tab',n:''},
+  ],
+  phase5:[
+    {l:'Present financial analysis to client',n:'Review report, discuss changes'},
+    {l:'Set 1-year financial goals and monthly sales projections',n:'Align with yearly plan goals'},
+    {l:'Set up scorecard to track KPIs',n:''},
+    {l:'Set 3-year financial vision with owner',n:''},
+  ]
+};
+const chk={};
+['phase1','phase2','phase3','phase4','phase5'].forEach(p=>{chk[p]=steps[p].map(()=>false);});
+const ccL=[],lnL=[],ciL=[],coL=[],colL=[],isL=[],pkgL=[];
+
+function g(id){const v=parseFloat(document.getElementById(id).value);return isNaN(v)?null:v;}
+function fD(n){if(n===null||n===undefined||isNaN(n))return'—';return'$'+Math.round(n).toLocaleString();}
+function fP(n){if(n===null||isNaN(n))return'—';return(Math.round(n*10)/10)+'%';}
+function fPraw(n){return isNaN(n)||n===null?null:Math.round(n*10)/10;}
+
+function T(t){
+  ['checklist','overhead','breakeven','projections','cashflow','collections','issues','pricing','dashboard'].forEach(id=>{
+    document.getElementById('tab-'+id).style.display=id===t?'block':'none';
+  });
+  document.querySelectorAll('.tab').forEach((el,i)=>{
+    el.classList.toggle('active',['checklist','overhead','breakeven','projections','cashflow','collections','issues','pricing','dashboard'][i]===t);
+  });
+  if(t==='breakeven')beCalc();
+  if(t==='dashboard')renderDash();
+}
+
+function renderCL(){
+  ['phase1','phase2','phase3','phase4','phase5'].forEach((p,pi)=>{
+    document.getElementById(p).innerHTML=steps[p].map((s,i)=>`
+      <div class="ci${chk[p][i]?' done':''}" onclick="tog('${p}',${i})">
+        <div class="cb"></div>
+        <div><div class="cil">${s.l}</div>${s.n?`<div class="cin">${s.n}</div>`:''}</div>
+      </div>`).join('');
+    const d=chk[p].filter(Boolean).length;
+    document.getElementById('b'+(pi+1)).textContent=`${d}/${steps[p].length}`;
+  });
+  updProg();
+}
+function tog(p,i){chk[p][i]=!chk[p][i];renderCL();}
+function updProg(){
+  const all=Object.values(chk).flat(),d=all.filter(Boolean).length;
+  const pct=all.length?Math.round(d/all.length*100):0;
+  document.getElementById('prog').style.width=pct+'%';
+  document.getElementById('plabel').textContent=`${d} of ${all.length} checklist steps complete`;
+}
+function resetCL(){Object.keys(chk).forEach(p=>{chk[p]=chk[p].map(()=>false);});renderCL();}
+
+function ohCalc(){
+  const fields=['oh_rent','oh_util','oh_office','oh_payroll','oh_tax','oh_ins','oh_legal','oh_bank','oh_pension','oh_mkt','oh_sw','oh_auto','oh_other','oh_draw','oh_liab'];
+  const total=fields.reduce((a,id)=>{const v=g(id);return v?a+v:a;},0);
+  const payrollTotal=(g('oh_payroll')||0)+(g('oh_tax')||0)+(g('oh_ins')||0);
+  const opsTotal=(g('oh_rent')||0)+(g('oh_util')||0)+(g('oh_office')||0);
+  const profTotal=(g('oh_legal')||0)+(g('oh_bank')||0)+(g('oh_pension')||0);
+  const genTotal=(g('oh_mkt')||0)+(g('oh_sw')||0)+(g('oh_auto')||0)+(g('oh_other')||0);
+  const ownerTotal=(g('oh_draw')||0)+(g('oh_liab')||0);
+  if(!total){document.getElementById('oh-summary').innerHTML='';return;}
+  document.getElementById('oh-summary').innerHTML=`
+    <div class="card"><h3>Overhead summary</h3>
+      <div class="kv"><span class="kk">1. Operations</span><span class="kv2">${fD(opsTotal)}</span></div>
+      <div class="kv"><span class="kk">2. Staffing / payroll</span><span class="kv2">${fD(payrollTotal)}</span></div>
+      <div class="kv"><span class="kk">3. Professional services</span><span class="kv2">${fD(profTotal)}</span></div>
+      <div class="kv"><span class="kk">4. General business</span><span class="kv2">${fD(genTotal)}</span></div>
+      <div class="kv"><span class="kk">Owner draw + liabilities</span><span class="kv2">${fD(ownerTotal)}</span></div>
+      <div class="kv"><span class="kk" style="font-weight:500;color:var(--color-text-primary)">Total monthly overhead</span><span class="kv2" style="font-size:15px">${fD(total)}</span></div>
+      <div class="kv"><span class="kk">Annual overhead</span><span class="kv2">${fD(total*12)}</span></div>
+    </div>`;
+  const beEl=document.getElementById('be_oh');
+  if(beEl&&!beEl.value)beEl.value=Math.round(total);
+}
+
+function beCalc(){
+  const oh=g('be_oh'),allow=g('be_allow')||0,draw=g('be_draw')||0,gpm=g('be_gpm'),avgSale=g('be_avg_sale'),target=g('be_target')||0;
+  if(!oh||!gpm){document.getElementById('be-results').innerHTML='<div style="font-size:12px;color:var(--color-text-secondary);padding:8px 0">Enter monthly overhead and gross margin % to calculate.</div>';return;}
+  const moTotal=oh+allow;
+  const annTotal=moTotal*12+draw;
+  const totalBase=annTotal+target;
+  const gpmDec=gpm/100;
+  const annSalesReq=gpmDec>0?totalBase/gpmDec:null;
+  const moSalesReq=annSalesReq?annSalesReq/12:null;
+  const clientsNeeded=(moSalesReq&&avgSale&&avgSale>0)?moSalesReq/avgSale:null;
+  document.getElementById('be-results').innerHTML=`
+    <div class="grid4">
+      <div class="met"><div class="ml">Monthly overhead</div><div class="mv">${fD(moTotal)}</div><div class="ms">incl. allowance</div></div>
+      <div class="met"><div class="ml">Annual base needed</div><div class="mv">${fD(annTotal)}</div><div class="ms">overhead + draw</div></div>
+      <div class="met good"><div class="ml">Annual sales required</div><div class="mv">${fD(annSalesReq)}</div><div class="ms">at ${gpm}% margin</div></div>
+      <div class="met good"><div class="ml">Monthly sales target</div><div class="mv">${fD(moSalesReq)}</div><div class="ms">to break even</div></div>
+    </div>
+    ${clientsNeeded?`<div class="card"><h3>Client / job target</h3>
+      <div class="kv"><span class="kk">Average sale per client</span><span class="kv2">${fD(avgSale)}</span></div>
+      <div class="kv"><span class="kk">Clients / jobs needed per month</span><span class="kv2 good">${Math.ceil(clientsNeeded)}</span></div>
+      ${target?`<div class="kv"><span class="kk">Target net income included</span><span class="kv2">${fD(target)}</span></div>`:''}
+    </div>`:''}`;
+}
+
+function prCalc(){
+  const rev=g('pr_rev'),cogs=g('pr_cogs'),growth=g('pr_growth')||0,startCash=g('pr_cash')||0;
+  const ohEl=document.getElementById('oh_payroll');
+  const moOH=(['oh_rent','oh_util','oh_office','oh_payroll','oh_tax','oh_ins','oh_legal','oh_bank','oh_pension','oh_mkt','oh_sw','oh_auto','oh_other','oh_liab']).reduce((a,id)=>{const v=g(id);return v?a+v:a;},0);
+  if(!rev){document.getElementById('proj-results').innerHTML='<div style="font-size:12px;color:var(--color-text-secondary);padding:8px 0">Enter annual revenue target to generate projections.</div>';return;}
+  const baseMonthly=rev/12;
+  const cogsRate=cogs&&rev?cogs/rev:0;
+  const months=Array.from({length:12},(_,i)=>{
+    const moRev=baseMonthly*Math.pow(1+growth/100,i);
+    const moCogs=moRev*cogsRate;
+    const moGP=moRev-moCogs;
+    const moNet=moGP-moOH;
+    return{rev:moRev,cogs:moCogs,gp:moGP,net:moNet};
+  });
+  let cash=startCash;
+  const cashFlow=months.map(m=>{const end=cash+m.net;const r={start:cash,net:m.net,end};cash=end;return r;});
+  const labels=['M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11','M12'];
+  document.getElementById('proj-results').innerHTML=`
+    <div class="card"><h3>12-month projection</h3>
+      <div style="overflow-x:auto">
+      <table class="dt"><thead><tr><th>Month</th><th>Revenue</th><th>Gross profit</th><th>Net profit</th><th>Ending cash</th></tr></thead>
+      <tbody>${months.map((m,i)=>`<tr>
+        <td>${labels[i]}</td>
+        <td>${fD(m.rev)}</td>
+        <td><span style="color:${m.gp>=0?'#1D9E75':'#E24B4A'}">${fD(m.gp)}</span></td>
+        <td><span style="color:${m.net>=0?'#1D9E75':'#E24B4A'}">${fD(m.net)}</span></td>
+        <td><span style="color:${cashFlow[i].end>=0?'#1D9E75':'#E24B4A'}">${fD(cashFlow[i].end)}</span></td>
+      </tr>`).join('')}
+      </tbody></table></div>
+    </div>
+    <div class="grid4">
+      <div class="met good"><div class="ml">Total projected revenue</div><div class="mv">${fD(months.reduce((a,m)=>a+m.rev,0))}</div></div>
+      <div class="met ${months.reduce((a,m)=>a+m.gp,0)>=0?'good':'bad'}"><div class="ml">Total gross profit</div><div class="mv">${fD(months.reduce((a,m)=>a+m.gp,0))}</div></div>
+      <div class="met ${months.reduce((a,m)=>a+m.net,0)>=0?'good':'bad'}"><div class="ml">Total net profit</div><div class="mv">${fD(months.reduce((a,m)=>a+m.net,0))}</div></div>
+      <div class="met ${cashFlow[11].end>=0?'good':'bad'}"><div class="ml">Year-end cash</div><div class="mv">${fD(cashFlow[11].end)}</div></div>
+    </div>`;
+}
+
+function addCC(){const n=document.getElementById('cc_n').value.trim(),b=parseFloat(document.getElementById('cc_b').value),l=parseFloat(document.getElementById('cc_l').value),d=document.getElementById('cc_d').value.trim();if(!n||isNaN(b))return;ccL.push({n,b,l:isNaN(l)?null:l,d});['cc_n','cc_b','cc_l','cc_d'].forEach(id=>document.getElementById(id).value='');rCC();cfCalc();}
+function rCC(){const tb=document.getElementById('cc-tb');if(!ccL.length){tb.innerHTML='<tr class="er"><td colspan="6">None added</td></tr>';return;}tb.innerHTML=ccL.map((c,i)=>`<tr><td>${c.n}</td><td>${fD(c.b)}</td><td>${c.l?fD(c.l):'—'}</td><td>${c.l?fD(c.l-c.b):'—'}</td><td>${c.d||'—'}</td><td><button class="delb" onclick="ccL.splice(${i},1);rCC();cfCalc()"><i class="ti ti-trash" aria-hidden="true"></i></button></td></tr>`).join('');}
+function addLoan(){const n=document.getElementById('ln_n').value.trim(),b=parseFloat(document.getElementById('ln_b').value),p=document.getElementById('ln_p').value.trim(),r=document.getElementById('ln_r').value.trim();if(!n||isNaN(b))return;lnL.push({n,b,p,r});['ln_n','ln_b','ln_p','ln_r'].forEach(id=>document.getElementById(id).value='');rLn();cfCalc();}
+function rLn(){const tb=document.getElementById('ln-tb');if(!lnL.length){tb.innerHTML='<tr class="er"><td colspan="5">None added</td></tr>';return;}tb.innerHTML=lnL.map((l,i)=>`<tr><td>${l.n}</td><td>${fD(l.b)}</td><td>${l.p?'$'+l.p:'—'}</td><td>${l.r?l.r+'%':'—'}</td><td><button class="delb" onclick="lnL.splice(${i},1);rLn();cfCalc()"><i class="ti ti-trash" aria-hidden="true"></i></button></td></tr>`).join('');}
+function addCI(){const n=document.getElementById('ci_n').value.trim(),a=parseFloat(document.getElementById('ci_a').value),d=document.getElementById('ci_d').value.trim();if(!n||isNaN(a))return;ciL.push({n,a,d});['ci_n','ci_a','ci_d'].forEach(id=>document.getElementById(id).value='');rCI();cfCalc();}
+function rCI(){const tb=document.getElementById('ci-tb');if(!ciL.length){tb.innerHTML='<tr class="er"><td colspan="4">None added</td></tr>';return;}tb.innerHTML=ciL.map((c,i)=>`<tr><td>${c.n}</td><td>${fD(c.a)}</td><td>${c.d||'—'}</td><td><button class="delb" onclick="ciL.splice(${i},1);rCI();cfCalc()"><i class="ti ti-trash" aria-hidden="true"></i></button></td></tr>`).join('');}
+function addCO(){const n=document.getElementById('co_n').value.trim(),a=parseFloat(document.getElementById('co_a').value),d=document.getElementById('co_d').value.trim(),t=document.getElementById('co_t').value;if(!n||isNaN(a))return;coL.push({n,a,d,t});['co_n','co_a','co_d'].forEach(id=>document.getElementById(id).value='');rCO();cfCalc();}
+function rCO(){const tb=document.getElementById('co-tb');if(!coL.length){tb.innerHTML='<tr class="er"><td colspan="5">None added</td></tr>';return;}tb.innerHTML=coL.map((c,i)=>`<tr><td>${c.n}</td><td>${fD(c.a)}</td><td>${c.d||'—'}</td><td><span class="pill blue">${c.t}</span></td><td><button class="delb" onclick="coL.splice(${i},1);rCO();cfCalc()"><i class="ti ti-trash" aria-hidden="true"></i></button></td></tr>`).join('');}
+function cfCalc(){
+  const tIn=ciL.reduce((a,c)=>a+c.a,0),tOut=coL.reduce((a,c)=>a+c.a,0),net=tIn-tOut;
+  const cash=g('cf_cash'),proj=cash!==null?cash+net:null;
+  const tCC=ccL.reduce((a,c)=>a+c.b,0),tLn=lnL.reduce((a,l)=>a+l.b,0);
+  if(!ciL.length&&!coL.length&&!ccL.length&&!lnL.length){document.getElementById('cf-summary').innerHTML='';return;}
+  document.getElementById('cf-summary').innerHTML=`<div class="card"><h3>Cash flow summary</h3>
+    <div class="kv"><span class="kk">Expected cash in</span><span class="kv2 good">${fD(tIn)}</span></div>
+    <div class="kv"><span class="kk">Expected cash out</span><span class="kv2 bad">${fD(tOut)}</span></div>
+    <div class="kv"><span class="kk">Net this month</span><span class="kv2 ${net>=0?'good':'bad'}">${fD(net)}</span></div>
+    ${proj!==null?`<div class="kv"><span class="kk">Projected end-of-month cash</span><span class="kv2 ${proj>=0?'good':'bad'}">${fD(proj)}</span></div>`:''}
+    <div class="kv"><span class="kk">Total CC balances</span><span class="kv2">${fD(tCC)}</span></div>
+    <div class="kv"><span class="kk">Total loan balances</span><span class="kv2">${fD(tLn)}</span></div>
+  </div>`;}
+
+function addCol(){const n=document.getElementById('col_n').value.trim(),a=parseFloat(document.getElementById('col_a').value),age=document.getElementById('col_age').value,st=document.getElementById('col_st').value;if(!n||isNaN(a))return;colL.push({n,a,age,st});['col_n','col_a'].forEach(id=>document.getElementById(id).value='');rCol();}
+function ageC(a){return a==='90+ days'?'red':a==='61–90 days'?'amber':a==='31–60 days'?'blue':'green';}
+function stC(s){return s==='Write off'||s==='Dispute'?'red':s==='Open'?'blue':'amber';}
+function rCol(){const tb=document.getElementById('col-tb');if(!colL.length){tb.innerHTML='<tr class="er"><td colspan="5">None</td></tr>';return;}tb.innerHTML=colL.map((c,i)=>`<tr><td>${c.n}</td><td>${fD(c.a)}</td><td><span class="pill ${ageC(c.age)}">${c.age}</span></td><td><span class="pill ${stC(c.st)}">${c.st}</span></td><td><button class="delb" onclick="colL.splice(${i},1);rCol()"><i class="ti ti-trash" aria-hidden="true"></i></button></td></tr>`).join('');
+  const tot=colL.reduce((a,c)=>a+c.a,0),at90=colL.filter(c=>c.age==='90+ days').reduce((a,c)=>a+c.a,0),open=colL.filter(c=>c.st==='Open').reduce((a,c)=>a+c.a,0);
+  document.getElementById('col-summary').innerHTML=`<div class="card"><h3>Collections summary</h3>
+    <div class="kv"><span class="kk">Total AR tracked</span><span class="kv2">${fD(tot)}</span></div>
+    <div class="kv"><span class="kk">AR 90+ days</span><span class="kv2 ${at90>0?'bad':''}">${fD(at90)}</span></div>
+    <div class="kv"><span class="kk">Open / not contacted</span><span class="kv2 warn">${fD(open)}</span></div>
+    <div class="kv"><span class="kk">Accounts tracked</span><span class="kv2">${colL.length}</span></div>
+  </div>`;}
+
+function addIss(){const area=document.getElementById('is_area').value,desc=document.getElementById('is_desc').value.trim(),pri=document.getElementById('is_pri').value,st=document.getElementById('is_st').value;if(!desc)return;isL.push({area,desc,pri,st});document.getElementById('is_desc').value='';rIss();}
+function priC(p){return p==='High'?'red':p==='Medium'?'amber':'green';}
+function rIss(){const tb=document.getElementById('is-tb');if(!isL.length){tb.innerHTML='<tr class="er"><td colspan="5">None</td></tr>';return;}tb.innerHTML=isL.map((s,i)=>`<tr><td><span class="pill blue">${s.area}</span></td><td style="max-width:180px;font-size:12px">${s.desc}</td><td><span class="pill ${priC(s.pri)}">${s.pri}</span></td><td><span class="pill ${s.st==='Fixed'?'green':s.st==='In progress'?'amber':'red'}">${s.st}</span></td><td><button class="delb" onclick="isL.splice(${i},1);rIss()"><i class="ti ti-trash" aria-hidden="true"></i></button></td></tr>`).join('');
+  const open=isL.filter(i=>i.st==='Open').length,hi=isL.filter(i=>i.pri==='High').length,fixed=isL.filter(i=>i.st==='Fixed').length;
+  document.getElementById('is-summary').innerHTML=`<div class="card"><h3>Issues summary</h3>
+    <div class="kv"><span class="kk">Total issues</span><span class="kv2">${isL.length}</span></div>
+    <div class="kv"><span class="kk">Open</span><span class="kv2 ${open>0?'bad':''}">${open}</span></div>
+    <div class="kv"><span class="kk">High priority</span><span class="kv2 ${hi>0?'bad':''}">${hi}</span></div>
+    <div class="kv"><span class="kk">Fixed</span><span class="kv2 good">${fixed}</span></div>
+  </div>`;}
+
+function pxCalc(){
+  const labor=g('px_labor')||0,mat=g('px_mat')||0,oh=g('px_oh')||0,jobs=g('px_jobs')||1;
+  const tgm=g('px_tgm'),tnm=g('px_tnm'),ind=g('px_ind'),curr=g('px_curr');
+  const directCost=labor+mat;
+  const totalCost=directCost+oh;
+  const costPlusPrice=tgm&&tgm<100?totalCost/(1-tgm/100):null;
+  const moOH=(['oh_rent','oh_util','oh_office','oh_payroll','oh_tax','oh_ins','oh_legal','oh_bank','oh_pension','oh_mkt','oh_sw','oh_auto','oh_other','oh_liab']).reduce((a,id)=>{const v=g(id);return v?a+v:a;},0);
+  const ohPerJob=moOH&&jobs?moOH/jobs:oh;
+  const fullCost=directCost+ohPerJob;
+  const marginPrice=tnm&&tnm<100?fullCost/(1-tnm/100):null;
+  const currMargin=curr&&totalCost?((curr-totalCost)/curr*100):null;
+  const vsIndustry=curr&&ind?curr-ind:null;
+  if(!totalCost&&!tgm&&!tnm){document.getElementById('px-results').innerHTML='';return;}
+  document.getElementById('px-results').innerHTML=`
+    <div class="two-col">
+      <div class="price-result ${costPlusPrice?'good':''}">
+        <div class="pr-label">Cost-plus price</div>
+        <div class="pr-val">${fD(costPlusPrice)}</div>
+        <div class="pr-sub">At ${tgm||'?'}% gross margin<br>Cost to deliver: ${fD(totalCost)}</div>
+      </div>
+      <div class="price-result ${marginPrice?'good':''}">
+        <div class="pr-label">Margin-based price</div>
+        <div class="pr-val">${fD(marginPrice)}</div>
+        <div class="pr-sub">At ${tnm||'?'}% net margin<br>Full cost (incl. overhead): ${fD(fullCost)}</div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:10px"><h3>Current pricing analysis</h3>
+      <div class="kv"><span class="kk">Your current price</span><span class="kv2">${fD(curr)}</span></div>
+      <div class="kv"><span class="kk">Industry average</span><span class="kv2">${fD(ind)}</span></div>
+      <div class="kv"><span class="kk">vs industry</span><span class="kv2 ${vsIndustry!==null?(vsIndustry>=0?'good':'bad'):''}">${vsIndustry!==null?(vsIndustry>=0?'+':'')+fD(vsIndustry):'—'}</span></div>
+      <div class="kv"><span class="kk">Current margin %</span><span class="kv2 ${currMargin!==null?(currMargin>=30?'good':currMargin>=15?'warn':'bad'):''}">${fP(currMargin)}</span></div>
+      <div class="kv"><span class="kk">Minimum price to break even</span><span class="kv2">${fD(totalCost)}</span></div>
+    </div>`;}
+
+function addPkg(){const n=document.getElementById('pkg_n').value.trim(),c=parseFloat(document.getElementById('pkg_c').value),p=parseFloat(document.getElementById('pkg_p').value);if(!n||isNaN(c)||isNaN(p))return;pkgL.push({n,c,p});['pkg_n','pkg_c','pkg_p'].forEach(id=>document.getElementById(id).value='');rPkg();}
+function rPkg(){const tb=document.getElementById('pkg-tb');if(!pkgL.length){tb.innerHTML='<tr class="er"><td colspan="6">None added</td></tr>';return;}tb.innerHTML=pkgL.map((pk,i)=>{const m=pk.p-pk.c,mp=pk.p?m/pk.p*100:0;return`<tr><td>${pk.n}</td><td>${fD(pk.c)}</td><td>${fD(pk.p)}</td><td style="color:${m>=0?'#1D9E75':'#E24B4A'}">${fD(m)}</td><td><span class="pill ${mp>=30?'green':mp>=15?'amber':'red'}">${fP(mp)}</span></td><td><button class="delb" onclick="pkgL.splice(${i},1);rPkg()"><i class="ti ti-trash" aria-hidden="true"></i></button></td></tr>`;}).join('');}
+
+function renderDash(){
+  const moOH=(['oh_rent','oh_util','oh_office','oh_payroll','oh_tax','oh_ins','oh_legal','oh_bank','oh_pension','oh_mkt','oh_sw','oh_auto','oh_other','oh_liab']).reduce((a,id)=>{const v=g(id);return v?a+v:a;},0);
+  const rev=g('pr_rev'),cogs=g('pr_cogs'),cash=g('cf_cash'),beOh=g('be_oh'),beGpm=g('be_gpm');
+  const gross=rev&&cogs?rev-cogs:null,grossPct=gross&&rev?gross/rev*100:null;
+  const annOH=moOH*12;
+  const net=gross?gross-annOH:null,netPct=net&&rev?net/rev*100:null;
+  const beAnn=beOh?beOh*12:annOH;
+  const breakEven=beGpm&&beGpm<100?beAnn/(beGpm/100):null;
+  const tCC=ccL.reduce((a,c)=>a+c.b,0),tLn=lnL.reduce((a,l)=>a+l.b,0);
+  const colTot=colL.reduce((a,c)=>a+c.a,0),col90=colL.filter(c=>c.age==='90+ days').reduce((a,c)=>a+c.a,0);
+  const openIss=isL.filter(i=>i.st==='Open').length,hiIss=isL.filter(i=>i.pri==='High').length;
+  const tIn=ciL.reduce((a,c)=>a+c.a,0),tOut=coL.reduce((a,c)=>a+c.a,0),cfNet=tIn-tOut;
+  const all=Object.values(chk).flat(),done=all.filter(Boolean).length,pct=all.length?Math.round(done/all.length*100):0;
+  const hasData=rev||moOH||colL.length||isL.length||ccL.length||ciL.length;
+  if(!hasData){document.getElementById('dash-content').innerHTML='<div style="text-align:center;padding:2rem;color:var(--color-text-secondary);font-size:13px"><i class="ti ti-chart-bar" style="font-size:26px;display:block;margin-bottom:7px" aria-hidden="true"></i>Fill in the tabs to see your full dashboard.</div>';return;}
+  const flags=[];
+  if(grossPct!==null&&grossPct<30)flags.push({t:'Low gross margin ('+fP(grossPct)+')',c:'red'});
+  if(netPct!==null&&netPct<0)flags.push({t:'Operating at a loss',c:'red'});
+  if(netPct!==null&&netPct<5&&netPct>=0)flags.push({t:'Thin net margin — review overhead',c:'amber'});
+  if(netPct!==null&&netPct>15)flags.push({t:'Healthy net margin ('+fP(netPct)+')',c:'green'});
+  if(col90>0)flags.push({t:'AR 90+ days: '+fD(col90),c:'amber'});
+  if(hiIss>0)flags.push({t:hiIss+' high-priority QB issue'+(hiIss>1?'s':''),c:'red'});
+  if(openIss>0)flags.push({t:openIss+' open QB issue'+(openIss>1?'s':''),c:'amber'});
+  if(cfNet<0&&(ciL.length||coL.length))flags.push({t:'Negative cash flow this month',c:'red'});
+  const cogsP=rev&&cogs?cogs/rev*100:null;
+  const payrollP=rev&&moOH?(moOH*12)/rev*100:null;
+  document.getElementById('dash-content').innerHTML=`
+    <div class="grid4">
+      <div class="met ${grossPct!==null?(grossPct>=30?'good':'bad'):''}"><div class="ml">Gross margin</div><div class="mv">${fP(grossPct)}</div><div class="ms">${fD(gross)}</div></div>
+      <div class="met ${netPct!==null?(netPct>0?'good':'bad'):''}"><div class="ml">Net margin</div><div class="mv">${fP(netPct)}</div><div class="ms">${fD(net)}</div></div>
+      <div class="met"><div class="ml">Monthly overhead</div><div class="mv">${fD(moOH||null)}</div><div class="ms">Annual: ${fD(annOH||null)}</div></div>
+      <div class="met ${breakEven?'good':''}"><div class="ml">Break-even revenue</div><div class="mv">${fD(breakEven)}</div><div class="ms">annual</div></div>
+    </div>
+    ${flags.length?`<div class="card"><h3>Flags</h3><div class="flags">${flags.map(f=>`<span class="fl ${f.c}"><i class="ti ti-${f.c==='red'?'alert-circle':f.c==='amber'?'alert-triangle':'circle-check'}" aria-hidden="true"></i>${f.t}</span>`).join('')}</div></div>`:''}
+    <div class="card"><h3>Key ratios</h3>
+      <div class="kv"><span class="kk">COGS % of revenue</span><span class="kv2 ${cogsP!==null&&cogsP>70?'bad':''}">${fP(cogsP)}</span></div>
+      <div class="kv"><span class="kk">Overhead % of revenue</span><span class="kv2 ${payrollP!==null&&payrollP>40?'bad':''}">${fP(payrollP)}</span></div>
+      <div class="kv"><span class="kk">Break-even annual revenue</span><span class="kv2">${fD(breakEven)}</span></div>
+      <div class="kv"><span class="kk">Annual revenue target</span><span class="kv2">${fD(rev)}</span></div>
+    </div>
+    <div class="card"><h3>Cash & debt</h3>
+      <div class="kv"><span class="kk">Cash in bank</span><span class="kv2">${fD(cash)}</span></div>
+      <div class="kv"><span class="kk">Monthly cash flow (net)</span><span class="kv2 ${cfNet>=0?'good':'bad'}">${ciL.length||coL.length?fD(cfNet):'—'}</span></div>
+      <div class="kv"><span class="kk">Total CC balances</span><span class="kv2">${tCC?fD(tCC):'—'}</span></div>
+      <div class="kv"><span class="kk">Total loan balances</span><span class="kv2">${tLn?fD(tLn):'—'}</span></div>
+    </div>
+    <div class="card"><h3>Collections & issues</h3>
+      <div class="kv"><span class="kk">Total AR tracked</span><span class="kv2">${colTot?fD(colTot):'—'}</span></div>
+      <div class="kv"><span class="kk">AR 90+ days</span><span class="kv2 ${col90>0?'bad':''}">${col90?fD(col90):'—'}</span></div>
+      <div class="kv"><span class="kk">Open QB issues</span><span class="kv2 ${openIss>0?'bad':''}">${openIss||'—'}</span></div>
+      <div class="kv"><span class="kk">High-priority issues</span><span class="kv2 ${hiIss>0?'bad':''}">${hiIss||'—'}</span></div>
+    </div>
+    <div class="card"><h3>Pricing snapshot</h3>
+      ${pkgL.length?`<div style="overflow-x:auto"><table class="dt"><thead><tr><th>Package</th><th>Cost</th><th>Price</th><th>Margin</th></tr></thead><tbody>${pkgL.map(pk=>{const mp=pk.p?(pk.p-pk.c)/pk.p*100:0;return`<tr><td>${pk.n}</td><td>${fD(pk.c)}</td><td>${fD(pk.p)}</td><td><span class="pill ${mp>=30?'green':mp>=15?'amber':'red'}">${fP(mp)}</span></td></tr>`;}).join('')}</tbody></table></div>`:'<div style="font-size:12px;color:var(--color-text-secondary)">No packages added yet — go to Pricing tab.</div>'}
+    </div>
+    <div class="card"><h3>Checklist progress</h3>
+      <div class="kv"><span class="kk">Steps complete</span><span class="kv2 ${pct===100?'good':''}">${done} / ${all.length} (${pct}%)</span></div>
+    </div>
+    <div class="br">
+      <button class="db p" onclick="sendPrompt('Generate a full financial summary for my client based on all the data entered in the financial tracker. Include key ratios, flags, pricing analysis, and recommendations.')"><i class="ti ti-file-text" aria-hidden="true"></i> Generate full client summary ↗</button>
+    </div>`;}
+
+renderCL();
+rCC();rLn();rCI();rCO();rCol();rIss();rPkg();
+</script>
