@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Role Clarity &ndash; PivotYes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f0f0f;
+    --bg2: #161616;
+    --bg3: #1e1e1e;
+    --bg4: #252525;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #f0ede8;
+    --text2: #9a9690;
+    --text3: #6a6763;
+    --accent: #c9a96e;
+    --accent2: #a8843f;
+    --accent-bg: rgba(201,169,110,0.08);
+    --accent-border: rgba(201,169,110,0.2);
+    --green: #4e9a6a;
+    --green-bg: rgba(78,154,106,0.1);
+    --green-border: rgba(78,154,106,0.25);
+    --amber: #c9813a;
+    --amber-bg: rgba(201,129,58,0.1);
+    --amber-border: rgba(201,129,58,0.25);
+    --red: #c95a5a;
+    --red-bg: rgba(201,90,90,0.1);
+    --red-border: rgba(201,90,90,0.25);
+    --blue: #5a8fc9;
+    --blue-bg: rgba(90,143,201,0.1);
+    --blue-border: rgba(90,143,201,0.25);
+    --purple: #9a7ec9;
+    --purple-bg: rgba(154,126,201,0.1);
+    --purple-border: rgba(154,126,201,0.25);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .site-header { text-align: center; padding: 48px 24px 0; }
+  .logo { font-size: 11px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 32px; display: block; }
+
+  /* PROGRESS */
+  .progress-wrap { max-width: 560px; margin: 0 auto 48px; padding: 0 24px; display: none; }
+  .progress-track { display: flex; align-items: center; position: relative; }
+  .progress-line { position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: var(--border2); transform: translateY(-50%); z-index: 0; }
+  .progress-fill-line { position: absolute; top: 50%; left: 0; height: 1px; background: var(--accent); transform: translateY(-50%); z-index: 0; transition: width 0.5s ease; width: 0%; }
+  .step-node { width: 28px; height: 28px; border-radius: 50%; background: var(--bg3); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--text3); position: relative; z-index: 1; flex-shrink: 0; transition: all 0.3s; cursor: pointer; }
+  .step-node.active { background: var(--accent); border-color: var(--accent); color: #0f0f0f; }
+  .step-node.done { background: rgba(201,169,110,0.15); border-color: var(--accent); color: var(--accent); }
+  .step-spacer { flex: 1; }
+
+  .main { max-width: 640px; margin: 0 auto; padding: 0 24px 80px; }
+
+  /* SCREENS */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* TYPOGRAPHY */
+  .eyebrow { font-size: 10px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  .screen-title { font-family: 'Playfair Display', serif; font-size: clamp(24px, 5vw, 36px); font-weight: 400; color: var(--text); line-height: 1.2; margin-bottom: 10px; }
+  .screen-title em { font-style: italic; color: var(--accent); }
+  .screen-sub { font-size: 15px; color: var(--text2); line-height: 1.65; margin-bottom: 32px; }
+  .intro-title { font-family: 'Playfair Display', serif; font-size: clamp(32px, 6vw, 48px); font-weight: 400; color: var(--text); line-height: 1.15; margin-bottom: 20px; }
+  .intro-title em { font-style: italic; color: var(--accent); }
+
+  /* CARDS */
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 24px; margin-bottom: 14px; }
+  .card-title { font-size: 10px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text3); margin-bottom: 16px; }
+
+  /* FIELDS */
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+  .field:last-child { margin-bottom: 0; }
+  .field label { font-size: 10px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text3); }
+  .fg2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .fg3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  input[type=text], input[type=number], textarea, select {
+    background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius-sm);
+    color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; padding: 9px 13px;
+    outline: none; transition: border-color 0.2s; width: 100%;
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+  textarea { resize: vertical; min-height: 72px; line-height: 1.5; }
+  select { cursor: pointer; }
+  select option { background: var(--bg3); }
+
+  /* TASK ROWS */
+  .task-row {
+    display: grid;
+    grid-template-columns: 1fr 110px 120px 32px;
+    gap: 8px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .task-row:last-of-type { border-bottom: none; }
+  .task-row input, .task-row select { font-size: 13px; }
+  .task-col-heads {
+    display: grid;
+    grid-template-columns: 1fr 110px 120px 32px;
+    gap: 8px;
+    padding: 0 0 8px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+  }
+  .task-col-heads span { font-size: 9px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text3); }
+
+  /* TEAM MEMBER ROWS */
+  .member-row { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
+  .member-row input { flex: 1; }
+  .member-avatar {
+    width: 32px; height: 32px; border-radius: 50%; background: var(--bg4);
+    border: 1px solid var(--border2); display: flex; align-items: center;
+    justify-content: center; font-size: 11px; font-weight: 600; color: var(--text3);
+    flex-shrink: 0; transition: all 0.2s;
+  }
+
+  /* REDISTRIBUTION BOARD */
+  .redist-board { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .redist-col { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; min-height: 120px; }
+  .redist-col-head { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .redist-col-head .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .redist-task-chip {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg3); border: 1px solid var(--border2); border-radius: 6px;
+    padding: 7px 10px; margin-bottom: 6px; font-size: 12px; color: var(--text2);
+    transition: all 0.15s; cursor: default;
+  }
+  .redist-task-chip:last-child { margin-bottom: 0; }
+  .chip-assign {
+    font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 4px;
+    border: none; cursor: pointer; font-family: 'Inter', sans-serif;
+    background: var(--bg4); color: var(--text3); transition: all 0.15s;
+  }
+  .chip-assign:hover { background: var(--accent-bg); color: var(--accent); border: none; }
+
+  /* DIAGNOSIS CARD */
+  .diag-option {
+    display: flex; gap: 14px; padding: 16px 18px;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); margin-bottom: 10px;
+    cursor: pointer; transition: all 0.2s; align-items: flex-start;
+  }
+  .diag-option:hover { border-color: var(--border2); }
+  .diag-option.selected { border-color: var(--accent); background: var(--accent-bg); }
+  .diag-option.selected-red { border-color: var(--red); background: var(--red-bg); }
+  .diag-option.selected-amber { border-color: var(--amber); background: var(--amber-bg); }
+  .diag-option.selected-green { border-color: var(--green); background: var(--green-bg); }
+  .diag-radio {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 1.5px solid var(--border2); flex-shrink: 0; margin-top: 1px;
+    display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+  }
+  .diag-option.selected .diag-radio,
+  .diag-option.selected-red .diag-radio,
+  .diag-option.selected-amber .diag-radio,
+  .diag-option.selected-green .diag-radio { border-color: var(--accent); background: var(--accent); }
+  .diag-option.selected-red .diag-radio { border-color: var(--red); background: var(--red); }
+  .diag-option.selected-amber .diag-radio { border-color: var(--amber); background: var(--amber); }
+  .diag-option.selected-green .diag-radio { border-color: var(--green); background: var(--green); }
+  .diag-radio::after { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #0f0f0f; display: none; }
+  .diag-option.selected .diag-radio::after,
+  .diag-option.selected-red .diag-radio::after,
+  .diag-option.selected-amber .diag-radio::after,
+  .diag-option.selected-green .diag-radio::after { display: block; }
+  .diag-content h4 { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .diag-content p { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+  /* VERDICT */
+  .verdict { border-radius: var(--radius); padding: 20px 24px; margin: 16px 0; border: 1px solid; }
+  .verdict.strong { background: var(--green-bg); border-color: var(--green-border); }
+  .verdict.improve { background: var(--amber-bg); border-color: var(--amber-border); }
+  .verdict.risk { background: var(--red-bg); border-color: var(--red-border); }
+  .verdict.info { background: var(--blue-bg); border-color: var(--blue-border); }
+  .verdict h3 { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 400; margin-bottom: 6px; }
+  .verdict.strong h3 { color: var(--green); }
+  .verdict.improve h3 { color: var(--amber); }
+  .verdict.risk h3 { color: var(--red); }
+  .verdict.info h3 { color: var(--blue); }
+  .verdict p { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+  /* SCORE STRIP */
+  .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+  .stat-tile { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 12px; text-align: center; }
+  .stat-tile .st-l { font-size: 9px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text3); margin-bottom: 6px; }
+  .stat-tile .st-v { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--text); }
+  .st-v.green { color: var(--green); }
+  .st-v.amber { color: var(--amber); }
+  .st-v.red { color: var(--red); }
+
+  /* TAGS */
+  .tag-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .tag { display: inline-flex; align-items: center; gap: 5px; border-radius: 6px; padding: 3px 10px; font-size: 12px; font-weight: 500; }
+  .tag-stays { background: var(--green-bg); border: 1px solid var(--green-border); color: var(--green); }
+  .tag-move { background: var(--amber-bg); border: 1px solid var(--amber-border); color: var(--amber); }
+  .tag-drop { background: var(--red-bg); border: 1px solid var(--red-border); color: var(--red); }
+  .tag-hire { background: var(--purple-bg); border: 1px solid var(--purple-border); color: var(--purple); }
+
+  /* BUTTONS */
+  .btn-primary { display: inline-flex; align-items: center; gap: 8px; padding: 13px 28px; background: var(--accent); color: #0f0f0f; border: none; border-radius: var(--radius-sm); font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: background 0.2s, transform 0.1s; }
+  .btn-primary:hover { background: #d4b37a; }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-secondary { display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px; background: transparent; color: var(--text2); border: 1px solid var(--border2); border-radius: var(--radius-sm); font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+  .btn-secondary:hover { color: var(--text); border-color: var(--text3); }
+  .btn-row { display: flex; gap: 12px; align-items: center; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border); }
+  .btn-row .sp { flex: 1; }
+  .add-link { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 500; color: var(--accent); background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; padding: 5px 0; opacity: 0.8; transition: opacity 0.2s; }
+  .add-link:hover { opacity: 1; }
+  .remove-btn { background: none; border: none; cursor: pointer; color: var(--text3); font-size: 18px; line-height: 1; padding: 4px; transition: color 0.15s; flex-shrink: 0; }
+  .remove-btn:hover { color: var(--red); }
+  .btn-restart { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; margin-top: 32px; transition: color 0.2s; }
+  .btn-restart:hover { color: var(--text2); }
+
+  hr.div { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
+
+  /* ANALYSIS */
+  .analysis-loading { text-align: center; padding: 40px 20px; color: var(--text2); font-size: 14px; display: none; }
+  .analysis-result { background: var(--bg2); border: 1px solid var(--accent-border); border-radius: var(--radius); padding: 24px; margin-top: 20px; display: none; }
+  .analysis-result h3 { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--accent); margin-bottom: 14px; font-weight: 400; }
+  .analysis-body { font-size: 14px; color: var(--text2); line-height: 1.75; white-space: pre-wrap; }
+
+  /* PRINT */
+  @media print {
+    @page { margin: 18mm 16mm; size: A4; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    body { background: #fff !important; color: #1a1a1a !important; font-size: 11pt !important; }
+    .site-header, .progress-wrap, .btn-row, .btn-restart, .add-link, .remove-btn, .analysis-loading, input, select, textarea, button { display: none !important; }
+    .main { max-width: 100% !important; padding: 0 !important; }
+    .screen { display: block !important; page-break-inside: avoid; }
+    #s-preintro { display: none !important; }
+    .screen-title { font-size: 18pt !important; color: #1a1a1a !important; }
+    .screen-title em { color: #a07840 !important; }
+    .eyebrow { color: #a07840 !important; font-size: 8pt !important; }
+    .card { background: #fafafa !important; border: 0.5pt solid #ddd !important; border-radius: 4pt !important; padding: 12pt !important; margin-bottom: 8pt !important; page-break-inside: avoid; }
+    .card-title { color: #888 !important; font-size: 7pt !important; }
+    .task-row, .task-col-heads { display: grid !important; }
+    .diag-option { background: #fafafa !important; border: 0.5pt solid #ddd !important; padding: 8pt 10pt !important; border-radius: 4pt !important; }
+    .diag-option.selected-red { background: #fdf0f0 !important; border-color: #e09090 !important; }
+    .diag-option.selected-amber { background: #fdf5e8 !important; border-color: #c8a060 !important; }
+    .diag-option.selected-green { background: #e8f5ee !important; border-color: #6aaa88 !important; }
+    .verdict { border-radius: 4pt !important; padding: 8pt 12pt !important; page-break-inside: avoid; }
+    .verdict.strong { background: #e8f5ee !important; border: 0.5pt solid #6aaa88 !important; }
+    .verdict.improve { background: #fdf5e8 !important; border: 0.5pt solid #c8a060 !important; }
+    .verdict.risk { background: #fdf0f0 !important; border: 0.5pt solid #e09090 !important; }
+    .verdict.info { background: #e8f0fc !important; border: 0.5pt solid #7aabe0 !important; }
+    .verdict h3 { font-size: 13pt !important; }
+    .verdict.strong h3 { color: #2d7a47 !important; }
+    .verdict.improve h3 { color: #a06020 !important; }
+    .verdict.risk h3 { color: #a03030 !important; }
+    .stat-row { display: grid !important; grid-template-columns: repeat(3,1fr) !important; gap: 6pt !important; }
+    .stat-tile { background: #f5f5f5 !important; border: 0.5pt solid #ddd !important; padding: 8pt !important; }
+    .print-header { display: flex !important; justify-content: space-between; border-bottom: 0.5pt solid #ddd; padding-bottom: 8pt; margin-bottom: 14pt; }
+    .ph-logo { font-size: 9pt; font-weight: 700; letter-spacing: 0.18em; color: #a07840; text-transform: uppercase; }
+    .ph-title { font-size: 8pt; color: #888; }
+    #s1, #s2, #s3 { page-break-before: always; }
+    .redist-board { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8pt !important; }
+    .redist-col { background: #fafafa !important; border: 0.5pt solid #ddd !important; padding: 10pt !important; }
+    .redist-task-chip { background: #f0f0f0 !important; border: 0.5pt solid #ddd !important; padding: 5pt 8pt !important; border-radius: 3pt !important; }
+    .analysis-result { display: block !important; background: #fafafa !important; border: 0.5pt solid #c9a96e !important; border-radius: 4pt !important; padding: 12pt !important; }
+    .analysis-result h3 { font-size: 12pt !important; color: #a07840 !important; }
+    .analysis-body { font-size: 9.5pt !important; color: #333 !important; }
+    .pdf-val { display: block !important; font-size: 10pt; color: #222; padding: 3pt 0; border-bottom: 0.5pt solid #eee; line-height: 1.5; }
+    .tag { border: 0.5pt solid #ccc !important; background: #f5f5f5 !important; color: #333 !important; }
+  }
+  .print-header { display: none; }
+  .pdf-val { display: none; }
+
+  @media (max-width: 560px) {
+    .fg2, .fg3 { grid-template-columns: 1fr; }
+    .task-row, .task-col-heads { grid-template-columns: 1fr 90px 28px; }
+    .task-row .hide-mobile { display: none; }
+    .redist-board { grid-template-columns: 1fr; }
+    .stat-row { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <span class="logo">PivotYes</span>
+</header>
+
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-track">
+    <div class="progress-line"></div>
+    <div class="progress-fill-line" id="progressFill"></div>
+    <div class="step-node active" id="sn0" onclick="jump(0)" title="Role snapshot">1</div>
+    <div class="step-spacer"></div>
+    <div class="step-node" id="sn1" onclick="jump(1)" title="Task audit">2</div>
+    <div class="step-spacer"></div>
+    <div class="step-node" id="sn2" onclick="jump(2)" title="Diagnose">3</div>
+    <div class="step-spacer"></div>
+    <div class="step-node" id="sn3" onclick="jump(3)" title="Redistribute">4</div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- PRE-INTRO -->
+<div class="screen active" id="s-preintro">
+  <div style="max-width:600px;margin:0 auto;padding:10px 0 40px">
+    <div style="text-align:center;margin-bottom:36px">
+      <div class="eyebrow" style="text-align:center">Owner Tool · Operations & HR</div>
+      <h1 class="intro-title">The <em>Role Clarity</em><br>Tool</h1>
+      <p style="font-size:15px;color:var(--text2);line-height:1.65;max-width:440px;margin:0 auto 28px">Before you reorganize anything &ndash; get clear on what's actually happening and why.</p>
+      <button class="btn-primary" onclick="startTool()" style="font-size:13px;padding:11px 28px;margin-bottom:8px">I'm ready &rarr;</button>
+      <div style="font-size:11px;color:var(--text3);margin-top:6px">or keep reading below</div>
+    </div>
+
+    <div style="margin-bottom:26px">
+      <div class="eyebrow" style="margin-bottom:14px">When to use this</div>
+      <div style="display:grid;gap:8px">
+        <div style="display:flex;gap:12px;padding:13px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm)">
+          <span style="font-size:16px;flex-shrink:0">⚡</span>
+          <div><div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px">An employee says they're overwhelmed</div><div style="font-size:12px;color:var(--text2);line-height:1.5">Before you respond, find out if the load is too high &ndash; or if the load is right but the fit isn't.</div></div>
+        </div>
+        <div style="display:flex;gap:12px;padding:13px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm)">
+          <span style="font-size:16px;flex-shrink:0">📉</span>
+          <div><div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px">Performance is dropping but you're not sure why</div><div style="font-size:12px;color:var(--text2);line-height:1.5">Sometimes it's not performance &ndash; it's a role that's grown beyond what one person can do.</div></div>
+        </div>
+        <div style="display:flex;gap:12px;padding:13px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm)">
+          <span style="font-size:16px;flex-shrink:0">🔄</span>
+          <div><div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px">You're planning a reorg or role change</div><div style="font-size:12px;color:var(--text2);line-height:1.5">Use this to map what exists before you redraw anything. Don't redesign in a vacuum.</div></div>
+        </div>
+        <div style="display:flex;gap:12px;padding:13px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm)">
+          <span style="font-size:16px;flex-shrink:0">🌱</span>
+          <div><div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px">The business has grown and roles haven't kept up</div><div style="font-size:12px;color:var(--text2);line-height:1.5">What worked at 5 people breaks at 15. Use this to realign structure to where you actually are.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;margin-bottom:26px">
+      <div class="eyebrow" style="margin-bottom:12px">The one thing most owners get wrong</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.75;margin-bottom:10px">They see an overwhelmed employee and immediately start thinking about who to hire or how to reshuffle the org chart. But the real question isn't <em style="color:var(--text)">who does what</em> &ndash; it's <em style="color:var(--text)">why is this broken in the first place.</em></p>
+      <p style="font-size:14px;color:var(--text2);line-height:1.75">There are only three reasons a role becomes unworkable: <span style="color:var(--text)">too much volume</span>, <span style="color:var(--text)">wrong tasks</span>, or <span style="color:var(--text)">wrong person for the load</span>. The fix is completely different for each. This tool helps you find out which one you're dealing with.</p>
+    </div>
+
+    <div style="background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:var(--radius);padding:18px 22px;margin-bottom:32px">
+      <div class="eyebrow" style="margin-bottom:10px">How it works</div>
+      <div style="display:grid;gap:7px">
+        <div style="font-size:13px;color:var(--text2);display:flex;gap:10px;line-height:1.5"><span style="color:var(--accent);font-weight:600;flex-shrink:0">1 ·</span> <span><strong style="color:var(--text);font-weight:500">Role snapshot</strong> &ndash; Who is this person and what should they own?</span></div>
+        <div style="font-size:13px;color:var(--text2);display:flex;gap:10px;line-height:1.5"><span style="color:var(--accent);font-weight:600;flex-shrink:0">2 ·</span> <span><strong style="color:var(--text);font-weight:500">Task audit</strong> &ndash; Map everything they're actually doing, not just what's on paper.</span></div>
+        <div style="font-size:13px;color:var(--text2);display:flex;gap:10px;line-height:1.5"><span style="color:var(--accent);font-weight:600;flex-shrink:0">3 ·</span> <span><strong style="color:var(--text);font-weight:500">Diagnose</strong> &ndash; Is this volume, scope creep, or capacity? Don't skip this step.</span></div>
+        <div style="font-size:13px;color:var(--text2);display:flex;gap:10px;line-height:1.5"><span style="color:var(--accent);font-weight:600;flex-shrink:0">4 ·</span> <span><strong style="color:var(--text);font-weight:500">Redistribute</strong> &ndash; Assign each task: stays, moves, drops, or needs a hire.</span></div>
+      </div>
+    </div>
+
+    <div style="text-align:center">
+      <button class="btn-primary" onclick="startTool()" style="font-size:14px;padding:14px 36px">I'm ready &rarr;</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- STEP 1: ROLE SNAPSHOT -->
+<div class="screen" id="s0">
+  <div class="print-header"><span class="ph-logo">PivotYes</span><span class="ph-title">Role Clarity Tool</span></div>
+  <div class="eyebrow">Step 1 of 4 · Role Snapshot</div>
+  <h2 class="screen-title">Who is this person<br>and what do they <em>own?</em></h2>
+  <p class="screen-sub">Write it down as it should be &ndash; not as it has become. We'll look at reality in the next step.</p>
+
+  <div class="card">
+    <div class="card-title">Employee information</div>
+    <div class="fg2">
+      <div class="field"><label>Employee name</label><input type="text" id="empName" placeholder="Full name"></div>
+      <div class="field"><label>Job title</label><input type="text" id="jobTitle" placeholder="e.g. Operations Coordinator"></div>
+    </div>
+    <div class="fg2">
+      <div class="field"><label>Department</label><input type="text" id="dept" placeholder="e.g. Production"></div>
+      <div class="field"><label>Reports to</label><input type="text" id="reportsTo" placeholder="Manager name"></div>
+    </div>
+    <div class="field"><label>Time in this role</label><input type="text" id="tenure" placeholder="e.g. 8 months, 2 years"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Role purpose</div>
+    <div class="field"><label>What does this person exist to deliver?</label><textarea id="rolePurpose" placeholder="One or two sentences. What outcome does the business need from this role?"></textarea></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">What this role should own (intended scope)</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.5">List the responsibilities as they were designed &ndash; or as you'd want them to be.</p>
+    <div id="intendedList"></div>
+    <button class="add-link" onclick="addSimpleRow('intendedList','intended')">+ Add responsibility</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Other team members (for redistribution later)</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.5">Add anyone who could potentially absorb tasks. You'll assign to them in Step 4.</p>
+    <div id="memberList"></div>
+    <button class="add-link" onclick="addMember()">+ Add team member</button>
+  </div>
+
+  <div class="btn-row">
+    <div class="sp"></div>
+    <button class="btn-primary" onclick="goTo(1)">Task audit &rarr;</button>
+  </div>
+</div>
+
+<!-- STEP 2: TASK AUDIT -->
+<div class="screen" id="s1">
+  <div class="print-header"><span class="ph-logo">PivotYes</span><span class="ph-title">Role Clarity · Task Audit</span></div>
+  <div class="eyebrow">Step 2 of 4 · Task Audit</div>
+  <h2 class="screen-title">What are they<br><em>actually</em> doing?</h2>
+  <p class="screen-sub">List every task they perform &ndash; not what the job description says. What lands on their desk every week? Include things that "aren't really their job."</p>
+
+  <div class="stat-row" id="statRow">
+    <div class="stat-tile"><div class="st-l">Total tasks</div><div class="st-v" id="statTotal">0</div></div>
+    <div class="stat-tile"><div class="st-l">Belongs here</div><div class="st-v green" id="statBelongs">0</div></div>
+    <div class="stat-tile"><div class="st-l">Scope creep</div><div class="st-v amber" id="statCreep">0</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Task inventory</div>
+    <div class="task-col-heads">
+      <span>Task description</span>
+      <span>Frequency</span>
+      <span class="hide-mobile">Belongs here?</span>
+      <span></span>
+    </div>
+    <div id="taskList"></div>
+    <div style="margin-top:10px">
+      <button class="add-link" onclick="addTask()">+ Add task</button>
+    </div>
+  </div>
+
+  <div id="auditVerdict"></div>
+
+  <div class="btn-row">
+    <button class="btn-secondary" onclick="goTo(0)">&larr; Back</button>
+    <div class="sp"></div>
+    <button class="btn-secondary" onclick="exportTaskList()" style="display:flex;align-items:center;gap:7px">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+      Export task list
+    </button>
+    <button class="btn-primary" onclick="goTo(2)">Diagnose &rarr;</button>
+  </div>
+</div>
+
+<!-- STEP 3: DIAGNOSE -->
+<div class="screen" id="s2">
+  <div class="print-header"><span class="ph-logo">PivotYes</span><span class="ph-title">Role Clarity · Diagnosis</span></div>
+  <div class="eyebrow">Step 3 of 4 · Diagnosis</div>
+  <h2 class="screen-title">What's actually<br><em>broken?</em></h2>
+  <p class="screen-sub">Don't jump to a solution until you've named the problem. The fix is completely different depending on which of these is true.</p>
+
+  <div class="card">
+    <div class="card-title">Root cause &ndash; pick the one that fits most</div>
+
+    <div class="diag-option" id="d-volume" onclick="selectDiag('volume','risk')">
+      <div class="diag-radio"></div>
+      <div class="diag-content">
+        <h4>Volume problem &ndash; too much, full stop</h4>
+        <p>The tasks that belong here are legitimately more than one person can handle well. The role has grown beyond its original design. They're not doing anything wrong &ndash; there's just too much.</p>
+      </div>
+    </div>
+
+    <div class="diag-option" id="d-scope" onclick="selectDiag('scope','amber')">
+      <div class="diag-radio"></div>
+      <div class="diag-content">
+        <h4>Scope creep &ndash; wrong tasks in the pile</h4>
+        <p>The volume is manageable, but tasks have accumulated that don't belong here. Other people's work has drifted in. The role has expanded informally without anyone deciding it should.</p>
+      </div>
+    </div>
+
+    <div class="diag-option" id="d-capacity" onclick="selectDiag('capacity','improve')">
+      <div class="diag-radio"></div>
+      <div class="diag-content">
+        <h4>Capacity problem &ndash; the load is right, but they're struggling with it</h4>
+        <p>The tasks are appropriate and the volume is reasonable &ndash; but this person isn't keeping up. Could be skill, efficiency, confidence, or fit. The role isn't the problem; the match is.</p>
+      </div>
+    </div>
+
+    <div class="diag-option" id="d-mixed" onclick="selectDiag('mixed','improve')">
+      <div class="diag-radio"></div>
+      <div class="diag-content">
+        <h4>Mixed &ndash; a bit of everything</h4>
+        <p>It's not clean. There's real scope creep AND the load is high AND there are capacity questions. Untangle one at a time &ndash; scope first, then volume, then person.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="diagVerdict"></div>
+
+  <div class="card" style="margin-top:4px">
+    <div class="card-title">What the employee said (optional)</div>
+    <div class="field"><label>Their words &ndash; how did they describe feeling overwhelmed?</label><textarea id="empWords" placeholder="e.g. 'I never have time to finish anything properly' / 'I keep getting pulled into things that aren't my job'"></textarea></div>
+    <div class="field" style="margin-top:4px"><label>What's the pattern you're observing?</label><textarea id="ownerObs" placeholder="What have you noticed? When did this start? What changed?"></textarea></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-secondary" onclick="goTo(1)">&larr; Back</button>
+    <div class="sp"></div>
+    <button class="btn-primary" onclick="goTo(3)">Redistribute &rarr;</button>
+  </div>
+</div>
+
+<!-- STEP 4: REDISTRIBUTE -->
+<div class="screen" id="s3">
+  <div class="print-header"><span class="ph-logo">PivotYes</span><span class="ph-title">Role Clarity · Redistribution Plan</span></div>
+  <div class="eyebrow">Step 4 of 4 · Redistribution</div>
+  <h2 class="screen-title">What <em>changes.</em><br>Who owns what.</h2>
+  <p class="screen-sub">Every task gets a decision. Stays in this role, moves to someone else, gets dropped, or needs a hire to cover it.</p>
+
+  <div class="stat-row" id="redistStats">
+    <div class="stat-tile"><div class="st-l">Stays</div><div class="st-v green" id="rs-stays">0</div></div>
+    <div class="stat-tile"><div class="st-l">Moving</div><div class="st-v amber" id="rs-move">0</div></div>
+    <div class="stat-tile"><div class="st-l">Dropped / Hire</div><div class="st-v red" id="rs-other">0</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Task redistribution</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.5">For each task: decide what happens to it. If it moves, assign it to a team member.</p>
+    <div id="redistList"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Revised role &ndash; what stays</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.5">After redistribution, write the revised role description. This is what gets communicated.</p>
+    <div class="field"><label>Updated role purpose</label><textarea id="newPurpose" placeholder="Restate what this person now exists to deliver &ndash; after the changes."></textarea></div>
+    <div class="field"><label>Core responsibilities going forward</label><textarea id="newResps" placeholder="List the responsibilities that belong here after redistribution." style="min-height:100px"></textarea></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Conversation plan</div>
+    <div class="field"><label>What you'll say to the employee</label><textarea id="convPlan" placeholder="How will you frame the change? What do they need to hear? Keep it clear and direct."></textarea></div>
+    <div class="field"><label>Timeline for changes</label><input type="text" id="timeline" placeholder="e.g. Changes effective next Monday, transition over 2 weeks"></div>
+    <div class="field"><label>Follow-up check-in date</label><input type="text" id="followUp" placeholder="When will you revisit to see how it's working?"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-secondary" onclick="goTo(2)">&larr; Back</button>
+    <div class="sp"></div>
+    <button class="btn-secondary" onclick="exportPDF()" style="display:flex;align-items:center;gap:7px">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+      Export PDF
+    </button>
+    <button class="btn-primary" onclick="runAnalysis()">Get AI analysis &rarr;</button>
+  </div>
+
+  <div class="analysis-loading" id="analysisLoading"><div style="margin-bottom:8px;font-size:20px">◌</div>Analyzing... this takes a moment.</div>
+  <div class="analysis-result" id="analysisResult">
+    <h3>Analysis</h3>
+    <div class="analysis-body" id="analysisBody"></div>
+    <div style="margin-top:18px;padding-top:14px;border-top:1px solid rgba(201,169,110,0.2);display:flex;justify-content:flex-end">
+      <button class="btn-secondary" onclick="exportPDF()" style="font-size:12px;display:flex;align-items:center;gap:6px">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+        Export full report as PDF
+      </button>
+    </div>
+  </div>
+
+  <div style="text-align:center">
+    <button class="btn-restart" onclick="restart()">↺ Start a new role</button>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+var S = {
+  tasks: [],
+  members: [],
+  diagnosis: null,
+  redistDecisions: {},
+  redistAssign: {},
+  current: -1
+};
+
+var FREQ_OPTS = ['Daily','Multiple/week','Weekly','Bi-weekly','Monthly','Ad hoc'];
+var BELONGS_OPTS = ['Yes &ndash; core role','Scope creep','Unclear'];
+var REDIST_OPTS = ['Stays','Moves to team','Drop it','Need a hire'];
+
+function startTool() {
+  document.getElementById('s-preintro').classList.remove('active');
+  document.getElementById('progressWrap').style.display = 'block';
+  goTo(0);
+}
+
+function goTo(n) {
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('s'+n).classList.add('active');
+  S.current = n;
+  updateProgress(n);
+  if (n === 1) renderTaskStats();
+  if (n === 3) buildRedistList();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function jump(n) { if (n <= S.current) goTo(n); }
+
+function updateProgress(n) {
+  for (var i = 0; i <= 3; i++) {
+    var nd = document.getElementById('sn'+i);
+    nd.classList.remove('active','done');
+    if (i === n) nd.classList.add('active');
+    else if (i < n) nd.classList.add('done');
+  }
+  document.getElementById('progressFill').style.width = (n/3*100)+'%';
+}
+
+function restart() {
+  S = {tasks:[],members:[],diagnosis:null,redistDecisions:{},redistAssign:{},current:-1};
+  document.querySelectorAll('input[type=text],textarea').forEach(function(i){i.value='';});
+  document.getElementById('intendedList').innerHTML = '';
+  document.getElementById('memberList').innerHTML = '';
+  document.getElementById('taskList').innerHTML = '';
+  document.getElementById('analysisResult').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'none';
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('s-preintro').classList.add('active');
+}
+
+/* ── SIMPLE ROWS ── */
+function addSimpleRow(listId, key) {
+  var c = document.getElementById(listId);
+  var d = document.createElement('div');
+  d.className = 'member-row';
+  d.innerHTML = '<input type="text" placeholder="e.g. Manage supplier orders" style="font-size:13px"><button class="remove-btn" onclick="this.parentNode.remove()">×</button>';
+  c.appendChild(d);
+}
+
+function getSimpleRows(listId) {
+  return Array.from(document.querySelectorAll('#'+listId+' .member-row input')).map(function(i){return i.value.trim();}).filter(Boolean);
+}
+
+/* ── MEMBERS ── */
+function addMember() {
+  var id = 'mbr_'+Date.now();
+  S.members.push({id:id, name:''});
+  renderMembers();
+}
+
+function renderMembers() {
+  var c = document.getElementById('memberList');
+  c.innerHTML = '';
+  S.members.forEach(function(m, i) {
+    var d = document.createElement('div');
+    d.className = 'member-row';
+    var initials = m.name ? m.name.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2) : '?';
+    d.innerHTML = '<div class="member-avatar">'+initials+'</div><input type="text" placeholder="Name and role (e.g. Kayla &ndash; Production)" value="'+esc(m.name)+'" style="font-size:13px" oninput="S.members['+i+'].name=this.value;renderMemberAvatars()"><button class="remove-btn" onclick="S.members.splice('+i+',1);renderMembers()">×</button>';
+    c.appendChild(d);
+  });
+}
+
+function renderMemberAvatars() {
+  var avs = document.querySelectorAll('#memberList .member-avatar');
+  S.members.forEach(function(m,i){
+    if(avs[i]) avs[i].textContent = m.name ? m.name.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2) : '?';
+  });
+}
+
+/* ── TASKS ── */
+function addTask() {
+  var id = 'task_'+Date.now();
+  S.tasks.push({id:id, desc:'', freq:'Weekly', belongs:'Yes &ndash; core role'});
+  renderTasks();
+}
+
+function renderTasks() {
+  var c = document.getElementById('taskList');
+  c.innerHTML = '';
+  S.tasks.forEach(function(t, i) {
+    var row = document.createElement('div');
+    row.className = 'task-row';
+
+    var freqOpts = FREQ_OPTS.map(function(o){return '<option'+(t.freq===o?' selected':'')+'>'+o+'</option>';}).join('');
+    var bOpts = BELONGS_OPTS.map(function(o){return '<option'+(t.belongs===o?' selected':'')+'>'+o+'</option>';}).join('');
+
+    row.innerHTML =
+      '<input type="text" placeholder="e.g. Follow up on open orders" value="'+esc(t.desc)+'" style="font-size:13px" oninput="S.tasks['+i+'].desc=this.value;renderTaskStats()">'+
+      '<select style="font-size:12px" onchange="S.tasks['+i+'].freq=this.value">'+freqOpts+'</select>'+
+      '<select style="font-size:12px" class="hide-mobile" onchange="S.tasks['+i+'].belongs=this.value;renderTaskStats()">'+bOpts+'</select>'+
+      '<button class="remove-btn" onclick="S.tasks.splice('+i+',1);renderTasks();renderTaskStats()">×</button>';
+    c.appendChild(row);
+  });
+  renderTaskStats();
+}
+
+function renderTaskStats() {
+  var total = S.tasks.length;
+  var belongs = S.tasks.filter(function(t){return t.belongs==='Yes &ndash; core role';}).length;
+  var creep = S.tasks.filter(function(t){return t.belongs==='Scope creep';}).length;
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statBelongs').textContent = belongs;
+  document.getElementById('statCreep').textContent = creep;
+
+  var vb = document.getElementById('auditVerdict');
+  if (total === 0) { vb.innerHTML=''; return; }
+  var creepPct = total > 0 ? Math.round(creep/total*100) : 0;
+  if (creepPct >= 30) {
+    vb.innerHTML = '<div class="verdict improve"><h3>Significant scope creep &ndash; '+creepPct+'% of tasks don\'t belong here.</h3><p>Nearly a third of what this person does isn\'t their job. That\'s not an efficiency problem &ndash; it\'s a structural one. Before anything else, those tasks need a home.</p></div>';
+  } else if (creep > 0) {
+    vb.innerHTML = '<div class="verdict info"><h3>Some scope creep present.</h3><p>'+creep+' task'+(creep>1?'s':'')+' flagged as outside this role. Worth addressing &ndash; even a few misplaced responsibilities add up over time.</p></div>';
+  } else if (total >= 10) {
+    vb.innerHTML = '<div class="verdict improve"><h3>High task count &ndash; '+total+' tasks is a heavy load.</h3><p>Even if everything belongs here, this volume warrants a serious look. Is one person actually supposed to own all of this?</p></div>';
+  } else {
+    vb.innerHTML = '';
+  }
+}
+
+/* ── DIAGNOSIS ── */
+function selectDiag(key, colorKey) {
+  S.diagnosis = key;
+  var colorMap = {risk:'selected-red', amber:'selected-amber', improve:'selected-amber', strong:'selected-green'};
+  var cls = colorKey==='risk'?'selected-red':colorKey==='amber'||colorKey==='improve'?'selected-amber':'selected-green';
+  ['volume','scope','capacity','mixed'].forEach(function(k){
+    document.getElementById('d-'+k).className = 'diag-option'+(k===key?' '+cls:'');
+  });
+
+  var verdicts = {
+    volume: ['risk','Volume is the problem &ndash; this role needs to shrink or get support.','The tasks are legitimate, but there\'s too many of them for one person. The fix is structural: redistribute, split the role, or hire. Until you change the volume, you\'ll keep having this conversation.'],
+    scope: ['improve','Scope creep &ndash; clean up the role before you do anything else.','A meaningful chunk of what this person does doesn\'t belong to them. The good news: you don\'t need a hire. You need to reassign those tasks and hold the line going forward.'],
+    capacity: ['improve','The role is right &ndash; the match may not be.','The volume and scope are appropriate. This is a people question, not a structural one. Go deeper on skill, efficiency, and fit before making any changes to the role itself.'],
+    mixed: ['improve','Mixed problem &ndash; untangle it one layer at a time.','Start with scope: remove what doesn\'t belong. Then reassess volume. Only after that can you fairly evaluate whether the remaining issue is about capacity.']
+  };
+  var v = verdicts[key];
+  var cls2 = v[0]==='risk'?'risk':'improve';
+  document.getElementById('diagVerdict').innerHTML = '<div class="verdict '+cls2+'"><h3>'+v[1]+'</h3><p>'+v[2]+'</p></div>';
+}
+
+/* ── REDISTRIBUTION ── */
+function buildRedistList() {
+  var c = document.getElementById('redistList');
+  c.innerHTML = '';
+
+  if (S.tasks.length === 0) {
+    c.innerHTML = '<p style="font-size:13px;color:var(--text3);font-style:italic;padding:8px 0">No tasks added yet. Go back to Step 2 to add them.</p>';
+    updateRedistStats();
+    return;
+  }
+
+  var memberNames = S.members.map(function(m){return m.name||'Unnamed';}).filter(Boolean);
+
+  S.tasks.forEach(function(t, i) {
+    if (!t.desc) return;
+    var decision = S.redistDecisions[t.id] || 'Stays';
+    var assignee = S.redistAssign[t.id] || '';
+
+    var row = document.createElement('div');
+    row.style.cssText = 'padding:12px 0;border-bottom:1px solid var(--border);display:grid;grid-template-columns:1fr 120px 140px;gap:10px;align-items:center;';
+
+    var decOpts = REDIST_OPTS.map(function(o){return '<option'+(decision===o?' selected':'')+'>'+o+'</option>';}).join('');
+    var memberOptsHtml = '<option value="">&ndash; assign to &ndash;</option>'+memberNames.map(function(n){return '<option'+(assignee===n?' selected':'')+'>'+n+'</option>';}).join('');
+
+    row.innerHTML =
+      '<div><div style="font-size:13px;color:var(--text)">'+esc(t.desc)+'</div>'+
+      '<div style="font-size:11px;color:var(--text3);margin-top:2px">'+t.freq+' · '+t.belongs+'</div></div>'+
+      '<select style="font-size:12px" onchange="setRedistDecision(\''+t.id+'\',this.value)">'+decOpts+'</select>'+
+      '<select style="font-size:12px" id="assign_'+t.id+'" '+(decision!=='Moves to team'?'disabled style="opacity:0.35;font-size:12px"':'style="font-size:12px"')+' onchange="S.redistAssign[\''+t.id+'\']=this.value">'+memberOptsHtml+'</select>';
+
+    c.appendChild(row);
+  });
+
+  updateRedistStats();
+}
+
+function setRedistDecision(taskId, val) {
+  S.redistDecisions[taskId] = val;
+  var sel = document.getElementById('assign_'+taskId);
+  if (sel) {
+    if (val === 'Moves to team') {
+      sel.disabled = false; sel.style.opacity = '1';
+    } else {
+      sel.disabled = true; sel.style.opacity = '0.35';
+    }
+  }
+  updateRedistStats();
+}
+
+function updateRedistStats() {
+  var stays=0, move=0, other=0;
+  S.tasks.forEach(function(t){
+    var d = S.redistDecisions[t.id]||'Stays';
+    if(d==='Stays') stays++;
+    else if(d==='Moves to team') move++;
+    else other++;
+  });
+  document.getElementById('rs-stays').textContent = stays;
+  document.getElementById('rs-move').textContent = move;
+  document.getElementById('rs-other').textContent = other;
+}
+
+/* ── AI ANALYSIS ── */
+async function runAnalysis() {
+  var name = document.getElementById('empName').value||'the employee';
+  var title = document.getElementById('jobTitle').value||'unknown';
+  var tenure = document.getElementById('tenure').value||'unknown';
+  var purpose = document.getElementById('rolePurpose').value||'not defined';
+  var intended = getSimpleRows('intendedList').join(', ')||'none listed';
+  var members = S.members.map(function(m){return m.name;}).filter(Boolean).join(', ')||'none';
+  var tasks = S.tasks.map(function(t){return t.desc+' ('+t.freq+', '+t.belongs+')';}).filter(function(t){return t.trim()!=='(,)';}).join(' | ')||'none listed';
+  var total = S.tasks.length;
+  var creep = S.tasks.filter(function(t){return t.belongs==='Scope creep';}).length;
+  var diag = S.diagnosis||'not selected';
+  var empWords = document.getElementById('empWords').value||'none';
+  var ownerObs = document.getElementById('ownerObs').value||'none';
+  var redistSummary = S.tasks.map(function(t){
+    var d = S.redistDecisions[t.id]||'Stays';
+    var a = S.redistAssign[t.id]||'';
+    return t.desc+' → '+d+(a?' ('+a+')':'');
+  }).filter(function(s){return s.indexOf(' → ')>0;}).join(' | ')||'none';
+  var convPlan = document.getElementById('convPlan').value||'none';
+  var timeline = document.getElementById('timeline').value||'none';
+
+  var prompt = `You are a business operations advisor. Analyze this role clarity assessment and give a direct, practical read.
+
+Employee: ${name}, ${title}, ${tenure} in role
+Role purpose: ${purpose}
+Intended scope: ${intended}
+Team members available: ${members}
+
+Task audit: ${total} total tasks, ${creep} flagged as scope creep
+Tasks: ${tasks}
+
+Diagnosis selected: ${diag}
+Employee's words: ${empWords}
+Owner's observations: ${ownerObs}
+
+Redistribution plan: ${redistSummary}
+Conversation plan: ${convPlan}
+Timeline: ${timeline}
+
+Respond with:
+1. ROOT CAUSE CONFIRMATION &ndash; does the diagnosis match what the task audit shows? Agree or push back in 2 sentences.
+2. BIGGEST RISK &ndash; what's the one thing most likely to go wrong if this isn't fixed?
+3. REDISTRIBUTION GAPS &ndash; any tasks that seem misassigned, dropped too quickly, or missing a clear owner?
+4. CONVERSATION GUIDANCE &ndash; what's the one thing the owner must communicate clearly to the employee?
+5. 30-DAY CHECK &ndash; what should the owner look for in 30 days to know if the change is working?
+
+Be direct. No filler. Write for a business owner.`;
+
+  document.getElementById('analysisLoading').style.display = 'block';
+  document.getElementById('analysisResult').style.display = 'none';
+
+  try {
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{role:'user', content: prompt}]
+      })
+    });
+    var data = await resp.json();
+    var text = (data.content||[]).filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join('');
+    document.getElementById('analysisLoading').style.display = 'none';
+    document.getElementById('analysisResult').style.display = 'block';
+    document.getElementById('analysisBody').textContent = text;
+  } catch(e) {
+    document.getElementById('analysisLoading').style.display = 'none';
+    document.getElementById('analysisResult').style.display = 'block';
+    document.getElementById('analysisBody').textContent = 'Analysis unavailable. Check your connection and try again.';
+  }
+}
+
+/* ── PDF EXPORT ── */
+function exportPDF() {
+  document.querySelectorAll('.pdf-val').forEach(function(e){e.remove();});
+
+  var simple = [
+    ['empName'],['jobTitle'],['dept'],['reportsTo'],['tenure'],
+    ['rolePurpose'],['empWords'],['ownerObs'],['newPurpose'],['newResps'],
+    ['convPlan'],['timeline'],['followUp']
+  ];
+  simple.forEach(function(pair){
+    var el = document.getElementById(pair[0]);
+    if(!el||!el.value.trim()) return;
+    var d = document.createElement('div');
+    d.className = 'pdf-val';
+    d.textContent = el.value.trim();
+    el.parentNode.insertBefore(d, el.nextSibling);
+  });
+
+  var name = document.getElementById('empName').value||'Role';
+  var origTitle = document.title;
+  document.title = 'Role Clarity &ndash; '+name;
+
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.add('active');});
+  document.getElementById('s-preintro').classList.remove('active');
+
+  window.print();
+
+  setTimeout(function(){
+    document.title = origTitle;
+    document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+    document.getElementById('s3').classList.add('active');
+    document.querySelectorAll('.pdf-val').forEach(function(e){e.remove();});
+  }, 1000);
+}
+
+/* ── TASK LIST EXPORT ── */
+function exportTaskList() {
+  var name = document.getElementById('empName').value || 'Employee';
+  var title = document.getElementById('jobTitle').value || '';
+  var date = new Date().toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'});
+
+  var total = S.tasks.filter(function(t){return t.desc.trim();}).length;
+  var core = S.tasks.filter(function(t){return t.belongs==='Yes \u2013 core role';}).length;
+  var creep = S.tasks.filter(function(t){return t.belongs==='Scope creep';}).length;
+  var unclear = S.tasks.filter(function(t){return t.belongs==='Unclear';}).length;
+
+  var byCategory = {
+    'Yes \u2013 core role': [],
+    'Scope creep': [],
+    'Unclear': []
+  };
+  S.tasks.forEach(function(t){
+    if(t.desc.trim() && byCategory[t.belongs]) byCategory[t.belongs].push(t);
+  });
+
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">';
+  html += '<title>Task List &ndash; '+name+'</title>';
+  html += '<link rel="preconnect" href="https://fonts.googleapis.com">';
+  html += '<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">';
+  html += '<style>';
+  html += '*{box-sizing:border-box;margin:0;padding:0}';
+  html += 'body{background:#fff;color:#1a1a1a;font-family:Inter,sans-serif;font-size:13px;line-height:1.6;padding:40px 48px;max-width:760px;margin:0 auto}';
+  html += '.logo{font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#a07840;margin-bottom:24px;display:block}';
+  html += 'h1{font-family:"Playfair Display",serif;font-size:26px;font-weight:400;color:#1a1a1a;margin-bottom:4px}';
+  html += 'h1 em{font-style:italic;color:#a07840}';
+  html += '.meta{font-size:12px;color:#888;margin-bottom:28px}';
+  html += '.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:28px}';
+  html += '.stat{background:#f8f6f2;border-radius:6px;padding:12px 14px;text-align:center}';
+  html += '.stat .sl{font-size:9px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#888;margin-bottom:4px}';
+  html += '.stat .sv{font-family:"Playfair Display",serif;font-size:22px;color:#1a1a1a}';
+  html += '.sv.green{color:#2d7a47}.sv.amber{color:#a06020}.sv.red{color:#a03030}';
+  html += '.section{margin-bottom:24px}';
+  html += '.section-head{font-size:9px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:7px 12px;border-radius:5px;margin-bottom:8px;display:flex;align-items:center;gap:8px}';
+  html += '.sh-core{background:#e8f5ee;color:#2d7a47}';
+  html += '.sh-creep{background:#fdf5e8;color:#a06020}';
+  html += '.sh-unclear{background:#f0f0f0;color:#666}';
+  html += '.task-item{display:grid;grid-template-columns:1fr 110px;gap:8px;padding:9px 12px;border-bottom:1px solid #f0f0f0;align-items:center}';
+  html += '.task-item:last-child{border-bottom:none}';
+  html += '.task-item .td{font-size:13px;color:#1a1a1a}';
+  html += '.task-item .tf{font-size:11px;color:#888;text-align:right}';
+  html += '.empty{font-size:12px;color:#aaa;font-style:italic;padding:8px 12px}';
+  html += '.footer{margin-top:36px;padding-top:16px;border-top:1px solid #eee;font-size:10px;color:#bbb;display:flex;justify-content:space-between}';
+  html += '@media print{body{padding:18mm 16mm}@page{margin:0}}';
+  html += '</style></head><body>';
+
+  html += '<span class="logo">PivotYes</span>';
+  html += '<h1>Task List &ndash; <em>'+esc(name)+'</em></h1>';
+  html += '<div class="meta">'+(title?esc(title)+' &nbsp;|&nbsp; ':'')+date+'</div>';
+
+  html += '<div class="stat-row">';
+  html += '<div class="stat"><div class="sl">Total tasks</div><div class="sv">'+total+'</div></div>';
+  html += '<div class="stat"><div class="sl">Core role</div><div class="sv green">'+core+'</div></div>';
+  html += '<div class="stat"><div class="sl">Scope creep</div><div class="sv amber">'+creep+'</div></div>';
+  html += '</div>';
+
+  var sections = [
+    {key:'Yes \u2013 core role', label:'Core role tasks', headCls:'sh-core'},
+    {key:'Scope creep',          label:'Scope creep &ndash; does not belong here', headCls:'sh-creep'},
+    {key:'Unclear',              label:'Unclear &ndash; needs a decision', headCls:'sh-unclear'}
+  ];
+
+  sections.forEach(function(sec){
+    var items = byCategory[sec.key];
+    if(!items || items.length === 0) return;
+    html += '<div class="section">';
+    html += '<div class="section-head '+sec.headCls+'">'+sec.label+' ('+items.length+')</div>';
+    items.forEach(function(t){
+      html += '<div class="task-item"><div class="td">'+esc(t.desc)+'</div><div class="tf">'+esc(t.freq)+'</div></div>';
+    });
+    html += '</div>';
+  });
+
+  if(total === 0){
+    html += '<p style="color:#aaa;font-style:italic;font-size:13px">No tasks added yet.</p>';
+  }
+
+  html += '<div class="footer"><span>Role Clarity Tool &ndash; PivotYes</span><span>'+date+'</span></div>';
+  html += '</body></html>';
+
+  var blob = new Blob([html], {type:'text/html'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = (name.replace(/\s+/g,'-')||'Employee')+'-Task-List.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+</script>
+</body>
+</html>
