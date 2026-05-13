@@ -263,6 +263,91 @@
     color: var(--text3);
   }
 
+  /* PASSWORD GATE */
+  .gate-overlay {
+    position: fixed;
+    inset: 0;
+    background: #ffffff;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .gate-box {
+    width: 100%;
+    max-width: 380px;
+    text-align: center;
+  }
+  .gate-logo {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 32px;
+  }
+  .gate-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .gate-title em { font-style: italic; color: var(--accent); }
+  .gate-sub {
+    font-size: 14px;
+    color: var(--text2);
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+  .gate-input-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .gate-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    background: var(--bg2);
+    outline: none;
+    text-align: center;
+    letter-spacing: 0.1em;
+    transition: border-color 0.2s;
+  }
+  .gate-input:focus { border-color: var(--accent); background: #fff; }
+  .gate-input.error { border-color: var(--accent); background: rgba(204,34,34,0.04); }
+  .gate-btn {
+    width: 100%;
+    padding: 13px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .gate-btn:hover { background: #991111; }
+  .gate-error {
+    font-size: 12px;
+    color: var(--accent);
+    margin-top: 8px;
+    min-height: 18px;
+    font-weight: 500;
+  }
+
   /* RESPONSIVE */
   @media (max-width: 540px) {
     .tool-card { flex-direction: column; gap: 14px; }
@@ -272,6 +357,49 @@
 </style>
 </head>
 <body>
+
+<!-- PASSWORD GATE -->
+<div class="gate-overlay" id="gateOverlay">
+  <div class="gate-box">
+    <span class="gate-logo">PivotYes</span>
+    <h1 class="gate-title">Owner <em>Tools</em></h1>
+    <p class="gate-sub">Enter your access code to continue.</p>
+    <div class="gate-input-wrap">
+      <input class="gate-input" type="password" id="gateInput" placeholder="Access code" onkeydown="if(event.key==='Enter')checkPassword()">
+      <button class="gate-btn" onclick="checkPassword()">Enter &rarr;</button>
+    </div>
+    <div class="gate-error" id="gateError"></div>
+  </div>
+</div>
+
+<script>
+// ── Change this to your chosen password ──
+var ACCESS_CODE = 'pivotyestools';
+
+function checkPassword() {
+  var input = document.getElementById('gateInput');
+  var val = input.value.trim();
+  if(val === ACCESS_CODE) {
+    // Store in sessionStorage so refresh doesn't re-prompt
+    sessionStorage.setItem('py_auth', '1');
+    document.getElementById('gateOverlay').style.display = 'none';
+    input.classList.remove('error');
+    document.getElementById('gateError').textContent = '';
+  } else {
+    input.classList.add('error');
+    document.getElementById('gateError').textContent = 'Incorrect code. Try again.';
+    input.value = '';
+    input.focus();
+  }
+}
+
+// Auto-unlock if already authenticated this session
+(function(){
+  if(sessionStorage.getItem('py_auth') === '1') {
+    document.getElementById('gateOverlay').style.display = 'none';
+  }
+})();
+</script>
 
 <header>
   <span class="logo">PivotYes</span>
