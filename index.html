@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Owner Tools &ndash; PivotYes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg2: #f7f7f7;
+    --bg3: #efefef;
+    --border: rgba(0,0,0,0.08);
+    --border2: rgba(0,0,0,0.14);
+    --text: #111111;
+    --text2: #555555;
+    --text3: #888888;
+    --accent: #cc2222;
+    --accent-bg: rgba(204,34,34,0.06);
+    --accent-border: rgba(204,34,34,0.2);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    text-align: center;
+    padding: 64px 24px 56px;
+    border-bottom: 1px solid var(--border);
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .logo {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 28px;
+  }
+
+  .header-eyebrow {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 6vw, 52px);
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1.15;
+    margin-bottom: 18px;
+    letter-spacing: -0.01em;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .header-sub {
+    font-size: 16px;
+    color: var(--text2);
+    line-height: 1.7;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  /* MAIN */
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 56px 24px 80px;
+  }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* TOOL CARDS */
+  .tools-grid {
+    display: grid;
+    gap: 14px;
+    margin-bottom: 56px;
+  }
+
+  .tool-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 24px 26px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tool-card:hover {
+    border-color: var(--accent-border);
+    background: #1a1a1a;
+  }
+
+  .tool-card:hover .card-arrow {
+    transform: translateX(3px);
+    color: var(--accent);
+  }
+
+  .tool-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: var(--accent-bg);
+    border: 1px solid var(--accent-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 18px;
+  }
+
+  .card-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .card-tag {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 6px;
+  }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 6px;
+    line-height: 1.2;
+  }
+
+  .card-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .card-desc {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+
+  .card-steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .step-pill {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text3);
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 3px 9px;
+    white-space: nowrap;
+  }
+
+  .card-arrow {
+    font-size: 18px;
+    color: var(--text3);
+    flex-shrink: 0;
+    transition: transform 0.2s, color 0.2s;
+    margin-top: 2px;
+    align-self: center;
+  }
+
+  /* COMING SOON */
+  .tool-card.coming-soon {
+    opacity: 0.45;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .coming-badge {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text3);
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    padding: 2px 7px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 28px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-logo {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .footer-note {
+    font-size: 11px;
+    color: var(--text3);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 540px) {
+    .tool-card { flex-direction: column; gap: 14px; }
+    .card-arrow { display: none; }
+    footer { flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="logo">PivotYes</span>
+  <div class="header-eyebrow">Owner Tools · HR &amp; People</div>
+  <h1>Think before you<br><em>act.</em></h1>
+  <p class="header-sub">Structured tools that help you make the right people decisions &ndash; with clarity, not gut feel.</p>
+</header>
+
+<main>
+
+  <div class="section-label">Available now</div>
+
+  <div class="tools-grid">
+
+    <!-- HIRING -->
+    <a href="https://blimi-adler.github.io/pivotyestools/hiring-tool.html" class="tool-card">
+      <div class="tool-icon">⊕</div>
+      <div class="card-body">
+        <div class="card-tag">Hiring decision</div>
+        <div class="card-title">The <em>Right Hire</em> Guide</div>
+        <div class="card-desc">Before you post the job &ndash; define the role, screen candidates consistently, run a structured interview, check references, and make a confident decision. Tracks multiple candidates side by side.</div>
+        <div class="card-steps">
+          <span class="step-pill">Job setup</span>
+          <span class="step-pill">Phone filter</span>
+          <span class="step-pill">Interview</span>
+          <span class="step-pill">References</span>
+          <span class="step-pill">Decision</span>
+        </div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+
+    <!-- PERFORMANCE EVALUATION -->
+    <a href="https://blimi-adler.github.io/pivotyestools/performance-evaluation-app.html" class="tool-card">
+      <div class="tool-icon">◈</div>
+      <div class="card-body">
+        <div class="card-tag">Performance review</div>
+        <div class="card-title">The <em>Performance</em> Evaluation</div>
+        <div class="card-desc">Five steps through every dimension of an employee's performance &ndash; role clarity, evaluation scores, GWC fit, pay analysis, and a feedback plan. Walk in prepared. Walk out with a decision.</div>
+        <div class="card-steps">
+          <span class="step-pill">Role setup</span>
+          <span class="step-pill">Evaluation</span>
+          <span class="step-pill">GWC</span>
+          <span class="step-pill">Pay analysis</span>
+          <span class="step-pill">Feedback &amp; plan</span>
+        </div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+
+    <!-- ROLE CLARITY -->
+    <a href="https://blimi-adler.github.io/pivotyestools/role-clarity-tool.html" class="tool-card">
+      <div class="tool-icon">⟳</div>
+      <div class="card-body">
+        <div class="card-tag">Role design &amp; restructuring</div>
+        <div class="card-title">The <em>Role Clarity</em> Tool</div>
+        <div class="card-desc">For when someone is overwhelmed, performance is dropping, or roles haven't kept up with growth. Audit what they're actually doing, diagnose the root cause, and build a redistribution plan.</div>
+        <div class="card-steps">
+          <span class="step-pill">Role snapshot</span>
+          <span class="step-pill">Task audit</span>
+          <span class="step-pill">Diagnosis</span>
+          <span class="step-pill">Redistribution</span>
+        </div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+
+    <!-- LETTING GO -->
+    <a href="https://blimi-adler.github.io/pivotyestools/letting-go-app.html" class="tool-card">
+      <div class="tool-icon">⚖</div>
+      <div class="card-body">
+        <div class="card-tag">Separation decision</div>
+        <div class="card-title">The <em>Letting Go</em> Guide</div>
+        <div class="card-desc">Walk through the decision to let someone go step by step. Gates for process vs. people, timing, guilt, and the conversation itself. So you move forward with confidence, not regret.</div>
+        <div class="card-steps">
+          <span class="step-pill">Process vs. people</span>
+          <span class="step-pill">Timing check</span>
+          <span class="step-pill">Decision filter</span>
+          <span class="step-pill">Conversation script</span>
+        </div>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+
+  </div>
+
+  <div class="section-label">Coming soon</div>
+
+  <div class="tools-grid">
+
+    <div class="tool-card coming-soon">
+      <div class="tool-icon">◎</div>
+      <div class="card-body">
+        <div class="card-tag">Compensation</div>
+        <div class="card-title">The <em>Pay Decision</em> Tool <span class="coming-badge">Soon</span></div>
+        <div class="card-desc">Evaluate any compensation question &ndash; new hire offer, raise request, or role change &ndash; against market data and performance. A clear answer, not a guess.</div>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<footer>
+  <span class="footer-logo">PivotYes</span>
+  <span class="footer-note">Owner tools for HR &amp; People decisions</span>
+</footer>
+
+</body>
+</html>
