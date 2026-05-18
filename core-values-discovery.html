@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Core Values Discovery | PivotYes</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #E3000F;
+    --dark: #1a1a1a;
+    --mid: #3d3d3d;
+    --light: #f5f5f5;
+    --white: #ffffff;
+    --border: #e0e0e0;
+    --accent: #fff0f0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--light);
+    color: var(--dark);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--dark);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--white);
+    letter-spacing: 2px;
+  }
+  .logo span { color: var(--red); }
+  .tool-label {
+    font-size: 12px;
+    color: #aaa;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* PROGRESS */
+  .progress-bar-wrap {
+    background: var(--dark);
+    padding: 0 32px 20px;
+  }
+  .progress-steps {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .step-dot {
+    width: 28px;
+    height: 4px;
+    border-radius: 2px;
+    background: #444;
+    transition: background 0.3s;
+  }
+  .step-dot.active { background: var(--red); }
+  .step-dot.done { background: #888; }
+  .progress-label {
+    font-size: 11px;
+    color: #888;
+    margin-left: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* MAIN LAYOUT */
+  .main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* SCREENS */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* INTRO */
+  .intro-eyebrow {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 12px;
+  }
+  .intro-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    line-height: 1;
+    color: var(--dark);
+    margin-bottom: 20px;
+  }
+  .intro-sub {
+    font-size: 17px;
+    color: var(--mid);
+    line-height: 1.6;
+    max-width: 560px;
+    margin-bottom: 32px;
+  }
+  .intro-pillars {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+  .pillar {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--mid);
+  }
+  .pillar .num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    color: var(--red);
+    margin-right: 6px;
+  }
+
+  /* QUESTION CARD */
+  .q-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+    margin-bottom: 24px;
+  }
+  .q-phase {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  .q-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--dark);
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  .q-sub {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 28px;
+    line-height: 1.5;
+  }
+
+  /* TEXT AREAS */
+  textarea {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--dark);
+    resize: vertical;
+    min-height: 120px;
+    transition: border 0.2s;
+    background: #fafafa;
+    line-height: 1.6;
+  }
+  textarea:focus {
+    outline: none;
+    border-color: var(--red);
+    background: var(--white);
+  }
+  textarea::placeholder { color: #bbb; }
+
+  /* FLIP CARDS (frustration → value) */
+  .flip-rows { display: flex; flex-direction: column; gap: 12px; }
+  .flip-row {
+    display: grid;
+    grid-template-columns: 1fr 36px 1fr;
+    gap: 8px;
+    align-items: center;
+  }
+  .flip-row input {
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--dark);
+    background: #fafafa;
+    transition: border 0.2s;
+  }
+  .flip-row input:focus { outline: none; border-color: var(--red); background: var(--white); }
+  .flip-row input::placeholder { color: #bbb; }
+  .flip-arrow {
+    text-align: center;
+    font-size: 18px;
+    color: var(--red);
+  }
+  .flip-row input.value-input { background: var(--accent); }
+
+  /* ADD ROW BUTTON */
+  .add-row-btn {
+    background: none;
+    border: 1.5px dashed var(--border);
+    border-radius: 8px;
+    padding: 10px;
+    width: 100%;
+    color: #aaa;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.2s;
+  }
+  .add-row-btn:hover { border-color: var(--red); color: var(--red); }
+
+  /* HINT BOX */
+  .hint {
+    background: var(--accent);
+    border-left: 3px solid var(--red);
+    border-radius: 0 6px 6px 0;
+    padding: 14px 16px;
+    font-size: 13px;
+    color: var(--mid);
+    margin-top: 16px;
+    line-height: 1.6;
+  }
+  .hint strong { color: var(--red); }
+
+  /* NAV BUTTONS */
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+  }
+  .btn-back {
+    background: none;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--mid);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-back:hover { border-color: var(--dark); color: var(--dark); }
+  .btn-next {
+    background: var(--red);
+    border: none;
+    border-radius: 8px;
+    padding: 14px 32px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--white);
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+  }
+  .btn-next:hover { background: #c00; transform: translateY(-1px); }
+  .btn-start {
+    background: var(--red);
+    border: none;
+    border-radius: 8px;
+    padding: 16px 40px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 2px;
+    color: var(--white);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-start:hover { background: #c00; transform: translateY(-1px); }
+
+  /* PROCESSING */
+  .processing-screen {
+    text-align: center;
+    padding: 60px 20px;
+  }
+  .spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid var(--border);
+    border-top-color: var(--red);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 24px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .processing-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--dark);
+    margin-bottom: 8px;
+  }
+  .processing-sub { font-size: 14px; color: #888; }
+
+  /* RESULTS */
+  .results-header {
+    margin-bottom: 32px;
+  }
+  .results-eyebrow {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 8px;
+  }
+  .results-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 44px;
+    color: var(--dark);
+    line-height: 1;
+  }
+
+  /* VALUES GRID */
+  .values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .value-card {
+    background: var(--white);
+    border-radius: 10px;
+    padding: 24px 20px;
+    border-top: 4px solid var(--red);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .value-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--dark);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+  .value-statement {
+    font-size: 13px;
+    color: var(--mid);
+    line-height: 1.5;
+  }
+
+  /* TEAM CARD */
+  .team-card {
+    background: var(--dark);
+    border-radius: 12px;
+    padding: 36px;
+    margin-bottom: 32px;
+    color: var(--white);
+  }
+  .team-card-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 12px;
+  }
+  .team-card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+  }
+  .team-values-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .team-value-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .team-value-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--red);
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+  .team-value-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+  }
+  .team-value-desc { font-size: 13px; color: #aaa; line-height: 1.5; }
+
+  /* ACTION BUTTONS */
+  .action-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+  }
+  .btn-print {
+    background: var(--red);
+    border: none;
+    border-radius: 8px;
+    padding: 14px 28px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--white);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+  .btn-print:hover { background: #c00; }
+  .btn-restart {
+    background: none;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 28px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--mid);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-restart:hover { border-color: var(--dark); }
+
+  /* NAME INPUT */
+  .name-input-wrap {
+    margin-bottom: 20px;
+  }
+  .name-input-wrap label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 8px;
+  }
+  .name-input-wrap input {
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    color: var(--dark);
+    background: #fafafa;
+    width: 100%;
+    max-width: 360px;
+    transition: border 0.2s;
+  }
+  .name-input-wrap input:focus { outline: none; border-color: var(--red); background: var(--white); }
+
+  /* PRINT STYLES */
+  @media print {
+    body { background: white; }
+    .header { background: var(--dark) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .progress-bar-wrap, .nav-row, .action-row, .intro-screen, .q-screen, .processing-screen { display: none !important; }
+    .results-screen { display: block !important; }
+    .screen { display: none !important; }
+    .screen.results-screen { display: block !important; }
+    .main { padding: 20px; }
+    .value-card { break-inside: avoid; border-top: 4px solid var(--red) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .team-card { background: var(--dark) !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; break-inside: avoid; }
+    .btn-restart { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">Pivot<span>Yes</span></div>
+  <div class="tool-label">Core Values Discovery</div>
+</div>
+
+<div class="progress-bar-wrap" id="progressWrap" style="display:none">
+  <div class="progress-steps" id="progressSteps"></div>
+</div>
+
+<div class="main">
+
+  <!-- INTRO -->
+  <div class="screen active" id="screen-intro">
+    <div class="intro-eyebrow">PivotYes Tools</div>
+    <div class="intro-title">Discover Your<br>Core Values</div>
+    <div class="intro-sub">
+      Core values aren't invented — they're uncovered. This tool walks you through 6 questions that surface what you actually believe, based on who you are and how you lead.
+    </div>
+    <div class="intro-pillars">
+      <div class="pillar"><span class="num">1</span> Your Best People</div>
+      <div class="pillar"><span class="num">2</span> Your Frustrations</div>
+      <div class="pillar"><span class="num">3</span> Your Pride Moments</div>
+      <div class="pillar"><span class="num">4</span> What You'd Defend</div>
+      <div class="pillar"><span class="num">5</span> What You've Paid For</div>
+      <div class="pillar"><span class="num">6</span> Your Team Experience</div>
+    </div>
+    <div class="name-input-wrap">
+      <label>Your Name / Business Name</label>
+      <input type="text" id="ownerName" placeholder="e.g. Sarah Cohen / Cohen & Co." />
+    </div>
+    <button class="btn-start" onclick="startWizard()">Start Discovery →</button>
+  </div>
+
+  <!-- Q1: Best People -->
+  <div class="screen" id="screen-q1">
+    <div class="q-card">
+      <div class="q-phase">Step 1 of 6 — Your Best People</div>
+      <div class="q-title">Think of 3 people you'd clone if you could.</div>
+      <div class="q-sub">Past or present employees. Not their skills — how they showed up. What did they have in common?</div>
+      <textarea id="q1" placeholder="e.g. They never waited to be told. They owned their mistakes and fixed them. They treated clients like family..."></textarea>
+      <div class="hint"><strong>Why this works:</strong> Your instinct about who you'd clone reveals what you actually value — before you've named it.</div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-back" onclick="goToScreen('screen-intro')">← Back</button>
+      <button class="btn-next" onclick="nextScreen('screen-q1', 'screen-q2')">Next →</button>
+    </div>
+  </div>
+
+  <!-- Q2: Frustrations -->
+  <div class="screen" id="screen-q2">
+    <div class="q-card">
+      <div class="q-phase">Step 2 of 6 — The Frustration Flip</div>
+      <div class="q-title">What behaviors make you want to pull your hair out?</div>
+      <div class="q-sub">Enter the behavior that frustrates you — then name the value it reveals on the right.</div>
+      <div class="flip-rows" id="flipRows">
+        <div class="flip-row">
+          <input type="text" class="frustration-input" placeholder="e.g. Making excuses" />
+          <div class="flip-arrow">→</div>
+          <input type="text" class="value-input" placeholder="e.g. Ownership" />
+        </div>
+        <div class="flip-row">
+          <input type="text" class="frustration-input" placeholder="e.g. Cutting corners" />
+          <div class="flip-arrow">→</div>
+          <input type="text" class="value-input" placeholder="e.g. Excellence" />
+        </div>
+        <div class="flip-row">
+          <input type="text" class="frustration-input" placeholder="e.g. Waiting to be told" />
+          <div class="flip-arrow">→</div>
+          <input type="text" class="value-input" placeholder="e.g. Initiative" />
+        </div>
+      </div>
+      <button class="add-row-btn" onclick="addFlipRow()">+ Add another</button>
+      <div class="hint"><strong>The flip rule:</strong> Every frustration is a value in disguise. Flip the negative into what you'd rather see.</div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-back" onclick="goToScreen('screen-q1')">← Back</button>
+      <button class="btn-next" onclick="nextScreen('screen-q2', 'screen-q3')">Next →</button>
+    </div>
+  </div>
+
+  <!-- Q3: Pride -->
+  <div class="screen" id="screen-q3">
+    <div class="q-card">
+      <div class="q-phase">Step 3 of 6 — Your Pride Moments</div>
+      <div class="q-title">"This is exactly what we're about."</div>
+      <div class="q-sub">Think of a moment — with a client, a team, a result — where everything felt right. What was happening? What did someone do that made it feel exactly like you.</div>
+      <textarea id="q3" placeholder="e.g. We had a client crisis at 10pm. My team didn't wait for direction — they solved it and called the client before I even knew. That felt like us..."></textarea>
+      <div class="hint"><strong>What to listen for:</strong> The emotion in your answer. What made it feel right tells you more than any list of words.</div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-back" onclick="goToScreen('screen-q2')">← Back</button>
+      <button class="btn-next" onclick="nextScreen('screen-q3', 'screen-q4')">Next →</button>
+    </div>
+  </div>
+
+  <!-- Q4: What you'd defend -->
+  <div class="screen" id="screen-q4">
+    <div class="q-card">
+      <div class="q-phase">Step 4 of 6 — What You'd Defend</div>
+      <div class="q-title">What would you fire someone for — even a top performer?</div>
+      <div class="q-sub">Not a skills gap. A character or conduct line they crossed that made the decision easy, even if it was costly.</div>
+      <textarea id="q4" placeholder="e.g. I let go of my best salesperson because he was dishonest with a client. Revenue wasn't worth it. Integrity isn't negotiable here..."></textarea>
+      <div class="hint"><strong>The real test:</strong> A value is only real if you've paid for it. This is where you find your non-negotiables.</div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-back" onclick="goToScreen('screen-q3')">← Back</button>
+      <button class="btn-next" onclick="nextScreen('screen-q4', 'screen-q5')">Next →</button>
+    </div>
+  </div>
+
+  <!-- Q5: What you believe about people -->
+  <div class="screen" id="screen-q5">
+    <div class="q-card">
+      <div class="q-phase">Step 5 of 6 — What You Believe</div>
+      <div class="q-title">What do you actually believe about people?</div>
+      <div class="q-sub">Not what you wish. What you've learned. Answer honestly — this reveals the deeper philosophy behind how you lead.</div>
+      <textarea id="q5" placeholder="e.g. I believe most people want to do good work — they just need clarity and someone who actually holds them accountable. When people fail, it's usually a system problem, not a people problem..."></textarea>
+      <div class="hint"><strong>Go deeper:</strong> Your beliefs about people shape every hiring, firing, and management decision you make.</div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-back" onclick="goToScreen('screen-q4')">← Back</button>
+      <button class="btn-next" onclick="nextScreen('screen-q5', 'screen-q6')">Next →</button>
+    </div>
+  </div>
+
+  <!-- Q6: Team experience -->
+  <div class="screen" id="screen-q6">
+    <div class="q-card">
+      <div class="q-phase">Step 6 of 6 — The Team Experience</div>
+      <div class="q-title">What do you want your team to feel — not just achieve?</div>
+      <div class="q-sub">Not the result. The experience of working here. What do you want people to say about what it's like to be on your team?</div>
+      <textarea id="q6" placeholder="e.g. I want them to feel challenged but supported. Like their work actually matters. Like they're growing. And like they can tell me the truth..."></textarea>
+      <div class="hint"><strong>This is your culture promise.</strong> It's what your values feel like from the inside.</div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-back" onclick="goToScreen('screen-q5')">← Back</button>
+      <button class="btn-next" onclick="generateValues()">Generate My Values →</button>
+    </div>
+  </div>
+
+  <!-- PROCESSING -->
+  <div class="screen" id="screen-processing">
+    <div class="processing-screen">
+      <div class="spinner"></div>
+      <div class="processing-title">Analyzing Your Answers...</div>
+      <div class="processing-sub">Surfacing what you actually believe.</div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="screen results-screen" id="screen-results">
+    <div class="results-header">
+      <div class="results-eyebrow">Your Core Values</div>
+      <div class="results-title" id="resultsTitle">Your Core Values</div>
+    </div>
+
+    <div class="values-grid" id="valuesGrid"></div>
+
+    <div class="team-card" id="teamCard">
+      <div class="team-card-label">Team Share Card</div>
+      <div class="team-card-title" id="teamCardTitle">Who We Are & How We Work</div>
+      <div class="team-values-list" id="teamValuesList"></div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn-print" onclick="window.print()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Print / Save PDF
+      </button>
+      <button class="btn-restart" onclick="restartTool()">Start Over</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const STEPS = ['screen-q1','screen-q2','screen-q3','screen-q4','screen-q5','screen-q6'];
+  const TOTAL = STEPS.length;
+
+  function buildProgress(currentStep) {
+    const wrap = document.getElementById('progressWrap');
+    const stepsEl = document.getElementById('progressSteps');
+    const idx = STEPS.indexOf(currentStep);
+    if (idx === -1) { wrap.style.display = 'none'; return; }
+    wrap.style.display = 'block';
+    stepsEl.innerHTML = '';
+    for (let i = 0; i < TOTAL; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'step-dot' + (i < idx ? ' done' : i === idx ? ' active' : '');
+      stepsEl.appendChild(dot);
+    }
+    const label = document.createElement('span');
+    label.className = 'progress-label';
+    label.textContent = `${idx + 1} / ${TOTAL}`;
+    stepsEl.appendChild(label);
+  }
+
+  function goToScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    buildProgress(id);
+    window.scrollTo(0, 0);
+  }
+
+  function startWizard() {
+    goToScreen('screen-q1');
+  }
+
+  function nextScreen(current, next) {
+    goToScreen(next);
+  }
+
+  function addFlipRow() {
+    const rows = document.getElementById('flipRows');
+    const row = document.createElement('div');
+    row.className = 'flip-row';
+    row.innerHTML = `
+      <input type="text" class="frustration-input" placeholder="What frustrates you..." />
+      <div class="flip-arrow">→</div>
+      <input type="text" class="value-input" placeholder="Value it reveals..." />
+    `;
+    rows.appendChild(row);
+  }
+
+  async function generateValues() {
+    goToScreen('screen-processing');
+
+    const ownerName = document.getElementById('ownerName').value.trim() || 'Your Business';
+    const q1 = document.getElementById('q1').value.trim();
+    const q3 = document.getElementById('q3').value.trim();
+    const q4 = document.getElementById('q4').value.trim();
+    const q5 = document.getElementById('q5').value.trim();
+    const q6 = document.getElementById('q6').value.trim();
+
+    // Collect frustration flips
+    const frustrations = [];
+    document.querySelectorAll('.flip-row').forEach(row => {
+      const f = row.querySelector('.frustration-input')?.value.trim();
+      const v = row.querySelector('.value-input')?.value.trim();
+      if (f || v) frustrations.push({ frustration: f, value: v });
+    });
+    const flipText = frustrations.map(r => `"${r.frustration}" → ${r.value}`).join('\n');
+
+    const prompt = `You are helping a business owner discover their core values based on their answers to a discovery exercise. 
+
+Here are their answers:
+
+1. BEST PEOPLE (who they'd clone and why):
+${q1 || 'Not provided'}
+
+2. FRUSTRATION FLIPS (behavior → value revealed):
+${flipText || 'Not provided'}
+
+3. PRIDE MOMENT (when everything felt right):
+${q3 || 'Not provided'}
+
+4. NON-NEGOTIABLE (what they'd fire someone for):
+${q4 || 'Not provided'}
+
+5. BELIEF ABOUT PEOPLE (what they actually believe):
+${q5 || 'Not provided'}
+
+6. TEAM EXPERIENCE (what they want team to feel):
+${q6 || 'Not provided'}
+
+Based on these answers, identify 4–6 core values for this business owner. For each value:
+- Give it a strong, single-word or short-phrase NAME (e.g. "Ownership", "Relentless Honesty", "Earn It")
+- Write a short STATEMENT: "We [value] — which means we [specific behavior]." (one sentence, plain language, no corporate jargon)
+- Write a TEAM LINE: one short sentence that brings the value to life for a team member (what it looks like day to day)
+
+Respond ONLY with a valid JSON array. No preamble, no markdown, no backticks. Example format:
+[
+  {
+    "name": "Ownership",
+    "statement": "We own it — which means we never pass the buck or wait to be told.",
+    "teamLine": "When something goes wrong, we fix it first and explain it after."
+  }
+]`;
+
+    try {
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          messages: [{ role: "user", content: prompt }]
+        })
+      });
+
+      const data = await response.json();
+      const raw = data.content.map(i => i.text || "").join("").trim();
+      const clean = raw.replace(/```json|```/g, "").trim();
+      const values = JSON.parse(clean);
+      renderResults(ownerName, values);
+
+    } catch (err) {
+      // Fallback with sample values if API fails
+      const fallback = [
+        { name: "Ownership", statement: "We own it — which means we never wait for someone else to fix what we see.", teamLine: "If you see it, it's yours. Fix it first, explain it after." },
+        { name: "Earned Trust", statement: "We earn trust — which means our word is our contract.", teamLine: "We say what we mean and do what we say, every time." },
+        { name: "Clarity Over Comfort", statement: "We choose clarity — which means we say the hard thing instead of the easy thing.", teamLine: "Honest feedback, delivered with care, is how we grow." },
+        { name: "Relentless Standards", statement: "We hold the standard — which means good enough is never enough.", teamLine: "Before you hand something off, ask: is this the best version?" }
+      ];
+      renderResults(ownerName, fallback);
+    }
+  }
+
+  function renderResults(ownerName, values) {
+    const firstName = ownerName.split(' ')[0];
+
+    document.getElementById('resultsTitle').textContent = `${ownerName}'s Core Values`;
+    document.getElementById('teamCardTitle').textContent = `How We Work at ${ownerName}`;
+
+    // Values grid
+    const grid = document.getElementById('valuesGrid');
+    grid.innerHTML = '';
+    values.forEach(v => {
+      const card = document.createElement('div');
+      card.className = 'value-card';
+      card.innerHTML = `
+        <div class="value-name">${v.name}</div>
+        <div class="value-statement">${v.statement}</div>
+      `;
+      grid.appendChild(card);
+    });
+
+    // Team card
+    const list = document.getElementById('teamValuesList');
+    list.innerHTML = '';
+    values.forEach(v => {
+      const item = document.createElement('div');
+      item.className = 'team-value-item';
+      item.innerHTML = `
+        <div class="team-value-dot"></div>
+        <div>
+          <div class="team-value-name">${v.name}</div>
+          <div class="team-value-desc">${v.teamLine}</div>
+        </div>
+      `;
+      list.appendChild(item);
+    });
+
+    goToScreen('screen-results');
+    document.getElementById('progressWrap').style.display = 'none';
+  }
+
+  function restartTool() {
+    document.getElementById('ownerName').value = '';
+    document.getElementById('q1').value = '';
+    document.getElementById('q3').value = '';
+    document.getElementById('q4').value = '';
+    document.getElementById('q5').value = '';
+    document.getElementById('q6').value = '';
+    document.getElementById('flipRows').innerHTML = `
+      <div class="flip-row">
+        <input type="text" class="frustration-input" placeholder="e.g. Making excuses" />
+        <div class="flip-arrow">→</div>
+        <input type="text" class="value-input" placeholder="e.g. Ownership" />
+      </div>
+      <div class="flip-row">
+        <input type="text" class="frustration-input" placeholder="e.g. Cutting corners" />
+        <div class="flip-arrow">→</div>
+        <input type="text" class="value-input" placeholder="e.g. Excellence" />
+      </div>
+      <div class="flip-row">
+        <input type="text" class="frustration-input" placeholder="e.g. Waiting to be told" />
+        <div class="flip-arrow">→</div>
+        <input type="text" class="value-input" placeholder="e.g. Initiative" />
+      </div>
+    `;
+    goToScreen('screen-intro');
+    document.getElementById('progressWrap').style.display = 'none';
+  }
+</script>
+</body>
+</html>
