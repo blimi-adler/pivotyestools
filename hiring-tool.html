@@ -62,10 +62,20 @@
   .candidate-bar-inner { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 16px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   .candidate-bar-inner label { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text3); flex-shrink: 0; }
   .candidate-tabs { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
-  .ctab { padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 500; border: 1px solid var(--border2); background: var(--bg); cursor: pointer; color: var(--text2); transition: all 0.15s; font-family: 'Inter', sans-serif; white-space: nowrap; }
+  .ctab { padding: 4px 12px 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; border: 1px solid var(--border2); background: var(--bg); cursor: pointer; color: var(--text2); transition: all 0.15s; font-family: 'Inter', sans-serif; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
   .ctab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
   .ctab.add-tab { color: var(--accent); border-color: var(--accent-border); background: var(--accent-bg); }
   .ctab.add-tab:hover { background: var(--accent); color: #fff; }
+  .ctab-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; background: var(--border2); }
+  .ctab-dot.dot-hire { background: var(--green); }
+  .ctab-dot.dot-hold { background: var(--amber); }
+  .ctab-dot.dot-pass { background: var(--red); }
+  .ctab-dot.dot-progress { background: var(--blue); }
+
+  /* CANDIDATE SAVE BANNER */
+  .save-next-banner { background: var(--green-bg); border: 1px solid var(--green-border); border-radius: var(--radius); padding: 16px 20px; margin: 20px 0; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .save-next-banner p { font-size: 13px; color: var(--green); font-weight: 500; margin: 0; }
+  .save-next-banner .banner-sub { font-size: 12px; color: var(--text2); font-weight: 400; margin-top: 2px; }
 
   /* MAIN */
   .main { max-width: 640px; margin: 0 auto; padding: 0 24px 80px; }
@@ -655,6 +665,14 @@
     </div>
   </div>
 
+  <div id="saveNextBanner" style="display:none" class="save-next-banner">
+    <div>
+      <p>&#10003; Decision saved for <span id="savedCandName"></span>.</p>
+      <div class="banner-sub">Ready to evaluate another candidate for this role?</div>
+    </div>
+    <button class="btn-primary" style="font-size:12px;padding:9px 18px;flex-shrink:0" onclick="addNextCandidate()">+ Add next candidate &rarr;</button>
+  </div>
+
   <div style="text-align:center">
     <button class="btn-restart" onclick="restart()">&#8635; Start a new hire</button>
   </div>
@@ -665,11 +683,11 @@
   <div class="eyebrow">Candidate comparison</div>
   <h2 class="screen-title">All candidates<br><em>side by side.</em></h2>
   <p class="screen-sub">Compare scores and decisions across everyone you've evaluated for this role.</p>
-  <div class="card">
-    <div id="compareContent"></div>
-  </div>
+  <div id="compareContent"></div>
   <div class="btn-row">
     <button class="btn-secondary" onclick="goTo(4)">&larr; Back to decision</button>
+    <div class="sp"></div>
+    <button class="btn-secondary" onclick="addNextCandidate()" style="display:flex;align-items:center;gap:6px">+ Add another candidate</button>
   </div>
 </div>
 
@@ -766,6 +784,18 @@ function addCandidate() {
   loadCandidateData();
 }
 
+function addNextCandidate() {
+  var name = prompt('New candidate name:');
+  if (!name || !name.trim()) return;
+  saveCandidateData();
+  S.candidates.push(newCandidate(name.trim()));
+  S.activeCandidateIdx = S.candidates.length - 1;
+  renderCandidateTabs();
+  loadCandidateData();
+  goTo(1); // drop to phone filter — job setup is shared
+  document.getElementById('saveNextBanner').style.display = 'none';
+}
+
 function switchCandidate(idx) {
   saveCandidateData();
   S.activeCandidateIdx = idx;
@@ -778,8 +808,13 @@ function renderCandidateTabs() {
   c.innerHTML = '';
   S.candidates.forEach(function(cand, i) {
     var btn = document.createElement('button');
+    var dotCls = 'ctab-dot';
+    if (cand.decision === 'hire') dotCls += ' dot-hire';
+    else if (cand.decision === 'hold') dotCls += ' dot-hold';
+    else if (cand.decision === 'pass') dotCls += ' dot-pass';
+    else if (Object.keys(cand.filterScores).length > 0 || Object.keys(cand.intScores).length > 0) dotCls += ' dot-progress';
     btn.className = 'ctab' + (i === S.activeCandidateIdx ? ' active' : '');
-    btn.textContent = cand.name;
+    btn.innerHTML = '<span class="' + dotCls + '"></span>' + esc(cand.name);
     btn.onclick = function(){ switchCandidate(i); };
     c.appendChild(btn);
   });
@@ -1408,6 +1443,8 @@ function renderDecisionVerdict() {
   var vb = document.getElementById('decisionVerdict');
   var oc = document.getElementById('offerCard');
   var ob = document.getElementById('onboardCard');
+  var banner = document.getElementById('saveNextBanner');
+  var savedName = document.getElementById('savedCandName');
   if(!vb) return;
   if(val==='hire'){
     vb.innerHTML='<div class="verdict strong"><h3>You\'re hiring.</h3><p>Move to offer letter. Have the details confirmed before you make the call.</p></div>';
@@ -1426,6 +1463,14 @@ function renderDecisionVerdict() {
     if(oc) oc.style.display='none';
     if(ob) ob.style.display='none';
   }
+  if(banner && savedName) {
+    if(val) {
+      savedName.textContent = c.name;
+      banner.style.display = 'flex';
+    } else {
+      banner.style.display = 'none';
+    }
+  }
 }
 
 function toggleCheck(li) {
@@ -1438,32 +1483,116 @@ function toggleCheck(li) {
 /* ===== COMPARE ===== */
 function buildCompareView() {
   var c = document.getElementById('compareContent');
-  if(S.candidates.length === 0){ c.innerHTML='<p style="font-size:13px;color:var(--text3);font-style:italic">No candidates added yet.</p>'; return; }
+  if(S.candidates.length === 0){
+    c.innerHTML='<div class="card"><p style="font-size:13px;color:var(--text3);font-style:italic">No candidates added yet.</p></div>';
+    return;
+  }
 
-  var html = '<table class="compare-table"><thead><tr><th>Candidate</th><th>Phone filter</th><th>Interview</th><th>References</th><th>Decision</th></tr></thead><tbody>';
+  if(S.candidates.length === 1) {
+    var cand = S.candidates[0];
+    c.innerHTML='<div class="card" style="background:var(--blue-bg);border-color:var(--blue-border)"><p style="font-size:13px;color:var(--blue);font-weight:500">Only one candidate evaluated so far — <strong>'+esc(cand.name)+'</strong>.</p><p style="font-size:12px;color:var(--text2);margin-top:6px">Use &ldquo;+ Add next candidate&rdquo; below to run another candidate through the process and compare them here.</p></div>';
+    return;
+  }
+
+  // Score summary table
+  var html = '<div class="card" style="margin-bottom:14px"><div class="card-title">Score summary</div>';
+  html += '<table class="compare-table"><thead><tr><th>Candidate</th><th>Phone filter</th><th>Interview avg</th><th>References</th><th>Decision</th></tr></thead><tbody>';
   S.candidates.forEach(function(cand){
     var filterPass = Object.values(cand.filterScores).filter(function(v){return v==='pass';}).length;
     var filterTotal = Object.keys(cand.filterScores).length;
-    var filterTxt = filterTotal > 0 ? filterPass+'/'+filterTotal+' pass' : 'Not done';
+    var filterTxt = filterTotal > 0 ? filterPass+'/'+filterTotal+' pass' : '<span style="color:var(--text3)">Not done</span>';
 
     var intVals = Object.values(cand.intScores);
-    var intAvg = intVals.length ? (intVals.reduce(function(a,b){return a+b;},0)/intVals.length).toFixed(1) : '-';
-    var intCls = intAvg!=='-' ? (parseFloat(intAvg)>=4?'sb-green':parseFloat(intAvg)>=2.5?'sb-amber':'sb-red') : '';
+    var intAvg = intVals.length ? (intVals.reduce(function(a,b){return a+b;},0)/intVals.length).toFixed(1) : null;
+    var intCls = intAvg ? (parseFloat(intAvg)>=4?'sb-green':parseFloat(intAvg)>=2.5?'sb-amber':'sb-red') : '';
 
-    var refDone = (cand.ref1.name||cand.ref2.name) ? 'Completed' : 'Not done';
+    var refDone = (cand.ref1.name||cand.ref2.name) ? '<span style="color:var(--green);font-weight:500">&#10003; Done</span>' : '<span style="color:var(--text3)">Not done</span>';
 
     var decCls = cand.decision==='hire'?'db-hire':cand.decision==='hold'?'db-hold':cand.decision==='pass'?'db-pass':'';
-    var decText = cand.decision ? cand.decision.charAt(0).toUpperCase()+cand.decision.slice(1) : 'Pending';
+    var decText = cand.decision ? cand.decision.charAt(0).toUpperCase()+cand.decision.slice(1) : '<span style="color:var(--text3)">Pending</span>';
 
     html += '<tr>'+
-      '<td style="font-weight:500;color:var(--text)">'+esc(cand.name)+'</td>'+
+      '<td style="font-weight:600;color:var(--text)">'+esc(cand.name)+'</td>'+
       '<td>'+filterTxt+'</td>'+
-      '<td>'+(intAvg!=='-'?'<span class="score-badge '+intCls+'">'+intAvg+'/5</span>':'-')+'</td>'+
+      '<td>'+(intAvg?'<span class="score-badge '+intCls+'">'+intAvg+'/5</span>':'-')+'</td>'+
       '<td>'+refDone+'</td>'+
-      '<td>'+(cand.decision?'<span class="dec-badge '+decCls+'">'+decText+'</span>':'<span style="color:var(--text3)">Pending</span>')+'</td>'+
+      '<td>'+(cand.decision?'<span class="dec-badge '+decCls+'">'+decText+'</span>':decText)+'</td>'+
     '</tr>';
   });
-  html += '</tbody></table>';
+  html += '</tbody></table></div>';
+
+  // Side-by-side detail cards (max 4 candidates)
+  if(S.candidates.length >= 2) {
+    html += '<div class="eyebrow" style="margin-bottom:10px">Side-by-side detail</div>';
+    html += '<div style="display:grid;grid-template-columns:repeat('+Math.min(S.candidates.length,2)+',1fr);gap:12px;margin-bottom:24px">';
+    S.candidates.forEach(function(cand) {
+      var intVals = Object.values(cand.intScores);
+      var intAvg = intVals.length ? (intVals.reduce(function(a,b){return a+b;},0)/intVals.length).toFixed(1) : null;
+      var intCls = intAvg ? (parseFloat(intAvg)>=4?'var(--green)':parseFloat(intAvg)>=2.5?'var(--amber)':'var(--red)') : 'var(--text3)';
+      var filterPass = Object.values(cand.filterScores).filter(function(v){return v==='pass';}).length;
+      var filterTotal = Object.keys(cand.filterScores).length;
+      var decColor = cand.decision==='hire'?'var(--green)':cand.decision==='hold'?'var(--amber)':cand.decision==='pass'?'var(--red)':'var(--text3)';
+      var decLabel = cand.decision ? cand.decision.charAt(0).toUpperCase()+cand.decision.slice(1) : 'Pending';
+
+      html += '<div class="card" style="margin-bottom:0">';
+      html += '<div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px">'+esc(cand.name)+'</div>';
+      if(cand.phone) html += '<div style="font-size:11px;color:var(--text3);margin-bottom:12px">'+esc(cand.phone)+'</div>';
+      else html += '<div style="margin-bottom:12px"></div>';
+
+      // Decision badge
+      html += '<div style="display:inline-block;padding:3px 10px;border-radius:5px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;background:rgba(0,0,0,0.05);color:'+decColor+';margin-bottom:14px">'+decLabel+'</div>';
+
+      // Scores
+      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">';
+      html += '<div style="background:var(--bg3);border-radius:6px;padding:8px 10px;text-align:center"><div style="font-size:9px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Phone</div><div style="font-size:16px;font-weight:600;color:var(--text2)">'+(filterTotal>0?filterPass+'/'+filterTotal:'-')+'</div></div>';
+      html += '<div style="background:var(--bg3);border-radius:6px;padding:8px 10px;text-align:center"><div style="font-size:9px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Interview</div><div style="font-size:16px;font-weight:600;color:'+intCls+'">'+(intAvg?intAvg:'-')+'</div></div>';
+      html += '</div>';
+
+      // Notes / impression
+      if(cand.phoneImpression) {
+        html += '<div style="font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Phone impression</div>';
+        html += '<div style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:12px;padding:8px 10px;background:var(--bg3);border-radius:6px">'+esc(cand.phoneImpression)+'</div>';
+      }
+
+      if(cand.decReason) {
+        html += '<div style="font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Decision reasoning</div>';
+        html += '<div style="font-size:12px;color:var(--text2);line-height:1.5;padding:8px 10px;background:var(--bg3);border-radius:6px">'+esc(cand.decReason)+'</div>';
+      }
+
+      html += '</div>';
+    });
+    html += '</div>';
+
+    // If more than 2, show remaining in another row
+    if(S.candidates.length > 2) {
+      html += '<div style="display:grid;grid-template-columns:repeat('+Math.min(S.candidates.length-2,2)+',1fr);gap:12px;margin-bottom:24px">';
+      S.candidates.slice(2).forEach(function(cand) {
+        var intVals = Object.values(cand.intScores);
+        var intAvg = intVals.length ? (intVals.reduce(function(a,b){return a+b;},0)/intVals.length).toFixed(1) : null;
+        var intCls = intAvg ? (parseFloat(intAvg)>=4?'var(--green)':parseFloat(intAvg)>=2.5?'var(--amber)':'var(--red)') : 'var(--text3)';
+        var filterPass = Object.values(cand.filterScores).filter(function(v){return v==='pass';}).length;
+        var filterTotal = Object.keys(cand.filterScores).length;
+        var decColor = cand.decision==='hire'?'var(--green)':cand.decision==='hold'?'var(--amber)':cand.decision==='pass'?'var(--red)':'var(--text3)';
+        var decLabel = cand.decision ? cand.decision.charAt(0).toUpperCase()+cand.decision.slice(1) : 'Pending';
+        html += '<div class="card" style="margin-bottom:0">';
+        html += '<div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px">'+esc(cand.name)+'</div>';
+        if(cand.phone) html += '<div style="font-size:11px;color:var(--text3);margin-bottom:12px">'+esc(cand.phone)+'</div>';
+        else html += '<div style="margin-bottom:12px"></div>';
+        html += '<div style="display:inline-block;padding:3px 10px;border-radius:5px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;background:rgba(0,0,0,0.05);color:'+decColor+';margin-bottom:14px">'+decLabel+'</div>';
+        html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">';
+        html += '<div style="background:var(--bg3);border-radius:6px;padding:8px 10px;text-align:center"><div style="font-size:9px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Phone</div><div style="font-size:16px;font-weight:600;color:var(--text2)">'+(filterTotal>0?filterPass+'/'+filterTotal:'-')+'</div></div>';
+        html += '<div style="background:var(--bg3);border-radius:6px;padding:8px 10px;text-align:center"><div style="font-size:9px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Interview</div><div style="font-size:16px;font-weight:600;color:'+intCls+'">'+(intAvg?intAvg:'-')+'</div></div>';
+        html += '</div>';
+        if(cand.decReason) {
+          html += '<div style="font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Decision reasoning</div>';
+          html += '<div style="font-size:12px;color:var(--text2);line-height:1.5;padding:8px 10px;background:var(--bg3);border-radius:6px">'+esc(cand.decReason)+'</div>';
+        }
+        html += '</div>';
+      });
+      html += '</div>';
+    }
+  }
+
   c.innerHTML = html;
 }
 
