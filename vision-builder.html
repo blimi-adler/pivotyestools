@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vision Builder — PivotYes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & BASE ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  background: #f7f5f2;
+  color: #0a0a0a;
+  min-height: 100vh;
+}
+
+/* ── TOKENS ── */
+:root {
+  --red: #E3000F;
+  --black: #0a0a0a;
+  --white: #ffffff;
+  --off: #f7f5f2;
+  --border: #e0ddd8;
+  --muted: #6b6860;
+  --light: #f0ede9;
+}
+
+/* ── TOP NAV ── */
+.top-nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--black);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2rem;
+  height: 52px;
+}
+.top-nav .brand {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 0.06em;
+  color: var(--white);
+  text-decoration: none;
+}
+.top-nav .tool-name {
+  font-size: 13px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 0.02em;
+}
+
+/* ── STEP PROGRESS BAR ── */
+.step-bar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.step-bar::-webkit-scrollbar { display: none; }
+.step-item {
+  flex: 1;
+  min-width: 80px;
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  padding: 14px 8px 12px;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: border-color 0.15s;
+  background: none; border-top: none; border-left: none; border-right: none;
+  font-family: 'DM Sans', sans-serif;
+}
+.step-item.active { border-bottom-color: var(--red); }
+.step-dot {
+  width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 500;
+  background: #e8e5e1; color: var(--muted);
+  transition: all 0.15s;
+}
+.step-item.active .step-dot { background: var(--red); color: var(--white); }
+.step-item.done .step-dot { background: #d4edda; color: #1a6b34; }
+.step-label {
+  font-size: 10px; font-weight: 400; color: var(--muted);
+  text-align: center; line-height: 1.3;
+  white-space: nowrap;
+}
+.step-item.active .step-label { color: var(--black); font-weight: 500; }
+
+/* ── PROGRESS LINE ── */
+.progress-line {
+  height: 3px; background: var(--border);
+}
+.progress-fill {
+  height: 3px; background: var(--red);
+  transition: width 0.35s ease;
+}
+
+/* ── LAYOUT ── */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ── LANDING ── */
+.landing {
+  max-width: 680px; margin: 0 auto;
+  padding: 72px 2rem 80px;
+}
+.landing .tool-tag {
+  font-size: 12px; font-weight: 500; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--red);
+  margin-bottom: 16px; display: block;
+}
+.landing h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(52px, 8vw, 76px);
+  line-height: 1; letter-spacing: 0.02em;
+  color: var(--black); margin-bottom: 20px;
+}
+.landing h1 em { font-style: italic; color: var(--red); font-family: 'DM Sans', sans-serif; font-weight: 300; font-size: 0.78em; }
+.landing .intro {
+  font-size: 17px; font-weight: 300; line-height: 1.7;
+  color: #3a3835; margin-bottom: 36px; max-width: 520px;
+}
+.btn-start {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--red); color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px; font-weight: 500;
+  padding: 14px 28px; border: none; border-radius: 3px;
+  cursor: pointer; text-decoration: none;
+  transition: opacity 0.15s;
+}
+.btn-start:hover { opacity: 0.88; }
+.btn-start .arrow { font-size: 18px; transition: transform 0.15s; }
+.btn-start:hover .arrow { transform: translateX(3px); }
+
+.how-section { margin-top: 64px; }
+.how-section h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px; letter-spacing: 0.04em;
+  margin-bottom: 20px; color: var(--black);
+}
+.how-list { list-style: none; }
+.how-list li {
+  display: flex; gap: 16px; align-items: flex-start;
+  padding: 14px 0; border-top: 1px solid var(--border);
+  font-size: 14px; line-height: 1.6;
+}
+.how-list li:last-child { border-bottom: 1px solid var(--border); }
+.how-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px; color: var(--red); min-width: 24px; padding-top: 1px;
+}
+.how-title { font-weight: 500; color: var(--black); display: block; margin-bottom: 2px; }
+.how-desc { color: var(--muted); }
+
+/* ── STEP PAGES ── */
+.step-page {
+  max-width: 680px; margin: 0 auto;
+  padding: 52px 2rem 100px;
+}
+.step-tag {
+  font-size: 12px; font-weight: 500; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+  display: flex; align-items: center; gap: 8px;
+}
+.step-tag .step-of { color: var(--red); }
+.step-h {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(38px, 6vw, 58px);
+  line-height: 1.02; letter-spacing: 0.02em;
+  color: var(--black); margin-bottom: 10px;
+}
+.step-h em { font-style: italic; color: var(--red); font-family: 'DM Sans', sans-serif; font-weight: 300; font-size: 0.8em; }
+.step-intro {
+  font-size: 15px; font-weight: 300; line-height: 1.7;
+  color: #3a3835; margin-bottom: 40px; max-width: 520px;
+}
+
+/* ── FORM GROUPS ── */
+.fg { margin-bottom: 28px; }
+.fg-label {
+  display: block;
+  font-size: 13px; font-weight: 500; letter-spacing: 0.01em;
+  color: var(--black); margin-bottom: 6px;
+}
+.fg-hint {
+  display: block;
+  font-size: 12px; font-weight: 300;
+  color: var(--muted); margin-bottom: 8px; line-height: 1.5;
+}
+input[type="text"],
+textarea,
+select {
+  width: 100%;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px; font-weight: 400;
+  color: var(--black);
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 10px 14px;
+  transition: border-color 0.15s;
+  outline: none;
+  -webkit-appearance: none;
+}
+input[type="text"]:focus,
+textarea:focus { border-color: var(--red); }
+textarea { min-height: 88px; resize: vertical; line-height: 1.6; }
+
+/* ── SECTION DIVIDER ── */
+.divider {
+  border: none; border-top: 1px solid var(--border);
+  margin: 36px 0;
+}
+.section-heading {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px; letter-spacing: 0.05em;
+  color: var(--black); margin-bottom: 20px;
+}
+
+/* ── TWO COL ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+@media (max-width: 540px) { .two-col, .three-col { grid-template-columns: 1fr; } }
+
+/* ── NUMBERED ROWS ── */
+.num-row {
+  display: flex; gap: 12px; align-items: center;
+  margin-bottom: 10px;
+}
+.num-badge {
+  width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 500; flex-shrink: 0;
+  background: var(--black); color: var(--white);
+}
+.num-badge.neg { background: #fce8e9; color: #a3000a; }
+
+/* ── STAT TILES ── */
+.stat-tiles { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 20px; }
+.stat-tile {
+  background: var(--white); padding: 14px 16px;
+}
+.stat-tile-label { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.stat-tile input {
+  border: none; padding: 0; background: transparent;
+  font-size: 15px; font-weight: 500; color: var(--black);
+  height: auto;
+}
+.stat-tile input:focus { border: none; outline: none; }
+
+/* ── VALUES GRID ── */
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  gap: 8px; margin-bottom: 20px;
+}
+.val-chip {
+  border: 1px solid var(--border); border-radius: 3px;
+  padding: 10px 13px;
+  display: flex; align-items: center; gap: 9px;
+  font-size: 13px; font-weight: 400;
+  color: var(--black); background: var(--white);
+  cursor: pointer; font-family: 'DM Sans', sans-serif;
+  transition: all 0.12s; text-align: left;
+}
+.val-chip:hover { border-color: var(--red); }
+.val-chip.sel { border-color: var(--red); background: #fff5f5; color: #8a000a; }
+.val-chip .dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 1px solid #ccc; flex-shrink: 0; transition: all 0.12s;
+}
+.val-chip.sel .dot {
+  background: var(--red); border-color: var(--red);
+  position: relative;
+}
+.val-chip.sel .dot::after {
+  content: '';
+  position: absolute; top: 50%; left: 50%;
+  width: 5px; height: 3px;
+  border-left: 1.5px solid #fff; border-bottom: 1.5px solid #fff;
+  transform: translate(-50%, -60%) rotate(-45deg);
+}
+
+/* ── MISSION PREVIEW ── */
+.mission-preview-box {
+  border-left: 3px solid var(--red);
+  padding: 16px 20px;
+  background: var(--white);
+  border-radius: 0 3px 3px 0;
+  margin-bottom: 28px;
+}
+.mission-preview-label {
+  font-size: 10px; font-weight: 500; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--red); margin-bottom: 8px;
+}
+.mission-preview-text {
+  font-size: 16px; font-weight: 400; line-height: 1.65;
+  color: var(--black); font-style: italic;
+  min-height: 30px;
+}
+.mission-preview-text.empty { color: var(--muted); font-style: normal; font-size: 14px; font-weight: 300; }
+
+/* ── ADD BUTTON ── */
+.btn-add {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: none; border: 1px solid var(--border);
+  border-radius: 3px; padding: 8px 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 400; color: var(--muted);
+  cursor: pointer; margin-top: 8px;
+  transition: border-color 0.15s, color 0.15s;
+}
+.btn-add:hover { border-color: var(--black); color: var(--black); }
+
+/* ── NAV BUTTONS ── */
+.nav-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 40px; border-top: 1px solid var(--border);
+  margin-top: 20px;
+}
+.btn-next {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--red); color: var(--white);
+  border: none; border-radius: 3px;
+  padding: 13px 26px;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+  cursor: pointer; transition: opacity 0.15s;
+}
+.btn-next:hover { opacity: 0.88; }
+.btn-back {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: none; border: 1px solid var(--border);
+  border-radius: 3px; padding: 12px 20px;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 400;
+  color: var(--muted); cursor: pointer; transition: all 0.15s;
+}
+.btn-back:hover { border-color: var(--black); color: var(--black); }
+
+/* ── BLUEPRINT ── */
+.blueprint-section { margin-bottom: 36px; }
+.bp-section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 16px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--red); margin-bottom: 14px;
+  padding-bottom: 8px; border-bottom: 1px solid var(--border);
+}
+.bp-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 3px; padding: 16px 18px; margin-bottom: 10px;
+}
+.bp-card-label {
+  font-size: 10px; font-weight: 500; letter-spacing: 0.09em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 7px;
+}
+.bp-card-value {
+  font-size: 14px; font-weight: 400; line-height: 1.65;
+  color: var(--black); white-space: pre-wrap;
+}
+.bp-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.bp-pill {
+  background: #fff5f5; color: #8a000a;
+  border-radius: 2px; padding: 4px 12px;
+  font-size: 12px; font-weight: 500;
+}
+.mission-statement-display {
+  background: var(--black); color: var(--white);
+  border-radius: 3px; padding: 24px 28px; margin-bottom: 10px;
+}
+.msd-label { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 10px; }
+.msd-text { font-size: 18px; font-weight: 300; line-height: 1.65; font-style: italic; }
+
+/* ── EXPORT ── */
+.export-box {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 3px; padding: 28px; text-align: center; margin-top: 40px;
+}
+.export-box p { font-size: 14px; color: var(--muted); margin-bottom: 16px; font-weight: 300; }
+
+/* ── FOOTER ── */
+.tool-footer {
+  margin-top: 0; padding: 28px 2rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  font-size: 12px; color: var(--muted); font-weight: 300;
+}
+
+/* ── DIFF TAG ── */
+.diff-badge {
+  display: inline-block;
+  background: #fff5f5; color: #8a000a;
+  border-radius: 2px; font-size: 10px; font-weight: 500;
+  padding: 2px 9px; letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="top-nav">
+  <a href="#" class="brand" onclick="showScreen('landing')">PivotYes</a>
+  <span class="tool-name">Vision Builder</span>
+</nav>
+
+<!-- STEP BAR (hidden on landing) -->
+<div class="step-bar" id="step-bar" style="display:none">
+  <button class="step-item active" onclick="goTo(1)" id="sb1"><span class="step-dot">1</span><span class="step-label">Mindset</span></button>
+  <button class="step-item" onclick="goTo(2)" id="sb2"><span class="step-dot">2</span><span class="step-label">What & Who</span></button>
+  <button class="step-item" onclick="goTo(3)" id="sb3"><span class="step-dot">3</span><span class="step-label">How & Why</span></button>
+  <button class="step-item" onclick="goTo(4)" id="sb4"><span class="step-dot">4</span><span class="step-label">Mission</span></button>
+  <button class="step-item" onclick="goTo(5)" id="sb5"><span class="step-dot">5</span><span class="step-label">Vision</span></button>
+  <button class="step-item" onclick="goTo(6)" id="sb6"><span class="step-dot">6</span><span class="step-label">Values</span></button>
+  <button class="step-item" onclick="goTo(7)" id="sb7"><span class="step-dot">7</span><span class="step-label">Blueprint</span></button>
+</div>
+<div class="progress-line" id="prog-line" style="display:none">
+  <div class="progress-fill" id="prog-fill" style="width:14.3%"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     LANDING
+══════════════════════════════════════════ -->
+<div id="screen-landing" class="screen active">
+  <div class="landing">
+    <span class="tool-tag">Owner Tool · Leadership &amp; Vision</span>
+    <h1>The <em>Vision</em><br>Builder</h1>
+    <p class="intro">Seven steps from mindset to blueprint. Know who you are, what you do, why you exist, and exactly where you're going — before you build anything else.</p>
+    <button class="btn-start" onclick="startTool()">I'm ready <span class="arrow">→</span></button>
+
+    <div class="how-section">
+      <h2>How it works</h2>
+      <ul class="how-list">
+        <li><span class="how-num">1 ·</span><div><span class="how-title">Mindset</span><span class="how-desc">Your driving why, who you need to become, and your strengths and weaknesses as an owner.</span></div></li>
+        <li><span class="how-num">2 ·</span><div><span class="how-title">What & Who</span><span class="how-desc">Your products, pricing, and the exact profile of your ideal client.</span></div></li>
+        <li><span class="how-num">3 ·</span><div><span class="how-title">How & Why</span><span class="how-desc">Your proven delivery process, your guarantee, and what makes you different.</span></div></li>
+        <li><span class="how-num">4 ·</span><div><span class="how-title">Mission & Purpose</span><span class="how-desc">Build your mission statement live, define your purpose, and craft your vision and tagline.</span></div></li>
+        <li><span class="how-num">5 ·</span><div><span class="how-title">Vision Timeline</span><span class="how-desc">10-year BHAG, 3-year picture, and 1-year goals with revenue and team targets.</span></div></li>
+        <li><span class="how-num">6 ·</span><div><span class="how-title">Core Values</span><span class="how-desc">What you stand for, what you hire for, and what you'll never tolerate.</span></div></li>
+        <li><span class="how-num">7 ·</span><div><span class="how-title">Blueprint</span><span class="how-desc">Your complete leadership document — mission, vision, values, and goals in one place.</span></div></li>
+      </ul>
+    </div>
+  </div>
+  <div class="tool-footer">PivotYes · Vision Builder</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     STEP 1 · MINDSET
+══════════════════════════════════════════ -->
+<div id="screen-1" class="screen">
+  <div class="step-page">
+    <div class="step-tag"><span class="step-of">Step 1 of 7</span> · Mindset</div>
+    <h2 class="step-h">Set your mind <em>to it.</em></h2>
+    <p class="step-intro">Before building a business, you build the leader. These questions surface your why before your what.</p>
+
+    <div class="fg">
+      <label class="fg-label">In 1 year from now, what does your life look like — personally and professionally?</label>
+      <textarea id="s1_year1" rows="4" placeholder="Describe the picture in detail — both your personal life and the business..."></textarea>
+    </div>
+    <div class="two-col">
+      <div class="fg">
+        <label class="fg-label">Why do you want all this?</label>
+        <span class="fg-hint">Your reason has to be bigger than the problem.</span>
+        <textarea id="s1_why" rows="3" placeholder="Your driving why..."></textarea>
+      </div>
+      <div class="fg">
+        <label class="fg-label">What is your driving factor?</label>
+        <span class="fg-hint">What moves you even on hard days?</span>
+        <textarea id="s1_drive" rows="3" placeholder="The thing that keeps you going..."></textarea>
+      </div>
+    </div>
+    <div class="fg">
+      <label class="fg-label">Who do you have to become as the owner to get there?</label>
+      <span class="fg-hint">Skills, mindset, habits — what needs to shift in you?</span>
+      <textarea id="s1_become" rows="3" placeholder="The version of you that leads this business..."></textarea>
+    </div>
+
+    <hr class="divider">
+    <h3 class="section-heading">Knowing your strengths and weaknesses</h3>
+
+    <div class="two-col">
+      <div class="fg">
+        <label class="fg-label">Top 3 strengths you bring</label>
+        <div class="num-row"><span class="num-badge">1</span><input type="text" class="str-in" placeholder="e.g. Relationship building"></div>
+        <div class="num-row"><span class="num-badge">2</span><input type="text" class="str-in" placeholder="e.g. Vision setting"></div>
+        <div class="num-row"><span class="num-badge">3</span><input type="text" class="str-in" placeholder="e.g. Sales"></div>
+      </div>
+      <div class="fg">
+        <label class="fg-label">Top 3 weaknesses to manage</label>
+        <div class="num-row"><span class="num-badge neg">1</span><input type="text" class="wk-in" placeholder="e.g. Delegation"></div>
+        <div class="num-row"><span class="num-badge neg">2</span><input type="text" class="wk-in" placeholder="e.g. Follow-through"></div>
+        <div class="num-row"><span class="num-badge neg">3</span><input type="text" class="wk-in" placeholder="e.g. Systems thinking"></div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <span></span>
+      <button class="btn-next" onclick="goTo(2)">What &amp; Who →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     STEP 2 · WHAT & WHO
+══════════════════════════════════════════ -->
+<div id="screen-2" class="screen">
+  <div class="step-page">
+    <div class="step-tag"><span class="step-of">Step 2 of 7</span> · Product &amp; Market</div>
+    <h2 class="step-h">What are you selling<br><em>— and to whom?</em></h2>
+    <p class="step-intro">Clarity here drives every other decision in the business. Know your product and your client before you build anything else.</p>
+
+    <h3 class="section-heading">What are you selling? — Products &amp; pricing</h3>
+    <div class="fg">
+      <label class="fg-label">List your products or services — include pricing</label>
+      <div id="products-list">
+        <div class="num-row"><span class="num-badge">1</span><input type="text" class="prod-in" placeholder="e.g. Monthly retainer consulting — $3,500/mo"></div>
+        <div class="num-row"><span class="num-badge">2</span><input type="text" class="prod-in" placeholder="e.g. One-time business audit — $1,200"></div>
+        <div class="num-row"><span class="num-badge">3</span><input type="text" class="prod-in" placeholder="e.g. Group program — $497"></div>
+      </div>
+      <button class="btn-add" onclick="addRow('products-list','prod-in','Product / service — price')">+ Add offering</button>
+    </div>
+
+    <hr class="divider">
+    <h3 class="section-heading">Who is your ideal client?</h3>
+
+    <div class="fg">
+      <label class="fg-label">Create a customer avatar — your best-case scenario customer</label>
+      <div class="two-col" style="margin-bottom:12px">
+        <div>
+          <div style="background:var(--white);border:1px solid var(--border);border-radius:3px;padding:14px 16px;margin-bottom:10px">
+            <div class="stat-tile-label">Demographic</div>
+            <input type="text" id="s2_demo" placeholder="Male/female, B2B/B2C, age range..." style="border:none;padding:0;background:transparent;font-size:14px">
+          </div>
+          <div style="background:var(--white);border:1px solid var(--border);border-radius:3px;padding:14px 16px">
+            <div class="stat-tile-label">Location / industry</div>
+            <input type="text" id="s2_loc" placeholder="Where they are, what sector..." style="border:none;padding:0;background:transparent;font-size:14px">
+          </div>
+        </div>
+        <div>
+          <div style="background:var(--white);border:1px solid var(--border);border-radius:3px;padding:14px 16px;margin-bottom:10px">
+            <div class="stat-tile-label">What they've already tried</div>
+            <input type="text" id="s2_tried" placeholder="Other solutions, DIY attempts..." style="border:none;padding:0;background:transparent;font-size:14px">
+          </div>
+          <div style="background:var(--white);border:1px solid var(--border);border-radius:3px;padding:14px 16px">
+            <div class="stat-tile-label">How they use what you sell</div>
+            <input type="text" id="s2_use" placeholder="Their workflow, decision context..." style="border:none;padding:0;background:transparent;font-size:14px">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fg">
+      <label class="fg-label">What does your ideal client want, need, and struggle with?</label>
+      <span class="fg-hint">Pain points, goals, and what they're really buying when they hire you.</span>
+      <textarea id="s2_pain" rows="4" placeholder="They want... They need... Their biggest frustration is... Their goal is..."></textarea>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-back" onclick="goTo(1)">← Back</button>
+      <button class="btn-next" onclick="goTo(3)">How &amp; Why →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     STEP 3 · HOW & WHY
+══════════════════════════════════════════ -->
+<div id="screen-3" class="screen">
+  <div class="step-page">
+    <div class="step-tag"><span class="step-of">Step 3 of 7</span> · Delivery &amp; Differentiation</div>
+    <h2 class="step-h">How you deliver —<br><em>why they choose you.</em></h2>
+    <p class="step-intro">Your proven process is your client experience. Your why is your competitive edge.</p>
+
+    <h3 class="section-heading">How are you delivering? — Proven process</h3>
+    <div class="fg">
+      <label class="fg-label">What are the steps in your service or fulfillment process?</label>
+      <span class="fg-hint">Proven Process = Client Experience. List the general steps from first contact to delivery.</span>
+      <div id="process-list">
+        <div class="num-row"><span class="num-badge">1</span><input type="text" class="proc-in" placeholder="e.g. Discovery call and intake"></div>
+        <div class="num-row"><span class="num-badge">2</span><input type="text" class="proc-in" placeholder="e.g. Audit and gap analysis"></div>
+        <div class="num-row"><span class="num-badge">3</span><input type="text" class="proc-in" placeholder="e.g. Build and implement"></div>
+        <div class="num-row"><span class="num-badge">4</span><input type="text" class="proc-in" placeholder="e.g. Hand off and train"></div>
+      </div>
+      <button class="btn-add" onclick="addRow('process-list','proc-in','Next step...')">+ Add step</button>
+    </div>
+    <div class="fg">
+      <label class="fg-label">What is your guarantee to your clients?</label>
+      <input type="text" id="s3_guarantee" placeholder="e.g. Clarity in 30 days or we keep working at no charge">
+    </div>
+
+    <hr class="divider">
+    <h3 class="section-heading">Why — why you, why now?</h3>
+
+    <div class="fg">
+      <label class="fg-label">Why are you doing this?</label>
+      <span class="fg-hint">Is it a purpose, cause, passion, or skill? What impact do you want your business to have?</span>
+      <textarea id="s3_whyyou" rows="3" placeholder="I started this because... The impact I want to create is..."></textarea>
+    </div>
+    <div class="fg">
+      <label class="fg-label">Why will customers choose you over everyone else?</label>
+      <span class="fg-hint">Three ways your company or service stands out from alternatives.</span>
+      <div class="num-row" style="margin-bottom:10px">
+        <span class="diff-badge">Differentiator 1</span>
+        <input type="text" class="diff-in" placeholder="e.g. We don't just advise — we build alongside you" style="flex:1;margin-left:12px">
+      </div>
+      <div class="num-row" style="margin-bottom:10px">
+        <span class="diff-badge">Differentiator 2</span>
+        <input type="text" class="diff-in" placeholder="e.g. We understand the owner's psychology" style="flex:1;margin-left:12px">
+      </div>
+      <div class="num-row">
+        <span class="diff-badge">Differentiator 3</span>
+        <input type="text" class="diff-in" placeholder="e.g. Our frameworks are proven in real businesses" style="flex:1;margin-left:12px">
+      </div>
+    </div>
+    <div class="fg">
+      <label class="fg-label">What is your specialty — your area of greatest strength?</label>
+      <input type="text" id="s3_specialty" placeholder="e.g. Turning chaotic owner-dependent businesses into structured, scalable operations">
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-back" onclick="goTo(2)">← Back</button>
+      <button class="btn-next" onclick="goTo(4)">Mission &amp; Purpose →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     STEP 4 · MISSION & PURPOSE
+══════════════════════════════════════════ -->
+<div id="screen-4" class="screen">
+  <div class="step-page">
+    <div class="step-tag"><span class="step-of">Step 4 of 7</span> · Foundation Statements</div>
+    <h2 class="step-h">Mission, purpose,<br><em>&amp; vision statement.</em></h2>
+    <p class="step-intro">These are the sentences your team rallies around and your clients recognize you by.</p>
+
+    <div class="mission-preview-box">
+      <div class="mission-preview-label">Mission statement — preview</div>
+      <div class="mission-preview-text empty" id="mission-preview">Fill in the fields below to build your mission statement.</div>
+    </div>
+
+    <div class="fg">
+      <label class="fg-label">What do you do? <span style="font-weight:300;color:var(--muted)">(the action)</span></label>
+      <span class="fg-hint">One clear verb phrase — what your business actually does.</span>
+      <input type="text" id="m_what" placeholder="e.g. We help small business owners build internal structure" oninput="updateMission()">
+    </div>
+    <div class="fg">
+      <label class="fg-label">For whom?</label>
+      <input type="text" id="m_who" placeholder="e.g. service and manufacturing businesses" oninput="updateMission()">
+    </div>
+    <div class="fg">
+      <label class="fg-label">So that… <span style="font-weight:300;color:var(--muted)">(the outcome / impact)</span></label>
+      <input type="text" id="m_outcome" placeholder="e.g. they can scale without chaos and lead with clarity" oninput="updateMission()">
+    </div>
+
+    <hr class="divider">
+
+    <div class="fg">
+      <label class="fg-label">Purpose — why does this company exist?</label>
+      <span class="fg-hint">Beyond revenue. The deeper reason this business needs to exist.</span>
+      <textarea id="s4_purpose" rows="3" placeholder="We exist because... The world needs this because..."></textarea>
+    </div>
+    <div class="fg">
+      <label class="fg-label">Vision statement — what do you want to become?</label>
+      <span class="fg-hint">A bold sentence about the future state of the company.</span>
+      <input type="text" id="s4_vision_stmt" placeholder="e.g. To be the most trusted business structuring firm for growing SMBs in North America">
+    </div>
+    <div class="fg">
+      <label class="fg-label">Tagline or positioning phrase <span style="font-weight:300;color:var(--muted)">(optional)</span></label>
+      <input type="text" id="s4_tagline" placeholder="e.g. Structure creates freedom">
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-back" onclick="goTo(3)">← Back</button>
+      <button class="btn-next" onclick="goTo(5)">Vision Timeline →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     STEP 5 · VISION TIMELINE
+══════════════════════════════════════════ -->
+<div id="screen-5" class="screen">
+  <div class="step-page">
+    <div class="step-tag"><span class="step-of">Step 5 of 7</span> · Vision Mapping</div>
+    <h2 class="step-h">Where you're going —<br><em>1, 3, and 10 years.</em></h2>
+    <p class="step-intro">Time-bound targets turn a vision into a plan. Be specific — this becomes your roadmap.</p>
+
+    <h3 class="section-heading">10-Year target — your BHAG</h3>
+    <div class="fg">
+      <span class="fg-hint">Big Hairy Audacious Goal. No filter. What does this look like at full scale?</span>
+      <textarea id="v_10yr" rows="4" placeholder="In 10 years, this company is..."></textarea>
+    </div>
+    <div class="stat-tiles" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="stat-tile"><div class="stat-tile-label">Revenue target</div><input type="text" id="v_rev10" placeholder="e.g. $10M"></div>
+      <div class="stat-tile"><div class="stat-tile-label">Team size</div><input type="text" id="v_team10" placeholder="e.g. 50 people"></div>
+      <div class="stat-tile"><div class="stat-tile-label">Market position</div><input type="text" id="v_mkt10" placeholder="e.g. #1 in region"></div>
+    </div>
+
+    <hr class="divider">
+    <h3 class="section-heading">3-Year picture</h3>
+    <div class="fg">
+      <span class="fg-hint">Paint it clearly — revenue, team, clients, what you've handed off.</span>
+      <textarea id="v_3yr" rows="3" placeholder="In 3 years, we have..."></textarea>
+    </div>
+    <div class="stat-tiles">
+      <div class="stat-tile"><div class="stat-tile-label">Revenue</div><input type="text" id="v_rev3" placeholder="e.g. $3M"></div>
+      <div class="stat-tile"><div class="stat-tile-label">Profit margin</div><input type="text" id="v_profit3" placeholder="e.g. 25%"></div>
+      <div class="stat-tile"><div class="stat-tile-label">Employees</div><input type="text" id="v_emp3" placeholder="e.g. 15"></div>
+    </div>
+    <div class="fg" style="margin-top:16px">
+      <label class="fg-label">What do you want to stop doing / outsource by year 3?</label>
+      <input type="text" id="v_outsource" placeholder="e.g. Day-to-day client delivery, all bookkeeping, marketing execution">
+    </div>
+
+    <hr class="divider">
+    <h3 class="section-heading">1-Year plan</h3>
+    <div class="fg">
+      <label class="fg-label">Top 3 goals for this year</label>
+      <span class="fg-hint">If only 3 things get done this year, these are them.</span>
+      <div class="num-row"><span class="num-badge">1</span><input type="text" class="goal-in" placeholder="e.g. Close 10 new retainer clients"></div>
+      <div class="num-row" style="margin-top:10px"><span class="num-badge">2</span><input type="text" class="goal-in" placeholder="e.g. Hire and onboard a project manager"></div>
+      <div class="num-row" style="margin-top:10px"><span class="num-badge">3</span><input type="text" class="goal-in" placeholder="e.g. Build out full ops documentation"></div>
+    </div>
+    <div class="two-col">
+      <div class="fg">
+        <label class="fg-label">Revenue goal (12 months)</label>
+        <input type="text" id="v_rev1" placeholder="e.g. $1.2M">
+      </div>
+      <div class="fg">
+        <label class="fg-label">Key measurables / KPIs</label>
+        <input type="text" id="v_kpis" placeholder="e.g. MRR, proposals sent, on-time delivery %">
+      </div>
+    </div>
+    <div class="fg">
+      <label class="fg-label">Biggest obstacle to this year's plan</label>
+      <input type="text" id="v_obstacle" placeholder="e.g. Owner involvement in every client deliverable">
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-back" onclick="goTo(4)">← Back</button>
+      <button class="btn-next" onclick="goTo(6)">Core Values →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     STEP 6 · CORE VALUES
+══════════════════════════════════════════ -->
+<div id="screen-6" class="screen">
+  <div class="step-page">
+    <div class="step-tag"><span class="step-of">Step 6 of 7</span> · Core Values</div>
+    <h2 class="step-h">What you<br><em>stand for.</em></h2>
+    <p class="step-intro">Values define your culture — who you hire, how you operate, and what you'll never compromise on. Select what resonates, then add your own.</p>
+
+    <div class="fg">
+      <label class="fg-label">Select your core values</label>
+      <span class="fg-hint">Pick 3–6 that are genuinely true to how you want to operate — not aspirational, not what sounds good.</span>
+      <div class="values-grid" id="values-grid"></div>
+      <div style="display:flex;gap:10px;margin-top:4px">
+        <input type="text" id="cv-in" placeholder="Add your own value..." style="flex:1">
+        <button class="btn-add" onclick="addCV()" style="margin-top:0;white-space:nowrap">+ Add</button>
+      </div>
+    </div>
+
+    <div class="fg">
+      <label class="fg-label">Values in action — what do they look like in real behavior?</label>
+      <span class="fg-hint">Write a story or example for your key values. This is what you share with your team.</span>
+      <textarea id="v_stories" rows="4" placeholder="Integrity means we tell clients hard truths even when it costs us. Ownership means nobody waits to be told — if you see a problem, you own the fix..."></textarea>
+    </div>
+    <div class="fg">
+      <label class="fg-label">What behavior would get someone fired here?</label>
+      <span class="fg-hint">The non-negotiable flip side of your values.</span>
+      <textarea id="v_nonneg" rows="2" placeholder="e.g. Dishonesty with clients, blaming the team, ignoring a defined process..."></textarea>
+    </div>
+    <div class="fg">
+      <label class="fg-label">What do you hire, recognize, and reward for?</label>
+      <input type="text" id="v_hire" placeholder="e.g. Proactive problem-solving, consistency, client obsession">
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-back" onclick="goTo(5)">← Back</button>
+      <button class="btn-next" onclick="buildBlueprint();goTo(7)">Build my blueprint →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     STEP 7 · BLUEPRINT
+══════════════════════════════════════════ -->
+<div id="screen-7" class="screen">
+  <div class="step-page">
+    <div class="step-tag"><span class="step-of">Step 7 of 7</span> · Leadership Blueprint</div>
+    <h2 class="step-h">Your complete<br><em>blueprint.</em></h2>
+    <p class="step-intro">Everything in one place. This is your north star document — review it with your consultant and your team.</p>
+
+    <div id="blueprint-output"></div>
+
+    <div class="export-box">
+      <p>Use this blueprint as the foundation for your first structured planning session.</p>
+      <button class="btn-next" onclick="window.print()">Export / Print</button>
+    </div>
+  </div>
+  <div class="tool-footer">PivotYes · Vision Builder · Leadership &amp; Vision</div>
+</div>
+
+<script>
+/* ─── STATE ─── */
+const TOTAL = 7;
+let cur = 0; // 0 = landing
+
+const VALUE_OPTS = [
+  'Integrity','Accountability','Transparency','Excellence','Innovation',
+  'Ownership','Teamwork','Respect','Customer-first','Consistency',
+  'Reliability','Grit','Empathy','Simplicity','Growth mindset',
+  'Decisiveness','Hustle','Humility','Results-driven','Quality'
+];
+let selVals = new Set();
+let customVals = [];
+let prodCount = 3;
+let procCount = 4;
+
+/* ─── INIT VALUES ─── */
+function initValues() {
+  const g = document.getElementById('values-grid');
+  g.innerHTML = '';
+  [...VALUE_OPTS, ...customVals].forEach(v => {
+    const b = document.createElement('button');
+    b.className = 'val-chip' + (selVals.has(v) ? ' sel' : '');
+    b.innerHTML = `<span class="dot"></span>${v}`;
+    b.onclick = () => { selVals.has(v) ? selVals.delete(v) : selVals.add(v); b.classList.toggle('sel'); };
+    g.appendChild(b);
+  });
+}
+function addCV() {
+  const i = document.getElementById('cv-in');
+  const v = i.value.trim(); if (!v) return;
+  customVals.push(v); selVals.add(v); i.value = '';
+  initValues();
+}
+
+/* ─── ADD ROWS ─── */
+function addRow(listId, cls, ph) {
+  const list = document.getElementById(listId);
+  const count = list.querySelectorAll('.' + cls).length + 1;
+  const d = document.createElement('div');
+  d.className = 'num-row'; d.style.marginTop = '10px';
+  d.innerHTML = `<span class="num-badge">${count}</span><input type="text" class="${cls}" placeholder="${ph}" style="flex:1">`;
+  list.appendChild(d);
+}
+
+/* ─── MISSION PREVIEW ─── */
+function updateMission() {
+  const w = gv('m_what'), who = gv('m_who'), o = gv('m_outcome');
+  const el = document.getElementById('mission-preview');
+  if (!w && !who && !o) {
+    el.textContent = 'Fill in the fields below to build your mission statement.';
+    el.className = 'mission-preview-text empty'; return;
+  }
+  let s = '';
+  if (w) s += w;
+  if (who) s += (s ? ' for ' : '') + who;
+  if (o) s += (s ? ' — so that ' : '') + o + '.';
+  el.textContent = s;
+  el.className = 'mission-preview-text';
+}
+
+/* ─── NAVIGATION ─── */
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function startTool() {
+  document.getElementById('step-bar').style.display = 'flex';
+  document.getElementById('prog-line').style.display = 'block';
+  cur = 1;
+  showScreen('1');
+  updateNav(1);
+}
+
+function goTo(n) {
+  if (n === 0) { showScreen('landing'); document.getElementById('step-bar').style.display = 'none'; document.getElementById('prog-line').style.display = 'none'; return; }
+  cur = n;
+  showScreen(String(n));
+  updateNav(n);
+  window.scrollTo(0, 0);
+}
+
+function updateNav(n) {
+  for (let i = 1; i <= TOTAL; i++) {
+    const btn = document.getElementById('sb' + i);
+    btn.classList.remove('active', 'done');
+    if (i === n) btn.classList.add('active');
+    else if (i < n) btn.classList.add('done');
+  }
+  document.getElementById('prog-fill').style.width = ((n / TOTAL) * 100).toFixed(1) + '%';
+}
+
+/* ─── HELPERS ─── */
+function gv(id) { const e = document.getElementById(id); return e ? e.value.trim() : ''; }
+function getList(cls) { return Array.from(document.querySelectorAll('.' + cls)).map(e => e.value.trim()).filter(Boolean); }
+
+/* ─── BLUEPRINT ─── */
+function bpBlock(label, rows) {
+  const filled = rows.filter(r => r.v);
+  if (!filled.length) return '';
+  let h = `<div class="blueprint-section"><div class="bp-section-title">${label}</div>`;
+  filled.forEach(r => {
+    h += `<div class="bp-card"><div class="bp-card-label">${r.k}</div><div class="bp-card-value">${r.v}</div></div>`;
+  });
+  return h + '</div>';
+}
+
+function buildBlueprint() {
+  const strs = getList('str-in');
+  const wks  = getList('wk-in');
+  const prods = getList('prod-in');
+  const procs = getList('proc-in');
+  const diffs = getList('diff-in');
+  const goals = getList('goal-in');
+  const vals  = Array.from(selVals);
+
+  // Mission statement
+  const mw = gv('m_what'), mwho = gv('m_who'), mo = gv('m_outcome');
+  let missionStmt = '';
+  if (mw) { missionStmt = mw; if (mwho) missionStmt += ' for ' + mwho; if (mo) missionStmt += ' — so that ' + mo + '.'; }
+
+  let html = '';
+
+  // Mission hero card
+  if (missionStmt || gv('s4_vision_stmt')) {
+    html += `<div class="blueprint-section">`;
+    if (missionStmt) html += `<div class="mission-statement-display"><div class="msd-label">Mission statement</div><div class="msd-text">${missionStmt}</div></div>`;
+    if (gv('s4_vision_stmt')) html += `<div class="bp-card"><div class="bp-card-label">Vision statement</div><div class="bp-card-value">${gv('s4_vision_stmt')}</div></div>`;
+    if (gv('s4_purpose')) html += `<div class="bp-card"><div class="bp-card-label">Purpose</div><div class="bp-card-value">${gv('s4_purpose')}</div></div>`;
+    if (gv('s4_tagline')) html += `<div class="bp-card"><div class="bp-card-label">Tagline</div><div class="bp-card-value">${gv('s4_tagline')}</div></div>`;
+    html += '</div>';
+  }
+
+  html += bpBlock('Mindset & leadership', [
+    { k: '1-year life vision', v: gv('s1_year1') },
+    { k: 'Driving why', v: gv('s1_why') },
+    { k: 'Driving factor', v: gv('s1_drive') },
+    { k: 'Who I need to become', v: gv('s1_become') },
+    { k: 'Strengths', v: strs.map((s,i) => `${i+1}. ${s}`).join('\n') },
+    { k: 'Weaknesses', v: wks.map((s,i)  => `${i+1}. ${s}`).join('\n') },
+  ]);
+
+  html += bpBlock('Product & market', [
+    { k: 'Products / services', v: prods.map((p,i) => `${i+1}. ${p}`).join('\n') },
+    { k: 'Ideal client', v: [gv('s2_demo') && 'Demographic: ' + gv('s2_demo'), gv('s2_loc') && 'Location / industry: ' + gv('s2_loc'), gv('s2_tried') && 'What they\'ve tried: ' + gv('s2_tried')].filter(Boolean).join('\n') },
+    { k: 'Client wants, needs & pain points', v: gv('s2_pain') },
+  ]);
+
+  html += bpBlock('Delivery & differentiation', [
+    { k: 'Proven process', v: procs.map((s,i) => `${i+1}. ${s}`).join('\n') },
+    { k: 'Guarantee', v: gv('s3_guarantee') },
+    { k: 'Why we do this', v: gv('s3_whyyou') },
+    { k: 'What makes us different', v: diffs.map((d,i) => `${i+1}. ${d}`).join('\n') },
+    { k: 'Specialty', v: gv('s3_specialty') },
+  ]);
+
+  html += bpBlock('Vision timeline', [
+    { k: '10-year target', v: [gv('v_10yr'), gv('v_rev10') && 'Revenue: ' + gv('v_rev10'), gv('v_team10') && 'Team: ' + gv('v_team10'), gv('v_mkt10') && 'Market: ' + gv('v_mkt10')].filter(Boolean).join('\n') },
+    { k: '3-year picture', v: [gv('v_3yr'), gv('v_rev3') && 'Revenue: ' + gv('v_rev3'), gv('v_profit3') && 'Profit: ' + gv('v_profit3'), gv('v_emp3') && 'Employees: ' + gv('v_emp3'), gv('v_outsource') && 'Off my plate: ' + gv('v_outsource')].filter(Boolean).join('\n') },
+    { k: '1-year goals', v: goals.map((g,i) => `${i+1}. ${g}`).join('\n') },
+    { k: 'Revenue goal', v: gv('v_rev1') },
+    { k: 'KPIs', v: gv('v_kpis') },
+    { k: 'Biggest obstacle', v: gv('v_obstacle') },
+  ]);
+
+  if (vals.length) {
+    html += `<div class="blueprint-section"><div class="bp-section-title">Core values</div>`;
+    html += `<div class="bp-card"><div class="bp-pills">${vals.map(v => `<span class="bp-pill">${v}</span>`).join('')}</div></div>`;
+    if (gv('v_stories')) html += `<div class="bp-card"><div class="bp-card-label">Values in action</div><div class="bp-card-value">${gv('v_stories')}</div></div>`;
+    if (gv('v_nonneg')) html += `<div class="bp-card"><div class="bp-card-label">Non-negotiables</div><div class="bp-card-value">${gv('v_nonneg')}</div></div>`;
+    if (gv('v_hire')) html += `<div class="bp-card"><div class="bp-card-label">Hire, recognize & reward for</div><div class="bp-card-value">${gv('v_hire')}</div></div>`;
+    html += '</div>';
+  }
+
+  if (!html) html = '<p style="color:#6b6860;font-size:14px;padding:1rem 0">Complete the sections to see your blueprint here.</p>';
+  document.getElementById('blueprint-output').innerHTML = html;
+}
+
+/* ─── INIT ─── */
+initValues();
+</script>
+</body>
+</html>
