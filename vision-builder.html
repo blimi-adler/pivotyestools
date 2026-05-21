@@ -373,6 +373,113 @@ textarea { min-height: 88px; resize: vertical; line-height: 1.6; }
 .msd-label { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 10px; }
 .msd-text { font-size: 18px; font-weight: 300; line-height: 1.65; font-style: italic; }
 
+/* ── EDITABLE BLUEPRINT CARDS ── */
+.bp-edit-notice {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 300; color: var(--muted);
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 3px; padding: 10px 14px; margin-bottom: 28px;
+}
+.bp-edit-icon { font-size: 14px; color: var(--red); }
+
+.bp-card {
+  position: relative;
+  cursor: text;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.bp-card:hover { border-color: #c0bbb4; }
+.bp-card.editing {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(227,0,15,0.08);
+}
+.bp-card-value[contenteditable="true"] {
+  outline: none;
+  min-height: 24px;
+  caret-color: var(--red);
+}
+.bp-card-value[contenteditable="true"]:empty::before {
+  content: attr(data-placeholder);
+  color: #bbb; font-style: italic; pointer-events: none;
+}
+
+/* edit / done button inside card */
+.bp-card-actions {
+  position: absolute; top: 12px; right: 12px;
+  display: flex; gap: 6px; opacity: 0;
+  transition: opacity 0.15s;
+}
+.bp-card:hover .bp-card-actions,
+.bp-card.editing .bp-card-actions { opacity: 1; }
+.bp-action-btn {
+  background: none; border: 1px solid var(--border);
+  border-radius: 2px; padding: 3px 9px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px; font-weight: 500; color: var(--muted);
+  cursor: pointer; white-space: nowrap;
+  transition: all 0.12s;
+}
+.bp-action-btn:hover { border-color: var(--black); color: var(--black); }
+.bp-action-btn.save { background: var(--red); border-color: var(--red); color: #fff; }
+.bp-action-btn.save:hover { opacity: 0.88; }
+
+/* editable mission hero */
+.mission-statement-display .msd-text[contenteditable="true"] {
+  outline: none; caret-color: #fff;
+  border-bottom: 1px dashed rgba(255,255,255,0.3);
+  padding-bottom: 2px;
+}
+.mission-statement-display .msd-text[contenteditable="true"]:empty::before {
+  content: 'Type your mission statement...';
+  color: rgba(255,255,255,0.35); font-style: normal;
+}
+.msd-edit-btn {
+  margin-top: 12px;
+  display: inline-flex; align-items: center; gap: 6px;
+  background: none; border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 2px; padding: 4px 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px; font-weight: 400; color: rgba(255,255,255,0.6);
+  cursor: pointer; transition: all 0.12s;
+}
+.msd-edit-btn:hover { border-color: rgba(255,255,255,0.6); color: #fff; }
+
+/* values editable area */
+.bp-values-edit {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;
+}
+.bp-pill-editable {
+  background: #fff5f5; color: #8a000a;
+  border-radius: 2px; padding: 4px 10px 4px 12px;
+  font-size: 12px; font-weight: 500;
+  display: flex; align-items: center; gap: 6px;
+}
+.bp-pill-remove {
+  background: none; border: none; cursor: pointer;
+  color: #c44; font-size: 13px; line-height: 1;
+  padding: 0; font-family: monospace;
+}
+.bp-pill-remove:hover { color: var(--red); }
+.bp-add-value-row {
+  display: flex; gap: 8px; margin-top: 10px;
+}
+.bp-add-value-row input {
+  flex: 1; height: 32px; font-size: 13px;
+}
+.bp-add-value-row button {
+  height: 32px; padding: 0 14px; font-size: 12px;
+  white-space: nowrap;
+}
+
+@media print {
+  .top-nav, .step-bar, .progress-line, .nav-row,
+  .export-box, .tool-footer, .bp-edit-notice,
+  .bp-card-actions, .msd-edit-btn, .bp-pill-remove,
+  .bp-add-value-row { display: none !important; }
+  body { background: #fff; }
+  .bp-card { break-inside: avoid; }
+  .mission-statement-display { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
 /* ── EXPORT ── */
 .export-box {
   background: var(--white); border: 1px solid var(--border);
@@ -792,13 +899,20 @@ textarea { min-height: 88px; resize: vertical; line-height: 1.6; }
   <div class="step-page">
     <div class="step-tag"><span class="step-of">Step 7 of 7</span> · Leadership Blueprint</div>
     <h2 class="step-h">Your complete<br><em>blueprint.</em></h2>
-    <p class="step-intro">Everything in one place. This is your north star document — review it with your consultant and your team.</p>
+    <p class="step-intro">Click any field to edit directly. This is your live north star document.</p>
+
+    <div class="bp-edit-notice">
+      <span class="bp-edit-icon">✎</span> Click any card to edit its content inline.
+    </div>
 
     <div id="blueprint-output"></div>
 
     <div class="export-box">
       <p>Use this blueprint as the foundation for your first structured planning session.</p>
-      <button class="btn-next" onclick="window.print()">Export / Print</button>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button class="btn-next" onclick="printBlueprint()">Print</button>
+        <button class="btn-next" style="background:var(--black)" onclick="downloadBlueprint()">Download</button>
+      </div>
     </div>
   </div>
   <div class="tool-footer">PivotYes · Vision Builder · Leadership &amp; Vision</div>
@@ -902,86 +1016,332 @@ function updateNav(n) {
 function gv(id) { const e = document.getElementById(id); return e ? e.value.trim() : ''; }
 function getList(cls) { return Array.from(document.querySelectorAll('.' + cls)).map(e => e.value.trim()).filter(Boolean); }
 
-/* ─── BLUEPRINT ─── */
-function bpBlock(label, rows) {
-  const filled = rows.filter(r => r.v);
-  if (!filled.length) return '';
-  let h = `<div class="blueprint-section"><div class="bp-section-title">${label}</div>`;
-  filled.forEach(r => {
-    h += `<div class="bp-card"><div class="bp-card-label">${r.k}</div><div class="bp-card-value">${r.v}</div></div>`;
+/* ─── BLUEPRINT — EDITABLE ─── */
+
+// Create one editable card and wire up edit/save/click behaviour
+function makeCard(label, value, placeholder) {
+  if (!value && !placeholder) return null;
+  const card = document.createElement('div');
+  card.className = 'bp-card';
+
+  const lbl = document.createElement('div');
+  lbl.className = 'bp-card-label';
+  lbl.textContent = label;
+
+  const val = document.createElement('div');
+  val.className = 'bp-card-value';
+  val.textContent = value || '';
+  val.setAttribute('data-placeholder', placeholder || 'Click to edit…');
+
+  const actions = document.createElement('div');
+  actions.className = 'bp-card-actions';
+
+  const editBtn = document.createElement('button');
+  editBtn.className = 'bp-action-btn';
+  editBtn.textContent = '✎ Edit';
+
+  const saveBtn = document.createElement('button');
+  saveBtn.className = 'bp-action-btn save';
+  saveBtn.textContent = '✓ Done';
+  saveBtn.style.display = 'none';
+
+  actions.appendChild(editBtn);
+  actions.appendChild(saveBtn);
+  card.appendChild(lbl);
+  card.appendChild(val);
+  card.appendChild(actions);
+
+  function startEdit() {
+    val.contentEditable = 'true';
+    card.classList.add('editing');
+    editBtn.style.display = 'none';
+    saveBtn.style.display = '';
+    // place cursor at end
+    val.focus();
+    const range = document.createRange();
+    range.selectNodeContents(val);
+    range.collapse(false);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+
+  function stopEdit() {
+    val.contentEditable = 'false';
+    card.classList.remove('editing');
+    editBtn.style.display = '';
+    saveBtn.style.display = 'none';
+  }
+
+  editBtn.onclick = (e) => { e.stopPropagation(); startEdit(); };
+  saveBtn.onclick = (e) => { e.stopPropagation(); stopEdit(); };
+  card.onclick = () => { if (val.contentEditable !== 'true') startEdit(); };
+
+  // Keyboard save: Escape = done (don't intercept Enter so newlines work)
+  val.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { e.preventDefault(); stopEdit(); }
   });
-  return h + '</div>';
+
+  return card;
+}
+
+// Build section wrapper
+function makeSection(title) {
+  const sec = document.createElement('div');
+  sec.className = 'blueprint-section';
+  const h = document.createElement('div');
+  h.className = 'bp-section-title';
+  h.textContent = title;
+  sec.appendChild(h);
+  return sec;
+}
+
+// Mission hero — editable black card
+function makeMissionHero(missionStmt) {
+  const div = document.createElement('div');
+  div.className = 'mission-statement-display';
+
+  const lbl = document.createElement('div');
+  lbl.className = 'msd-label';
+  lbl.textContent = 'Mission statement';
+
+  const txt = document.createElement('div');
+  txt.className = 'msd-text';
+  txt.textContent = missionStmt || '';
+  txt.setAttribute('data-placeholder', 'Type your mission statement…');
+
+  const editBtn = document.createElement('button');
+  editBtn.className = 'msd-edit-btn';
+  editBtn.innerHTML = '✎ Edit';
+
+  function startEdit() {
+    txt.contentEditable = 'true';
+    txt.focus();
+    editBtn.textContent = '✓ Done';
+    editBtn.onclick = stopEdit;
+    const range = document.createRange();
+    range.selectNodeContents(txt);
+    range.collapse(false);
+    const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+  }
+  function stopEdit() {
+    txt.contentEditable = 'false';
+    editBtn.innerHTML = '✎ Edit';
+    editBtn.onclick = startEdit;
+  }
+  editBtn.onclick = startEdit;
+  txt.addEventListener('keydown', e => { if (e.key === 'Escape') stopEdit(); });
+
+  div.appendChild(lbl);
+  div.appendChild(txt);
+  div.appendChild(editBtn);
+  return div;
+}
+
+// Values editable block
+function makeValuesBlock(vals) {
+  const sec = makeSection('Core values');
+
+  // pills area
+  const pillCard = document.createElement('div');
+  pillCard.className = 'bp-card';
+  const pillLbl = document.createElement('div');
+  pillLbl.className = 'bp-card-label';
+  pillLbl.textContent = 'Selected values';
+  const pillArea = document.createElement('div');
+  pillArea.className = 'bp-values-edit';
+
+  function renderPills(list) {
+    pillArea.innerHTML = '';
+    list.forEach(v => {
+      const p = document.createElement('span');
+      p.className = 'bp-pill-editable';
+      p.innerHTML = `${v}<button class="bp-pill-remove" title="Remove">×</button>`;
+      p.querySelector('.bp-pill-remove').onclick = () => {
+        const idx = list.indexOf(v);
+        if (idx > -1) list.splice(idx, 1);
+        renderPills(list);
+      };
+      pillArea.appendChild(p);
+    });
+  }
+  renderPills(vals);
+
+  // add value inline
+  const addRow = document.createElement('div');
+  addRow.className = 'bp-add-value-row';
+  const addIn = document.createElement('input');
+  addIn.type = 'text'; addIn.placeholder = 'Add a value…';
+  const addBtn = document.createElement('button');
+  addBtn.className = 'btn-add'; addBtn.textContent = '+ Add';
+  addBtn.style.marginTop = '0';
+  addBtn.onclick = () => {
+    const v = addIn.value.trim(); if (!v) return;
+    vals.push(v); addIn.value = '';
+    renderPills(vals);
+  };
+  addIn.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addBtn.onclick(); } });
+  addRow.appendChild(addIn); addRow.appendChild(addBtn);
+
+  pillCard.appendChild(pillLbl);
+  pillCard.appendChild(pillArea);
+  pillCard.appendChild(addRow);
+  sec.appendChild(pillCard);
+  return sec;
 }
 
 function buildBlueprint() {
-  const strs = getList('str-in');
-  const wks  = getList('wk-in');
+  const strs  = getList('str-in');
+  const wks   = getList('wk-in');
   const prods = getList('prod-in');
   const procs = getList('proc-in');
   const diffs = getList('diff-in');
   const goals = getList('goal-in');
   const vals  = Array.from(selVals);
 
-  // Mission statement
   const mw = gv('m_what'), mwho = gv('m_who'), mo = gv('m_outcome');
   let missionStmt = '';
   if (mw) { missionStmt = mw; if (mwho) missionStmt += ' for ' + mwho; if (mo) missionStmt += ' — so that ' + mo + '.'; }
 
-  let html = '';
+  const out = document.getElementById('blueprint-output');
+  out.innerHTML = '';
 
-  // Mission hero card
+  // ── Foundation statements ──
+  const foundSec = makeSection('Mission, purpose & vision');
   if (missionStmt || gv('s4_vision_stmt')) {
-    html += `<div class="blueprint-section">`;
-    if (missionStmt) html += `<div class="mission-statement-display"><div class="msd-label">Mission statement</div><div class="msd-text">${missionStmt}</div></div>`;
-    if (gv('s4_vision_stmt')) html += `<div class="bp-card"><div class="bp-card-label">Vision statement</div><div class="bp-card-value">${gv('s4_vision_stmt')}</div></div>`;
-    if (gv('s4_purpose')) html += `<div class="bp-card"><div class="bp-card-label">Purpose</div><div class="bp-card-value">${gv('s4_purpose')}</div></div>`;
-    if (gv('s4_tagline')) html += `<div class="bp-card"><div class="bp-card-label">Tagline</div><div class="bp-card-value">${gv('s4_tagline')}</div></div>`;
-    html += '</div>';
+    if (missionStmt || true) foundSec.appendChild(makeMissionHero(missionStmt));
+    const rows = [
+      { k: 'Vision statement', v: gv('s4_vision_stmt'), ph: 'e.g. To be the most trusted…' },
+      { k: 'Purpose', v: gv('s4_purpose'), ph: 'Why does this company exist?' },
+      { k: 'Tagline', v: gv('s4_tagline'), ph: 'e.g. Structure creates freedom' },
+    ];
+    rows.forEach(r => { const c = makeCard(r.k, r.v, r.ph); if (c) foundSec.appendChild(c); });
+    out.appendChild(foundSec);
   }
 
-  html += bpBlock('Mindset & leadership', [
-    { k: '1-year life vision', v: gv('s1_year1') },
-    { k: 'Driving why', v: gv('s1_why') },
-    { k: 'Driving factor', v: gv('s1_drive') },
-    { k: 'Who I need to become', v: gv('s1_become') },
-    { k: 'Strengths', v: strs.map((s,i) => `${i+1}. ${s}`).join('\n') },
-    { k: 'Weaknesses', v: wks.map((s,i)  => `${i+1}. ${s}`).join('\n') },
-  ]);
+  // ── Mindset ──
+  const mindSec = makeSection('Mindset & leadership');
+  [
+    { k: '1-year life vision', v: gv('s1_year1'), ph: 'Where you want to be in 1 year…' },
+    { k: 'Driving why', v: gv('s1_why'), ph: 'Your driving why…' },
+    { k: 'Driving factor', v: gv('s1_drive'), ph: 'What keeps you going…' },
+    { k: 'Who I need to become', v: gv('s1_become'), ph: 'The leader this company needs…' },
+    { k: 'Strengths', v: strs.map((s,i)=>`${i+1}. ${s}`).join('\n'), ph: 'Your top strengths…' },
+    { k: 'Weaknesses', v: wks.map((s,i)=>`${i+1}. ${s}`).join('\n'), ph: 'Areas to manage…' },
+  ].forEach(r => { if (r.v) { const c = makeCard(r.k, r.v, r.ph); if (c) mindSec.appendChild(c); } });
+  if (mindSec.children.length > 1) out.appendChild(mindSec);
 
-  html += bpBlock('Product & market', [
-    { k: 'Products / services', v: prods.map((p,i) => `${i+1}. ${p}`).join('\n') },
-    { k: 'Ideal client', v: [gv('s2_demo') && 'Demographic: ' + gv('s2_demo'), gv('s2_loc') && 'Location / industry: ' + gv('s2_loc'), gv('s2_tried') && 'What they\'ve tried: ' + gv('s2_tried')].filter(Boolean).join('\n') },
-    { k: 'Client wants, needs & pain points', v: gv('s2_pain') },
-  ]);
+  // ── Product & market ──
+  const prodSec = makeSection('Product & market');
+  [
+    { k: 'Products / services', v: prods.map((p,i)=>`${i+1}. ${p}`).join('\n'), ph: 'Your offerings and pricing…' },
+    { k: 'Ideal client', v: [gv('s2_demo')&&'Demographic: '+gv('s2_demo'), gv('s2_loc')&&'Location / industry: '+gv('s2_loc'), gv('s2_tried')&&'What they\'ve tried: '+gv('s2_tried')].filter(Boolean).join('\n'), ph: 'Describe your ideal customer…' },
+    { k: 'Client wants, needs & pain points', v: gv('s2_pain'), ph: 'Their frustrations and goals…' },
+  ].forEach(r => { if (r.v) { const c = makeCard(r.k, r.v, r.ph); if (c) prodSec.appendChild(c); } });
+  if (prodSec.children.length > 1) out.appendChild(prodSec);
 
-  html += bpBlock('Delivery & differentiation', [
-    { k: 'Proven process', v: procs.map((s,i) => `${i+1}. ${s}`).join('\n') },
-    { k: 'Guarantee', v: gv('s3_guarantee') },
-    { k: 'Why we do this', v: gv('s3_whyyou') },
-    { k: 'What makes us different', v: diffs.map((d,i) => `${i+1}. ${d}`).join('\n') },
-    { k: 'Specialty', v: gv('s3_specialty') },
-  ]);
+  // ── Delivery & differentiation ──
+  const delSec = makeSection('Delivery & differentiation');
+  [
+    { k: 'Proven process', v: procs.map((s,i)=>`${i+1}. ${s}`).join('\n'), ph: 'Your delivery steps…' },
+    { k: 'Guarantee', v: gv('s3_guarantee'), ph: 'What you promise clients…' },
+    { k: 'Why we do this', v: gv('s3_whyyou'), ph: 'Your purpose / passion…' },
+    { k: 'What makes us different', v: diffs.map((d,i)=>`${i+1}. ${d}`).join('\n'), ph: 'Your differentiators…' },
+    { k: 'Specialty', v: gv('s3_specialty'), ph: 'Your greatest strength…' },
+  ].forEach(r => { if (r.v) { const c = makeCard(r.k, r.v, r.ph); if (c) delSec.appendChild(c); } });
+  if (delSec.children.length > 1) out.appendChild(delSec);
 
-  html += bpBlock('Vision timeline', [
-    { k: '10-year target', v: [gv('v_10yr'), gv('v_rev10') && 'Revenue: ' + gv('v_rev10'), gv('v_team10') && 'Team: ' + gv('v_team10'), gv('v_mkt10') && 'Market: ' + gv('v_mkt10')].filter(Boolean).join('\n') },
-    { k: '3-year picture', v: [gv('v_3yr'), gv('v_rev3') && 'Revenue: ' + gv('v_rev3'), gv('v_profit3') && 'Profit: ' + gv('v_profit3'), gv('v_emp3') && 'Employees: ' + gv('v_emp3'), gv('v_outsource') && 'Off my plate: ' + gv('v_outsource')].filter(Boolean).join('\n') },
-    { k: '1-year goals', v: goals.map((g,i) => `${i+1}. ${g}`).join('\n') },
-    { k: 'Revenue goal', v: gv('v_rev1') },
-    { k: 'KPIs', v: gv('v_kpis') },
-    { k: 'Biggest obstacle', v: gv('v_obstacle') },
-  ]);
+  // ── Vision timeline ──
+  const visSec = makeSection('Vision timeline');
+  [
+    { k: '10-year target', v: [gv('v_10yr'), gv('v_rev10')&&'Revenue: '+gv('v_rev10'), gv('v_team10')&&'Team: '+gv('v_team10'), gv('v_mkt10')&&'Market: '+gv('v_mkt10')].filter(Boolean).join('\n'), ph: 'Your BHAG…' },
+    { k: '3-year picture', v: [gv('v_3yr'), gv('v_rev3')&&'Revenue: '+gv('v_rev3'), gv('v_profit3')&&'Profit: '+gv('v_profit3'), gv('v_emp3')&&'Employees: '+gv('v_emp3'), gv('v_outsource')&&'Off my plate: '+gv('v_outsource')].filter(Boolean).join('\n'), ph: 'Paint the 3-year picture…' },
+    { k: '1-year goals', v: goals.map((g,i)=>`${i+1}. ${g}`).join('\n'), ph: 'Top 3 goals this year…' },
+    { k: 'Revenue goal (12 months)', v: gv('v_rev1'), ph: 'e.g. $1.2M' },
+    { k: 'KPIs', v: gv('v_kpis'), ph: 'How you will track progress\u2026' },
+    { k: 'Biggest obstacle', v: gv('v_obstacle'), ph: 'What is most likely to get in the way\u2026' },
+  ].forEach(r => { if (r.v) { const c = makeCard(r.k, r.v, r.ph); if (c) visSec.appendChild(c); } });
+  if (visSec.children.length > 1) out.appendChild(visSec);
 
+  // ── Core values ──
   if (vals.length) {
-    html += `<div class="blueprint-section"><div class="bp-section-title">Core values</div>`;
-    html += `<div class="bp-card"><div class="bp-pills">${vals.map(v => `<span class="bp-pill">${v}</span>`).join('')}</div></div>`;
-    if (gv('v_stories')) html += `<div class="bp-card"><div class="bp-card-label">Values in action</div><div class="bp-card-value">${gv('v_stories')}</div></div>`;
-    if (gv('v_nonneg')) html += `<div class="bp-card"><div class="bp-card-label">Non-negotiables</div><div class="bp-card-value">${gv('v_nonneg')}</div></div>`;
-    if (gv('v_hire')) html += `<div class="bp-card"><div class="bp-card-label">Hire, recognize & reward for</div><div class="bp-card-value">${gv('v_hire')}</div></div>`;
-    html += '</div>';
+    const valSec = makeValuesBlock(vals);
+    [
+      { k: 'Values in action', v: gv('v_stories'), ph: 'Examples of values lived out…' },
+      { k: 'Non-negotiables', v: gv('v_nonneg'), ph: 'What will never be tolerated…' },
+      { k: 'Hire, recognize & reward for', v: gv('v_hire'), ph: 'What you reward…' },
+    ].forEach(r => { if (r.v) { const c = makeCard(r.k, r.v, r.ph); if (c) valSec.appendChild(c); } });
+    out.appendChild(valSec);
   }
 
-  if (!html) html = '<p style="color:#6b6860;font-size:14px;padding:1rem 0">Complete the sections to see your blueprint here.</p>';
-  document.getElementById('blueprint-output').innerHTML = html;
+  if (!out.children.length) {
+    out.innerHTML = '<p style="color:#6b6860;font-size:14px;padding:1rem 0">Complete the sections to see your blueprint here.</p>';
+  }
+}
+
+/* ─── EXPORT ─── */
+function getBlueprintHTML() {
+  return document.getElementById('blueprint-output').innerHTML;
+}
+
+function getExportStyles() {
+  return `
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; font-size: 14px; color: #0a0a0a; background: #fff; padding: 48px; max-width: 800px; margin: 0 auto; }
+    .print-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #0a0a0a; padding-bottom: 12px; margin-bottom: 36px; }
+    .print-brand { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 0.06em; }
+    .print-title { font-family: 'Bebas Neue', sans-serif; font-size: 40px; letter-spacing: 0.02em; }
+    .print-title em { font-style: italic; color: #E3000F; font-family: 'DM Sans', sans-serif; font-weight: 300; font-size: 0.75em; }
+    .print-date { font-size: 11px; color: #6b6860; text-align: right; }
+    .blueprint-section { margin-bottom: 32px; }
+    .bp-section-title { font-family: 'Bebas Neue', sans-serif; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: #E3000F; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid #e0ddd8; }
+    .bp-card { background: #f7f5f2; border: 1px solid #e0ddd8; border-radius: 2px; padding: 14px 16px; margin-bottom: 8px; page-break-inside: avoid; }
+    .bp-card-label { font-size: 9px; font-weight: 500; letter-spacing: 0.09em; text-transform: uppercase; color: #6b6860; margin-bottom: 6px; }
+    .bp-card-value { font-size: 13px; line-height: 1.65; white-space: pre-wrap; }
+    .mission-statement-display { background: #0a0a0a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; color: #fff; border-radius: 2px; padding: 22px 26px; margin-bottom: 8px; page-break-inside: avoid; }
+    .msd-label { font-size: 9px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
+    .msd-text { font-size: 17px; font-weight: 300; line-height: 1.65; font-style: italic; color: #fff; }
+    .bp-values-edit { display: flex; flex-wrap: wrap; gap: 6px; }
+    .bp-pill-editable { background: #fff5f5 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; color: #8a000a; border-radius: 2px; padding: 4px 12px; font-size: 11px; font-weight: 500; display: inline-flex; align-items: center; }
+    .bp-pill-remove, .bp-card-actions, .msd-edit-btn, .bp-add-value-row { display: none !important; }
+  `;
+}
+
+function buildExportDoc(content) {
+  var date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Vision Blueprint - PivotYes</title>'
+    + '<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">'
+    + '<style>' + getExportStyles() + '</style></head><body>'
+    + '<div class="print-header"><div><div class="print-brand">PivotYes</div><div class="print-title">Vision <em>Blueprint</em></div></div>'
+    + '<div class="print-date">Generated<br>' + date + '</div></div>'
+    + content
+    + '</body></html>';
+}
+
+function printBlueprint() {
+  var content = getBlueprintHTML();
+  if (!content.trim()) { alert('Complete some sections first before printing.'); return; }
+  var doc = buildExportDoc(content);
+  var win = window.open('', '_blank', 'width=900,height=700');
+  win.document.write(doc);
+  win.document.close();
+  win.focus();
+  setTimeout(function() { win.print(); }, 800);
+}
+
+function downloadBlueprint() {
+  var content = getBlueprintHTML();
+  if (!content.trim()) { alert('Complete some sections first before downloading.'); return; }
+  var doc = buildExportDoc(content);
+  var blob = new Blob([doc], { type: 'text/html;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'vision-blueprint-pivotyes.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
 }
 
 /* ─── INIT ─── */
