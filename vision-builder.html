@@ -401,6 +401,12 @@ textarea { min-height: 88px; resize: vertical; line-height: 1.6; }
   content: attr(data-placeholder);
   color: #bbb; font-style: italic; pointer-events: none;
 }
+/* Empty card — shows as a fillable line */
+.bp-card-value:empty:not([contenteditable="true"]) {
+  min-height: 28px;
+  border-bottom: 1px dashed #ccc;
+  display: block;
+}
 
 /* edit / done button inside card */
 .bp-card-actions {
@@ -493,6 +499,33 @@ textarea { min-height: 88px; resize: vertical; line-height: 1.6; }
   border-top: 1px solid var(--border);
   text-align: center;
   font-size: 12px; color: var(--muted); font-weight: 300;
+}
+
+/* ── VALUES PHASES ── */
+.values-phase-label {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 10px;
+}
+.values-phase-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px; line-height: 1;
+  color: var(--red); letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+.values-phase-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px; letter-spacing: 0.06em;
+  color: var(--black);
+}
+.values-phase-desc {
+  font-size: 14px; font-weight: 300; color: var(--muted);
+  line-height: 1.6; margin-bottom: 24px;
+  padding-left: 46px;
+}
+.values-phase-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 36px 0 32px;
 }
 
 /* ── DIFF TAG ── */
@@ -600,6 +633,20 @@ textarea { min-height: 88px; resize: vertical; line-height: 1.6; }
         <div class="num-row"><span class="num-badge neg">2</span><input type="text" class="wk-in" placeholder="e.g. Follow-through"></div>
         <div class="num-row"><span class="num-badge neg">3</span><input type="text" class="wk-in" placeholder="e.g. Systems thinking"></div>
       </div>
+    </div>
+
+    <hr class="divider">
+    <h3 class="section-heading">Your track record</h3>
+
+    <div class="fg">
+      <label class="fg-label">Top accomplishments in your business so far</label>
+      <span class="fg-hint">What have you already built, closed, launched, or figured out? Own it.</span>
+      <div id="accom-list">
+        <div class="num-row"><span class="num-badge">1</span><input type="text" class="accom-in" placeholder="e.g. Grew revenue from $0 to $500K in year one"></div>
+        <div class="num-row" style="margin-top:10px"><span class="num-badge">2</span><input type="text" class="accom-in" placeholder="e.g. Built and retained a team of 8"></div>
+        <div class="num-row" style="margin-top:10px"><span class="num-badge">3</span><input type="text" class="accom-in" placeholder="e.g. Landed our first enterprise client"></div>
+      </div>
+      <button class="btn-add" onclick="addRow('accom-list','accom-in','Another win...')" style="margin-top:10px">+ Add</button>
     </div>
 
     <div class="nav-row">
@@ -858,31 +905,96 @@ textarea { min-height: 88px; resize: vertical; line-height: 1.6; }
   <div class="step-page">
     <div class="step-tag"><span class="step-of">Step 6 of 7</span> · Core Values</div>
     <h2 class="step-h">What you<br><em>stand for.</em></h2>
-    <p class="step-intro">Values define your culture — who you hire, how you operate, and what you'll never compromise on. Select what resonates, then add your own.</p>
+    <p class="step-intro">Don’t start with a list. Start with what’s already true. Answer the questions below, then pick and define your values.</p>
+
+    <!-- PHASE 1: DISCOVERY -->
+    <div class="values-phase-label">
+      <span class="values-phase-num">01</span>
+      <span class="values-phase-title">Discover your values</span>
+    </div>
+    <p class="values-phase-desc">Think about how you actually work and who belongs on your team.</p>
 
     <div class="fg">
-      <label class="fg-label">Select your core values</label>
-      <span class="fg-hint">Pick 3–6 that are genuinely true to how you want to operate — not aspirational, not what sounds good.</span>
+      <label class="fg-label">What do you care most about in how work gets done?</label>
+      <span class="fg-hint">Think about your proudest moments. What made them that way?</span>
+      <textarea id="v_disc_matters" rows="3" placeholder="e.g. People take initiative. We over-deliver. The team is honest even when it’s hard..."></textarea>
+    </div>
+
+    <div class="fg">
+      <label class="fg-label">Think about the best person you’ve ever worked with. What made them stand out?</label>
+      <span class="fg-hint">Think about your best hire and the ones who didn't work out. What separated them?</span>
+      <textarea id="v_disc_best" rows="3" placeholder="e.g. Must have: owns their work, communicates proactively.&#10;Deal-breakers: blames others, cuts corners, hides problems..."></textarea>
+    </div>
+
+    <div class="fg">
+      <label class="fg-label">What would make you pass on a candidate, even if they were technically perfect?</label>
+      <span class="fg-hint">The character traits that are deal-breakers, no matter how good they look on paper.</span>
+      <textarea id="v_disc_dealbreak" rows="3" placeholder="e.g. Blamed others. Cut corners. Wasn’t honest about a mistake..."></textarea>
+    </div>
+
+    <div class="fg">
+      <label class="fg-label">When you’ve been most frustrated at work, what was missing?</label>
+      <span class="fg-hint">Frustration is a values signal. What wasn’t being honored?</span>
+      <textarea id="v_disc_frustrated" rows="3" placeholder="e.g. Accountability — no one owned their mistakes. Transparency — problems got hidden..."></textarea>
+    </div>
+
+    <div class="fg">
+      <label class="fg-label">How do you want clients and your team to describe working with you?</label>
+      <span class="fg-hint">The words you want attached to your name and your company.</span>
+      <textarea id="v_disc_client" rows="2" placeholder="e.g. Reliable. Straight-talking. Invested in our success. High standards..."></textarea>
+    </div>
+
+    <!-- PHASE 2: SELECT & DEFINE -->
+    <div class="values-phase-divider"></div>
+
+    <div class="values-phase-label">
+      <span class="values-phase-num">02</span>
+      <span class="values-phase-title">Select your core values</span>
+    </div>
+    <p class="values-phase-desc">Pick 3–6 that are already true — not what you wish were true. You’ll define each one below.</p>
+
+    <div class="fg">
+      <label class="fg-label">Choose from the list or add your own</label>
+      <span class="fg-hint">Pick what already shows up — not what sounds good.</span>
       <div class="values-grid" id="values-grid"></div>
-      <div style="display:flex;gap:10px;margin-top:4px">
+      <div style="display:flex;gap:10px;margin-top:8px">
         <input type="text" id="cv-in" placeholder="Add your own value..." style="flex:1">
         <button class="btn-add" onclick="addCV()" style="margin-top:0;white-space:nowrap">+ Add</button>
       </div>
     </div>
 
-    <div class="fg">
-      <label class="fg-label">Values in action — what do they look like in real behavior?</label>
-      <span class="fg-hint">Write a story or example for your key values. This is what you share with your team.</span>
-      <textarea id="v_stories" rows="4" placeholder="Integrity means we tell clients hard truths even when it costs us. Ownership means nobody waits to be told — if you see a problem, you own the fix..."></textarea>
+    <!-- PHASE 3: DEFINE -->
+    <div class="values-phase-divider"></div>
+
+    <div class="values-phase-label">
+      <span class="values-phase-num">03</span>
+      <span class="values-phase-title">Define your values</span>
     </div>
+    <p class="values-phase-desc">A value without a definition is just a word on a wall. Say what each one means in practice.</p>
+
     <div class="fg">
-      <label class="fg-label">What behavior would get someone fired here?</label>
-      <span class="fg-hint">The non-negotiable flip side of your values.</span>
-      <textarea id="v_nonneg" rows="2" placeholder="e.g. Dishonesty with clients, blaming the team, ignoring a defined process..."></textarea>
+      <label class="fg-label">What does each value look like in practice?</label>
+      <span class="fg-hint">One sentence per value. Start with the name.</span>
+      <textarea id="v_stories" rows="6" placeholder="Integrity means we tell clients hard truths even when it costs us.&#10;Ownership means if you see a problem, you fix it.&#10;Excellence means we review our work before it leaves our hands..."></textarea>
     </div>
+
     <div class="fg">
-      <label class="fg-label">What do you hire, recognize, and reward for?</label>
-      <input type="text" id="v_hire" placeholder="e.g. Proactive problem-solving, consistency, client obsession">
+      <label class="fg-label">What does breaking these values look like?</label>
+      <span class="fg-hint">The behavior that would be a serious problem here.</span>
+      <textarea id="v_nonneg" rows="3" placeholder="e.g. Blaming others for your mistake. Hiding a problem instead of flagging it. Rushing work to hit a deadline..."></textarea>
+    </div>
+
+    <div class="two-col">
+      <div class="fg">
+        <label class="fg-label">What do you hire for?</label>
+        <span class="fg-hint">What you’re listening for in the interview.</span>
+        <textarea id="v_hire" rows="3" placeholder="e.g. Takes initiative. Communicates without being chased. Holds themselves accountable..."></textarea>
+      </div>
+      <div class="fg">
+        <label class="fg-label">What do you recognize and reward?</label>
+        <span class="fg-hint">What you call out and celebrate.</span>
+        <textarea id="v_reward" rows="3" placeholder="e.g. Caught a problem before it hit the client. Went above scope because it was the right call..."></textarea>
+      </div>
     </div>
 
     <div class="nav-row">
@@ -1020,7 +1132,6 @@ function getList(cls) { return Array.from(document.querySelectorAll('.' + cls)).
 
 // Create one editable card and wire up edit/save/click behaviour
 function makeCard(label, value, placeholder) {
-  if (!value && !placeholder) return null;
   const card = document.createElement('div');
   card.className = 'bp-card';
 
@@ -1192,6 +1303,7 @@ function makeValuesBlock(vals) {
 
 function buildBlueprint() {
   const strs  = getList('str-in');
+  const accoms = getList('accom-in');
   const wks   = getList('wk-in');
   const prods = getList('prod-in');
   const procs = getList('proc-in');
@@ -1205,143 +1317,137 @@ function buildBlueprint() {
 
   const out = document.getElementById('blueprint-output');
   out.innerHTML = '';
+  let hasContent = false;
 
-  // ── Foundation statements ──
-  const foundSec = makeSection('Mission, purpose & vision');
-  if (missionStmt || gv('s4_vision_stmt')) {
-    if (missionStmt || true) foundSec.appendChild(makeMissionHero(missionStmt));
-    const rows = [
-      { k: 'Vision statement', v: gv('s4_vision_stmt'), ph: 'e.g. To be the most trusted…' },
-      { k: 'Purpose', v: gv('s4_purpose'), ph: 'Why does this company exist?' },
-      { k: 'Tagline', v: gv('s4_tagline'), ph: 'e.g. Structure creates freedom' },
-    ];
-    rows.forEach(r => { const c = makeCard(r.k, r.v, r.ph); if (c) foundSec.appendChild(c); });
-    out.appendChild(foundSec);
+  function addSection(title, items) {
+    hasContent = true;
+    const sec = makeSection(title);
+    items.forEach(item => {
+      const c = makeCard(item.k, item.v, item.ph || 'Click to edit...');
+      if (c) sec.appendChild(c);
+    });
+    out.appendChild(sec);
   }
 
-  // ── Mindset ──
-  const mindSec = makeSection('Mindset & leadership');
+  // Foundation statements - always show
+  hasContent = true;
+  const foundSec = makeSection('Mission, purpose & vision');
+  foundSec.appendChild(makeMissionHero(missionStmt));
   [
-    { k: '1-year life vision', v: gv('s1_year1'), ph: 'Where you want to be in 1 year…' },
-    { k: 'Driving why', v: gv('s1_why'), ph: 'Your driving why…' },
-    { k: 'Driving factor', v: gv('s1_drive'), ph: 'What keeps you going…' },
-    { k: 'Who I need to become', v: gv('s1_become'), ph: 'The leader this company needs…' },
-    { k: 'Strengths', v: strs.map((s,i)=>`${i+1}. ${s}`).join('\n'), ph: 'Your top strengths…' },
-    { k: 'Weaknesses', v: wks.map((s,i)=>`${i+1}. ${s}`).join('\n'), ph: 'Areas to manage…' },
-  ].forEach(r => { if (r.v) { const c = makeCard(r.k, r.v, r.ph); if (c) mindSec.appendChild(c); } });
-  if (mindSec.children.length > 1) out.appendChild(mindSec);
+    { k: 'Vision statement', v: gv('s4_vision_stmt'), ph: 'e.g. To be the most trusted...' },
+    { k: 'Purpose', v: gv('s4_purpose'), ph: 'Why does this company exist?' },
+    { k: 'Tagline', v: gv('s4_tagline'), ph: 'e.g. Structure creates freedom' },
+  ].forEach(i => { const c = makeCard(i.k, i.v, i.ph); if (c) out.appendChild; foundSec.appendChild(c); });
+  out.appendChild(foundSec);
 
-  // ── Product & market ──
-  const prodSec = makeSection('Product & market');
-  [
-    { k: 'Products / services', v: prods.map((p,i)=>`${i+1}. ${p}`).join('\n'), ph: 'Your offerings and pricing…' },
-    { k: 'Ideal client', v: [gv('s2_demo')&&'Demographic: '+gv('s2_demo'), gv('s2_loc')&&'Location / industry: '+gv('s2_loc'), gv('s2_tried')&&'What they\'ve tried: '+gv('s2_tried')].filter(Boolean).join('\n'), ph: 'Describe your ideal customer…' },
-    { k: 'Client wants, needs & pain points', v: gv('s2_pain'), ph: 'Their frustrations and goals…' },
-  ].forEach(r => { if (r.v) { const c = makeCard(r.k, r.v, r.ph); if (c) prodSec.appendChild(c); } });
-  if (prodSec.children.length > 1) out.appendChild(prodSec);
+  addSection('Mindset & leadership', [
+    { k: '1-year life vision', v: gv('s1_year1'), ph: 'Where you want to be in 1 year...' },
+    { k: 'Driving why', v: gv('s1_why'), ph: 'Your driving why...' },
+    { k: 'Driving factor', v: gv('s1_drive'), ph: 'What keeps you going...' },
+    { k: 'Who I need to become', v: gv('s1_become'), ph: 'The leader this company needs...' },
+    { k: 'Strengths', v: strs.map((s,i) => (i+1) + '. ' + s).join('\n'), ph: 'Your top strengths...' },
+    { k: 'Top accomplishments', v: accoms.map((a,i) => (i+1) + '. ' + a).join('\n'), ph: 'What you have already built...' },
+    { k: 'Weaknesses', v: wks.map((s,i) => (i+1) + '. ' + s).join('\n'), ph: 'Areas to manage...' },
+  ]);
 
-  // ── Delivery & differentiation ──
-  const delSec = makeSection('Delivery & differentiation');
-  [
-    { k: 'Proven process', v: procs.map((s,i)=>`${i+1}. ${s}`).join('\n'), ph: 'Your delivery steps…' },
-    { k: 'Guarantee', v: gv('s3_guarantee'), ph: 'What you promise clients…' },
-    { k: 'Why we do this', v: gv('s3_whyyou'), ph: 'Your purpose / passion…' },
-    { k: 'What makes us different', v: diffs.map((d,i)=>`${i+1}. ${d}`).join('\n'), ph: 'Your differentiators…' },
-    { k: 'Specialty', v: gv('s3_specialty'), ph: 'Your greatest strength…' },
-  ].forEach(r => { if (r.v) { const c = makeCard(r.k, r.v, r.ph); if (c) delSec.appendChild(c); } });
-  if (delSec.children.length > 1) out.appendChild(delSec);
+  addSection('Product & market', [
+    { k: 'Products / services', v: prods.map((p,i) => (i+1) + '. ' + p).join('\n'), ph: 'Your offerings and pricing...' },
+    { k: 'Ideal client', v: [gv('s2_demo') && 'Demographic: ' + gv('s2_demo'), gv('s2_loc') && 'Location / industry: ' + gv('s2_loc'), gv('s2_tried') && 'What they have tried: ' + gv('s2_tried')].filter(Boolean).join('\n'), ph: 'Describe your ideal customer...' },
+    { k: 'Client wants, needs & pain points', v: gv('s2_pain'), ph: 'Their frustrations and goals...' },
+  ]);
 
-  // ── Vision timeline ──
-  const visSec = makeSection('Vision timeline');
-  [
-    { k: '10-year target', v: [gv('v_10yr'), gv('v_rev10')&&'Revenue: '+gv('v_rev10'), gv('v_team10')&&'Team: '+gv('v_team10'), gv('v_mkt10')&&'Market: '+gv('v_mkt10')].filter(Boolean).join('\n'), ph: 'Your BHAG…' },
-    { k: '3-year picture', v: [gv('v_3yr'), gv('v_rev3')&&'Revenue: '+gv('v_rev3'), gv('v_profit3')&&'Profit: '+gv('v_profit3'), gv('v_emp3')&&'Employees: '+gv('v_emp3'), gv('v_outsource')&&'Off my plate: '+gv('v_outsource')].filter(Boolean).join('\n'), ph: 'Paint the 3-year picture…' },
-    { k: '1-year goals', v: goals.map((g,i)=>`${i+1}. ${g}`).join('\n'), ph: 'Top 3 goals this year…' },
+  addSection('Delivery & differentiation', [
+    { k: 'Proven process', v: procs.map((s,i) => (i+1) + '. ' + s).join('\n'), ph: 'Your delivery steps...' },
+    { k: 'Guarantee', v: gv('s3_guarantee'), ph: 'What you promise clients...' },
+    { k: 'Why we do this', v: gv('s3_whyyou'), ph: 'Your purpose / passion...' },
+    { k: 'What makes us different', v: diffs.map((d,i) => (i+1) + '. ' + d).join('\n'), ph: 'Your differentiators...' },
+    { k: 'Specialty', v: gv('s3_specialty'), ph: 'Your greatest strength...' },
+  ]);
+
+  addSection('Vision timeline', [
+    { k: '10-year target', v: [gv('v_10yr'), gv('v_rev10') && 'Revenue: ' + gv('v_rev10'), gv('v_team10') && 'Team: ' + gv('v_team10'), gv('v_mkt10') && 'Market: ' + gv('v_mkt10')].filter(Boolean).join('\n'), ph: 'Your BHAG...' },
+    { k: '3-year picture', v: [gv('v_3yr'), gv('v_rev3') && 'Revenue: ' + gv('v_rev3'), gv('v_profit3') && 'Profit: ' + gv('v_profit3'), gv('v_emp3') && 'Employees: ' + gv('v_emp3'), gv('v_outsource') && 'Off my plate: ' + gv('v_outsource')].filter(Boolean).join('\n'), ph: 'Paint the 3-year picture...' },
+    { k: '1-year goals', v: goals.map((g,i) => (i+1) + '. ' + g).join('\n'), ph: 'Top 3 goals this year...' },
     { k: 'Revenue goal (12 months)', v: gv('v_rev1'), ph: 'e.g. $1.2M' },
-    { k: 'KPIs', v: gv('v_kpis'), ph: 'How you will track progress\u2026' },
-    { k: 'Biggest obstacle', v: gv('v_obstacle'), ph: 'What is most likely to get in the way\u2026' },
-  ].forEach(r => { if (r.v) { const c = makeCard(r.k, r.v, r.ph); if (c) visSec.appendChild(c); } });
-  if (visSec.children.length > 1) out.appendChild(visSec);
+    { k: 'KPIs', v: gv('v_kpis'), ph: 'How you will track progress...' },
+    { k: 'Biggest obstacle', v: gv('v_obstacle'), ph: 'What is most likely to get in the way...' },
+  ]);
 
-  // ── Core values ──
-  if (vals.length) {
+  {
+    hasContent = true;
     const valSec = makeValuesBlock(vals);
-    [
-      { k: 'Values in action', v: gv('v_stories'), ph: 'Examples of values lived out…' },
-      { k: 'Non-negotiables', v: gv('v_nonneg'), ph: 'What will never be tolerated…' },
-      { k: 'Hire, recognize & reward for', v: gv('v_hire'), ph: 'What you reward…' },
-    ].forEach(r => { if (r.v) { const c = makeCard(r.k, r.v, r.ph); if (c) valSec.appendChild(c); } });
+    const defCard = makeCard('What each value means in practice', gv('v_stories'), 'e.g. Integrity means we tell clients hard truths even when it costs us...');
+    if (defCard) valSec.appendChild(defCard);
     out.appendChild(valSec);
   }
 
-  if (!out.children.length) {
-    out.innerHTML = '<p style="color:#6b6860;font-size:14px;padding:1rem 0">Complete the sections to see your blueprint here.</p>';
-  }
+
 }
 
 /* ─── EXPORT ─── */
-function getBlueprintHTML() {
-  return document.getElementById('blueprint-output').innerHTML;
+function getExportCSS() {
+  return [
+    '* { box-sizing: border-box; margin: 0; padding: 0; }',
+    'body { font-family: DM Sans, sans-serif; font-size: 14px; color: #0a0a0a; background: #fff; padding: 48px; max-width: 800px; margin: 0 auto; }',
+    '.print-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #0a0a0a; padding-bottom: 12px; margin-bottom: 36px; }',
+    '.print-brand { font-family: Bebas Neue, sans-serif; font-size: 22px; letter-spacing: 0.06em; }',
+    '.print-title { font-family: Bebas Neue, sans-serif; font-size: 40px; letter-spacing: 0.02em; }',
+    '.print-title em { font-style: italic; color: #E3000F; font-family: DM Sans, sans-serif; font-weight: 300; font-size: 0.75em; }',
+    '.print-date { font-size: 11px; color: #6b6860; text-align: right; }',
+    '.blueprint-section { margin-bottom: 32px; }',
+    '.bp-section-title { font-family: Bebas Neue, sans-serif; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: #E3000F; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid #e0ddd8; }',
+    '.bp-card { background: #f7f5f2; border: 1px solid #e0ddd8; border-radius: 2px; padding: 14px 16px; margin-bottom: 8px; page-break-inside: avoid; }',
+    '.bp-card-label { font-size: 9px; font-weight: 500; letter-spacing: 0.09em; text-transform: uppercase; color: #6b6860; margin-bottom: 6px; }',
+    '.bp-card-value { font-size: 13px; line-height: 1.65; white-space: pre-wrap; }',
+    '.mission-statement-display { background: #0a0a0a; color: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 2px; padding: 22px 26px; margin-bottom: 8px; page-break-inside: avoid; }',
+    '.msd-label { font-size: 9px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 8px; }',
+    '.msd-text { font-size: 17px; font-weight: 300; line-height: 1.65; font-style: italic; color: #fff; }',
+    '.bp-values-edit { display: flex; flex-wrap: wrap; gap: 6px; }',
+    '.bp-pill-editable { background: #fff5f5; -webkit-print-color-adjust: exact; print-color-adjust: exact; color: #8a000a; border-radius: 2px; padding: 4px 12px; font-size: 11px; font-weight: 500; display: inline-flex; align-items: center; }',
+    '.bp-pill-remove, .bp-card-actions, .msd-edit-btn, .bp-add-value-row { display: none !important; }',
+    '.bp-card-value:empty { min-height: 28px; border-bottom: 1px dashed #ccc; display: block; }',
+  ].join(' ');
 }
 
-function getExportStyles() {
-  return `
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'DM Sans', sans-serif; font-size: 14px; color: #0a0a0a; background: #fff; padding: 48px; max-width: 800px; margin: 0 auto; }
-    .print-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #0a0a0a; padding-bottom: 12px; margin-bottom: 36px; }
-    .print-brand { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 0.06em; }
-    .print-title { font-family: 'Bebas Neue', sans-serif; font-size: 40px; letter-spacing: 0.02em; }
-    .print-title em { font-style: italic; color: #E3000F; font-family: 'DM Sans', sans-serif; font-weight: 300; font-size: 0.75em; }
-    .print-date { font-size: 11px; color: #6b6860; text-align: right; }
-    .blueprint-section { margin-bottom: 32px; }
-    .bp-section-title { font-family: 'Bebas Neue', sans-serif; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: #E3000F; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid #e0ddd8; }
-    .bp-card { background: #f7f5f2; border: 1px solid #e0ddd8; border-radius: 2px; padding: 14px 16px; margin-bottom: 8px; page-break-inside: avoid; }
-    .bp-card-label { font-size: 9px; font-weight: 500; letter-spacing: 0.09em; text-transform: uppercase; color: #6b6860; margin-bottom: 6px; }
-    .bp-card-value { font-size: 13px; line-height: 1.65; white-space: pre-wrap; }
-    .mission-statement-display { background: #0a0a0a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; color: #fff; border-radius: 2px; padding: 22px 26px; margin-bottom: 8px; page-break-inside: avoid; }
-    .msd-label { font-size: 9px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
-    .msd-text { font-size: 17px; font-weight: 300; line-height: 1.65; font-style: italic; color: #fff; }
-    .bp-values-edit { display: flex; flex-wrap: wrap; gap: 6px; }
-    .bp-pill-editable { background: #fff5f5 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; color: #8a000a; border-radius: 2px; padding: 4px 12px; font-size: 11px; font-weight: 500; display: inline-flex; align-items: center; }
-    .bp-pill-remove, .bp-card-actions, .msd-edit-btn, .bp-add-value-row { display: none !important; }
-  `;
-}
-
-function buildExportDoc(content) {
+function buildExportDoc(innerHTML) {
   var date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Vision Blueprint - PivotYes</title>'
-    + '<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">'
-    + '<style>' + getExportStyles() + '</style></head><body>'
-    + '<div class="print-header"><div><div class="print-brand">PivotYes</div><div class="print-title">Vision <em>Blueprint</em></div></div>'
-    + '<div class="print-date">Generated<br>' + date + '</div></div>'
-    + content
-    + '</body></html>';
+  var fonts = '<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">';
+  var header = '<div class="print-header"><div><div class="print-brand">PivotYes</div><div class="print-title">Vision <em>Blueprint</em></div></div><div class="print-date">Generated<br>' + date + '</div></div>';
+  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Vision Blueprint - PivotYes</title>' + fonts + '<style>' + getExportCSS() + '</style></head><body>' + header + innerHTML + '</body></html>';
 }
 
 function printBlueprint() {
-  var content = getBlueprintHTML();
-  if (!content.trim()) { alert('Complete some sections first before printing.'); return; }
-  var doc = buildExportDoc(content);
-  var win = window.open('', '_blank', 'width=900,height=700');
-  win.document.write(doc);
-  win.document.close();
-  win.focus();
-  setTimeout(function() { win.print(); }, 800);
+  var inner = document.getElementById('blueprint-output').innerHTML;
+  if (!inner || !inner.trim()) { alert('Complete at least one section before printing.'); return; }
+  var doc = buildExportDoc(inner);
+  // Use iframe approach - works in GitHub Pages without popup blocker issues
+  var iframe = document.getElementById('print-iframe');
+  if (!iframe) {
+    iframe = document.createElement('iframe');
+    iframe.id = 'print-iframe';
+    iframe.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;';
+    document.body.appendChild(iframe);
+  }
+  var iDoc = iframe.contentWindow.document;
+  iDoc.open(); iDoc.write(doc); iDoc.close();
+  iframe.contentWindow.focus();
+  setTimeout(function() { iframe.contentWindow.print(); }, 800);
 }
 
 function downloadBlueprint() {
-  var content = getBlueprintHTML();
-  if (!content.trim()) { alert('Complete some sections first before downloading.'); return; }
-  var doc = buildExportDoc(content);
+  var inner = document.getElementById('blueprint-output').innerHTML;
+  if (!inner || !inner.trim()) { alert('Complete at least one section before downloading.'); return; }
+  var doc = buildExportDoc(inner);
   var blob = new Blob([doc], { type: 'text/html;charset=utf-8' });
   var url = URL.createObjectURL(blob);
   var a = document.createElement('a');
   a.href = url;
   a.download = 'vision-blueprint-pivotyes.html';
+  a.style.display = 'none';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+  setTimeout(function() { URL.revokeObjectURL(url); }, 2000);
 }
 
 /* ─── INIT ─── */
