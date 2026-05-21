@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Assessment | PivotYes</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#E3000F;--black:#ffffff;--white:#0a0a0a;
+  --s1:#c0392b;--s2:#d68910;--s3:#b7860b;--s4:#1a8a63;--s5:#0d7a5a;
+  --g1:#f0f0f0;--g2:#e0e0e0;--g3:#cccccc;--g4:#999;--g5:#777;--g6:#444;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--black);color:var(--white);min-height:100vh}
+
+.header{background:var(--black);border-bottom:1px solid var(--g2);padding:18px 40px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px}
+.logo span{color:var(--red)}
+.hdr-center{flex:1;max-width:380px;margin:0 32px}
+.prog-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g5);margin-bottom:5px;display:flex;justify-content:space-between}
+.prog-track{height:2px;background:var(--g2);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:var(--red);border-radius:2px;transition:width .4s ease}
+.hdr-right{font-size:11px;color:var(--g5);letter-spacing:1px;text-transform:uppercase}
+
+.main{max-width:780px;margin:0 auto;padding:56px 40px 120px}
+
+/* SCREENS */
+.screen{display:none}.screen.active{display:block}
+
+/* INTRO */
+.intro{text-align:center;padding:60px 0 20px}
+.eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:16px}
+.intro h1{font-family:'Bebas Neue',sans-serif;font-size:68px;line-height:1;letter-spacing:2px;margin-bottom:16px}
+.intro p{font-size:15px;color:var(--g6);max-width:480px;margin:0 auto 36px;line-height:1.75}
+.meta-row{display:flex;justify-content:center;gap:48px;margin-bottom:48px}
+.meta-item .n{font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--red);line-height:1}
+.meta-item .l{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g5);margin-top:2px}
+
+.card{background:var(--g1);border:1px solid var(--g2);border-radius:12px;padding:32px}
+.intake-card{max-width:480px;margin:0 auto 36px;text-align:left}
+.card-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--g5);margin-bottom:20px}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--g5);margin-bottom:7px}
+.field input,.field select,.field textarea{width:100%;background:#f8f8f8;border:1px solid var(--g3);border-radius:8px;padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--white);outline:none;transition:border-color .2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--red)}
+.field select option{background:#f8f8f8}
+.field textarea{resize:vertical;min-height:72px;line-height:1.6}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+/* FUNCTION */
+.fn-dots{display:flex;gap:7px;justify-content:center;margin-bottom:44px}
+.fn-dot{width:7px;height:7px;border-radius:50%;background:var(--g3);transition:all .2s;cursor:pointer}
+.fn-dot.active{background:var(--red);width:22px;border-radius:4px}
+.fn-dot.done{background:var(--g4)}
+
+.fn-head{margin-bottom:40px}
+.fn-num{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:10px}
+.fn-title{font-family:'Bebas Neue',sans-serif;font-size:52px;line-height:1;letter-spacing:2px;margin-bottom:8px}
+.fn-desc{font-size:13px;color:var(--g5);line-height:1.6}
+
+/* OWNERSHIP + URGENCY ROW */
+.fn-meta-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.fn-meta-card{background:var(--g1);border:1px solid var(--g2);border-radius:10px;padding:20px 22px}
+.fn-meta-card .mc-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g5);margin-bottom:10px}
+.fn-meta-card select{width:100%;background:#f8f8f8;border:1px solid var(--g3);border-radius:6px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--white);outline:none}
+.fn-meta-card select:focus{border-color:var(--red)}
+
+/* ROOT CAUSE */
+.root-cause-row{display:flex;gap:8px;margin-bottom:20px}
+.rc-btn{flex:1;padding:10px 8px;border:1px solid var(--g3);border-radius:8px;background:transparent;color:var(--g5);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;letter-spacing:.5px;cursor:pointer;transition:all .15s;text-align:center}
+.rc-btn:hover{border-color:var(--g4);color:var(--white)}
+.rc-btn.sel-product{background:rgba(53,130,220,.12);border-color:#378ADD;color:#1a5fa0}
+.rc-btn.sel-process{background:rgba(29,158,117,.12);border-color:#1D9E75;color:#1a8a63}
+.rc-btn.sel-people{background:rgba(226,75,74,.12);border-color:#c0392b;color:#c0392b}
+.rc-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g5);margin-bottom:8px}
+
+/* QUESTIONS */
+.qblock{background:var(--g1);border:1px solid var(--g2);border-radius:10px;padding:24px 28px;margin-bottom:12px}
+.qtext{font-size:14px;font-weight:500;color:var(--white);margin-bottom:16px;line-height:1.55}
+.rating-row{display:flex;gap:7px;margin-bottom:8px}
+.rb{flex:1;aspect-ratio:1;max-width:48px;border:1px solid var(--g3);border-radius:7px;background:transparent;color:var(--g5);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.rb:hover{border-color:var(--g4);color:var(--white)}
+.rb.s1{background:var(--s1);border-color:var(--s1);color:var(--white)}
+.rb.s2{background:var(--s2);border-color:var(--s2);color:var(--black)}
+.rb.s3{background:#FAC775;border-color:#FAC775;color:var(--black)}
+.rb.s4{background:#5DCAA5;border-color:#5DCAA5;color:var(--black)}
+.rb.s5{background:var(--s4);border-color:var(--s4);color:var(--white)}
+.rating-ends{display:flex;justify-content:space-between;font-size:10px;letter-spacing:.5px;color:var(--g5);text-transform:uppercase;margin-bottom:12px}
+.answer-ta{width:100%;background:#f8f8f8;border:1px solid #2a2a2a;border-radius:7px;padding:10px 14px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--white);resize:vertical;min-height:64px;outline:none;transition:border-color .2s;line-height:1.6}
+.answer-ta:focus{border-color:var(--g3)}
+.answer-ta::placeholder{color:#bbb}
+
+/* SWOT */
+.swot-wrap{background:var(--g1);border:1px solid var(--g2);border-radius:10px;padding:24px 28px;margin-bottom:12px}
+.swot-head-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.swot-title{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--red)}
+.swot-note{font-size:11px;color:var(--g5)}
+.swot-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sc label{display:block;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;font-weight:600}
+.sc.s label{color:#1a8a63}.sc.w label{color:#c0392b}.sc.o label{color:#378ADD}.sc.t label{color:var(--s2)}
+.req-star{color:var(--red)}
+
+/* NAV */
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:44px}
+.btn-primary{background:var(--red);color:var(--white);border:none;border-radius:8px;padding:15px 36px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.btn-primary:hover{background:#c2000d;transform:translateY(-1px)}
+.btn-primary:active{transform:translateY(0)}
+.btn-ghost{background:transparent;color:var(--g5);border:1px solid var(--g3);border-radius:8px;padding:13px 28px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.btn-ghost:hover{border-color:var(--g4);color:var(--white)}
+
+/* RESULTS */
+.results{animation:fadeUp .4s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.res-header{text-align:center;padding:50px 0 44px;border-bottom:1px solid var(--g1);margin-bottom:44px}
+.res-header h1{font-family:'Bebas Neue',sans-serif;font-size:58px;line-height:1;letter-spacing:2px;margin-bottom:8px}
+.res-meta{font-size:14px;color:var(--g5);margin-top:6px}
+.res-concern{background:var(--g1);border-left:3px solid var(--red);border-radius:0 8px 8px 0;padding:16px 20px;margin-bottom:44px;font-size:14px;color:var(--g6);line-height:1.6}
+.res-concern strong{color:var(--white);display:block;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;color:var(--red)}
+
+.overall-wrap{display:grid;grid-template-columns:140px 1fr;gap:36px;align-items:center;background:var(--g1);border:1px solid var(--g2);border-radius:14px;padding:36px;margin-bottom:44px}
+.big-score .n{font-family:'Bebas Neue',sans-serif;font-size:90px;line-height:1;color:var(--red)}
+.big-score .d{font-size:12px;color:var(--g5);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.score-bars{display:flex;flex-direction:column;gap:10px}
+.sbar-row{display:grid;grid-template-columns:110px 1fr 32px;align-items:center;gap:10px}
+.sbar-lbl{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--g5)}
+.sbar-track{height:3px;background:var(--g2);border-radius:2px;overflow:hidden}
+.sbar-fill{height:100%;border-radius:2px;transition:width .8s ease}
+.sbar-val{font-size:12px;font-weight:600;text-align:right}
+
+.section-title{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid var(--g1)}
+
+/* PRIORITY */
+.priority-list{margin-bottom:44px}
+.pitem{display:grid;grid-template-columns:28px 1fr auto;gap:14px;align-items:start;padding:18px 0;border-bottom:1px solid var(--g1)}
+.prank{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--red);line-height:1;margin-top:2px}
+.pcontent h4{font-size:14px;font-weight:600;margin-bottom:3px}
+.pcontent p{font-size:12px;color:var(--g5);line-height:1.5}
+.pcontent .powner{font-size:11px;color:var(--g4);margin-top:3px;letter-spacing:.3px}
+.pbadge{font-size:12px;font-weight:700;padding:3px 12px;border-radius:20px;white-space:nowrap;margin-top:2px}
+
+/* FN REPORT CARDS */
+.fn-cards{margin-bottom:44px}
+.fn-card{background:var(--g1);border:1px solid var(--g2);border-radius:10px;margin-bottom:12px;overflow:hidden}
+.fn-card-head{padding:18px 24px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:background .15s}
+.fn-card-head:hover{background:#f5f5f5}
+.fn-card-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px}
+.fn-card-meta{display:flex;align-items:center;gap:12px}
+.fn-pill{font-size:12px;font-weight:700;padding:3px 12px;border-radius:20px}
+.chev{font-size:16px;color:var(--g5);transition:transform .2s;display:inline-block}
+.fn-body{padding:0 24px;max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease}
+.fn-body.open{max-height:2400px;padding:4px 24px 24px}
+
+.fn-tag-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.fn-tag{font-size:11px;padding:3px 10px;border-radius:4px;font-weight:500;letter-spacing:.3px}
+.tag-product{background:rgba(53,130,220,.12);color:#1a5fa0}
+.tag-process{background:rgba(29,158,117,.12);color:#1a8a63}
+.tag-people{background:rgba(226,75,74,.12);color:#c0392b}
+.tag-owner{background:rgba(136,136,136,.12);color:#555}
+.tag-urgency-1{background:rgba(29,158,117,.1);color:#1a8a63}
+.tag-urgency-2{background:rgba(239,159,39,.1);color:#9a6800}
+.tag-urgency-3{background:rgba(226,75,74,.1);color:#c0392b}
+
+.fn-swot{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.fn-sc{background:#f8f8f8;border-radius:8px;padding:14px}
+.fn-sc .sh{font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:6px}
+.fn-sc.s .sh{color:#1a8a63}.fn-sc.w .sh{color:#c0392b}.fn-sc.o .sh{color:#378ADD}.fn-sc.t .sh{color:var(--s2)}
+.fn-sc p{font-size:12px;color:var(--g6);line-height:1.6}
+
+.fn-qa{margin-top:4px}
+.fn-qa-item{padding:10px 0;border-top:1px solid var(--g1)}
+.fn-qa-q{font-size:11px;color:var(--g4);margin-bottom:3px;line-height:1.5}
+.fn-qa-score{display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:4px;margin-left:6px;vertical-align:middle}
+.fn-qa-a{font-size:13px;color:var(--white);line-height:1.6}
+
+/* CTA */
+.cta-block{background:var(--g1);border:1px solid var(--g2);border-radius:14px;padding:44px;text-align:center;margin-top:44px}
+.cta-block h2{font-family:'Bebas Neue',sans-serif;font-size:40px;letter-spacing:2px;margin-bottom:10px}
+.cta-block p{font-size:14px;color:var(--g5);margin-bottom:28px;line-height:1.7;max-width:420px;margin-left:auto;margin-right:auto}
+.cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-cta{background:var(--red);color:var(--white);border:none;border-radius:8px;padding:16px 40px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}
+.btn-cta:hover{background:#c2000d;transform:translateY(-1px)}
+
+/* UTILS */
+.sc1{background:rgba(192,57,43,.1);color:#c0392b}
+.sc2{background:rgba(214,137,16,.1);color:#9a6800}
+.sc3{background:rgba(183,134,11,.1);color:#7a5c00}
+.sc4{background:rgba(26,138,99,.1);color:#1a8a63}
+.sc5{background:rgba(13,122,90,.1);color:#0d7a5a}
+.bc1{background:var(--s1)}.bc2{background:var(--s2)}.bc3{background:#FAC775}.bc4{background:#5DCAA5}.bc5{background:var(--s4)}
+
+@media(max-width:600px){
+  .main{padding:36px 20px 100px}.header{padding:14px 20px}.hdr-center{display:none}
+  .intro h1{font-size:48px}.fn-title{font-size:38px}.fn-meta-row{grid-template-columns:1fr}
+  .swot-grid{grid-template-columns:1fr}.fn-swot{grid-template-columns:1fr}
+  .overall-wrap{grid-template-columns:1fr}.field-row{grid-template-columns:1fr}
+}
+@media print{
+  body{background:#fff;color:#000}.header,.nav-row,.cta-block{display:none}
+  .fn-body{max-height:none!important;padding:4px 24px 24px!important}
+  .card,.fn-card,.overall-wrap,.res-concern{background:#f0f0f0;border-color:#ccc}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">Pivot<span>Yes</span></div>
+  <div class="hdr-center" id="hdrProgress" style="display:none">
+    <div class="prog-label"><span id="progLbl">Getting started</span></div>
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+  <div class="hdr-right" id="hdrCounter"></div>
+</div>
+
+<div class="main">
+
+  <!-- INTRO -->
+  <div id="s-intro" class="screen active">
+    <div class="intro">
+      <div class="eyebrow">PivotYes Consulting</div>
+      <h1>Business Assessment</h1>
+      <p>A function-by-function diagnostic that shows exactly where your business stands — and where to focus first.</p>
+      <div class="meta-row">
+        <div class="meta-item"><div class="n">6</div><div class="l">Functions</div></div>
+        <div class="meta-item"><div class="n">~20</div><div class="l">Minutes</div></div>
+        <div class="meta-item"><div class="n">1</div><div class="l">Clear Report</div></div>
+      </div>
+      <div class="card intake-card">
+        <div class="card-label">Tell us about your business</div>
+        <div class="field-row">
+          <div class="field"><label>Business Name</label><input type="text" id="f-biz" placeholder="Your company"></div>
+          <div class="field"><label>Your Name</label><input type="text" id="f-name" placeholder="Owner / Founder"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Industry</label><input type="text" id="f-industry" placeholder="e.g. Manufacturing, Services..."></div>
+          <div class="field"><label>Business Stage</label>
+            <select id="f-stage">
+              <option value="">Select one</option>
+              <option>Early Stage (0–2 years)</option>
+              <option>Growth Stage (2–5 years)</option>
+              <option>Established (5–10 years)</option>
+              <option>Scaling (10+ years)</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Number of Employees</label>
+            <select id="f-employees">
+              <option value="">Select range</option>
+              <option>Just me</option>
+              <option>2–5</option>
+              <option>6–15</option>
+              <option>16–50</option>
+              <option>51–150</option>
+              <option>150+</option>
+            </select>
+          </div>
+          <div class="field"><label>Annual Revenue</label>
+            <select id="f-revenue">
+              <option value="">Select range</option>
+              <option>Under $250K</option>
+              <option>$250K–$1M</option>
+              <option>$1M–$3M</option>
+              <option>$3M–$10M</option>
+              <option>$10M–$25M</option>
+              <option>$25M+</option>
+            </select>
+          </div>
+        </div>
+        <div class="field"><label>What is the #1 thing keeping you up at night right now?</label><textarea id="f-concern" placeholder="Be specific — this shapes how we read your results..."></textarea></div>
+      </div>
+      <button class="btn-primary" onclick="startAssessment()">Begin Assessment →</button>
+    </div>
+  </div>
+
+  <!-- FUNCTION -->
+  <div id="s-function" class="screen">
+    <div class="fn-dots" id="fnDots"></div>
+    <div id="fnContent"></div>
+    <div class="nav-row">
+      <button class="btn-ghost" id="btnBack" onclick="goBack()">← Back</button>
+      <button class="btn-primary" id="btnNext" onclick="goNext()">Next →</button>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="s-results" class="screen">
+    <div id="resultsContent"></div>
+  </div>
+
+</div>
+
+<script>
+const FNS = [
+  { id:'marketing', name:'Marketing', desc:'How you attract, engage, and position your business in the market.',
+    questions:[
+      'We have a clearly defined ideal client — we know exactly who we are selling to.',
+      'Our message is consistent across all channels — people understand what we do and why it matters.',
+      'We have active channels generating qualified interest on a regular basis.',
+      'We track what is generating leads and what is not.',
+      'Our marketing reaches decision-makers — not just browsers.'
+    ]},
+  { id:'sales', name:'Sales', desc:'How you convert interest into revenue — consistently.',
+    questions:[
+      'We have a defined, repeatable sales process that the team follows.',
+      'We have full visibility into the pipeline — what is active, closing, and stalled.',
+      'Revenue targets are set and tracked on a weekly basis.',
+      'Sales conversations focus on the client\'s problem, not our service list.',
+      'There is a follow-up system — no lead falls through the cracks after first contact.'
+    ]},
+  { id:'operations', name:'Operations', desc:'How work gets done — systems, process, and delivery.',
+    questions:[
+      'Our core processes are documented — not just in people\'s heads.',
+      'We can deliver our product or service without the owner in every conversation.',
+      'There are clear quality standards and someone is accountable for them.',
+      'The team knows what to do when something breaks — there is a system for exceptions.',
+      'Capacity is planned — we know our bandwidth before it becomes a problem.'
+    ]},
+  { id:'finance', name:'Finance', desc:'How money flows in, out, and across the business.',
+    questions:[
+      'We know our numbers — revenue, expenses, and margins — without waiting for an accountant.',
+      'We have a budget and compare actual performance against it regularly.',
+      'Cash flow is predictable — we are not scrambling to cover payroll or bills.',
+      'We price based on margin, not just what feels competitive.',
+      'Financial decisions are made with data, not gut feel alone.'
+    ]},
+  { id:'hr', name:'HR & People', desc:'How you hire, develop, and retain the right people.',
+    questions:[
+      'Every role has a clear job description — people know exactly what they are accountable for.',
+      'We hire based on a defined process, not just who shows up or who we like.',
+      'Performance is reviewed regularly — not only when there is a problem.',
+      'Team members know how to grow inside this company — there is a path forward.',
+      'We have policies and practices that protect the business and treat people fairly.'
+    ]},
+  { id:'leadership', name:'Leadership', desc:'How you lead, decide, delegate, and drive the business forward.',
+    questions:[
+      'There is a clear vision for where this business is going — and the team knows it.',
+      'Decisions are made at the right level — the owner is not the bottleneck for everything.',
+      'We hold regular structured meetings that actually move the business forward.',
+      'The owner works on the business regularly — not just in it.',
+      'There is a 90-day plan — the team is aligned on what is next.'
+    ]}
+];
+
+const SCORE_LABEL = {1:'Not in place',2:'Barely started',3:'In progress',4:'Mostly working',5:'Fully in place'};
+const URGENCY_LABEL = {1:'Low urgency',2:'Medium urgency',3:'High urgency — fix now'};
+const OWNER_OPTIONS = ['Owner / Founder','No one — it\'s unowned','Shared / unclear','Team member / Manager','Dedicated role'];
+const ROOT_CAUSES = ['Product','Process','People'];
+
+let cur = 0, ans = {}, client = {};
+
+function startAssessment(){
+  client = {
+    biz: document.getElementById('f-biz').value.trim() || 'Your Business',
+    name: document.getElementById('f-name').value.trim() || '',
+    industry: document.getElementById('f-industry').value.trim() || '',
+    stage: document.getElementById('f-stage').value || '',
+    employees: document.getElementById('f-employees').value || '',
+    revenue: document.getElementById('f-revenue').value || '',
+    concern: document.getElementById('f-concern').value.trim() || ''
+  };
+  FNS.forEach(f=>{ ans[f.id]={scores:{},notes:{},swot:{s:'',w:'',o:'',t:''},owner:'',urgency:'',rootCause:''}; });
+  cur = 0;
+  showFn(0);
+  document.getElementById('hdrProgress').style.display='flex';
+}
+
+function showFn(idx){
+  document.getElementById('s-intro').classList.remove('active');
+  document.getElementById('s-function').classList.add('active');
+  cur = idx;
+  renderDots();
+  renderFn();
+  updateProgress();
+  window.scrollTo(0,0);
+}
+
+function renderDots(){
+  document.getElementById('fnDots').innerHTML = FNS.map((f,i)=>{
+    let c='fn-dot';
+    if(i===cur) c+=' active';
+    else if(allScored(f.id)) c+=' done';
+    return `<div class="${c}" onclick="jump(${i})" title="${f.name}"></div>`;
+  }).join('');
+}
+
+function allScored(id){ return Object.keys(ans[id].scores).length===FNS.find(f=>f.id===id).questions.length; }
+
+function jump(i){ saveCur(); showFn(i); }
+
+function renderFn(){
+  const fn = FNS[cur];
+  const a = ans[fn.id];
+  let h = `<div class="fn-head">
+    <div class="fn-num">Function ${cur+1} of 6</div>
+    <div class="fn-title">${fn.name}</div>
+    <div class="fn-desc">${fn.desc}</div>
+  </div>`;
+
+  h += `<div class="fn-meta-row">
+    <div class="fn-meta-card">
+      <div class="mc-label">Who currently owns ${fn.name}?</div>
+      <select id="own_${fn.id}" onchange="ans['${fn.id}'].owner=this.value">
+        <option value="">Select one</option>
+        ${OWNER_OPTIONS.map(o=>`<option${a.owner===o?' selected':''}>${o}</option>`).join('')}
+      </select>
+    </div>
+    <div class="fn-meta-card">
+      <div class="mc-label">How urgent is fixing this?</div>
+      <select id="urg_${fn.id}" onchange="ans['${fn.id}'].urgency=this.value">
+        <option value="">Select one</option>
+        <option value="1"${a.urgency==='1'?' selected':''}>1 — Low urgency</option>
+        <option value="2"${a.urgency==='2'?' selected':''}>2 — Medium urgency</option>
+        <option value="3"${a.urgency==='3'?' selected':''}>3 — Fix this now</option>
+      </select>
+    </div>
+  </div>`;
+
+  h += `<div class="card" style="margin-bottom:12px;padding:20px 24px">
+    <div class="rc-label">Where does the main breakdown live in ${fn.name}?</div>
+    <div class="root-cause-row">
+      ${ROOT_CAUSES.map(rc=>{
+        const cls = a.rootCause===rc ? `sel-${rc.toLowerCase()}` : '';
+        return `<button class="rc-btn ${cls}" onclick="setRC('${fn.id}','${rc}',this)">${rc}</button>`;
+      }).join('')}
+    </div>
+  </div>`;
+
+  fn.questions.forEach((q,qi)=>{
+    const sc = a.scores[qi]||0;
+    const nt = a.notes[qi]||'';
+    h += `<div class="qblock">
+      <div class="qtext">${q}</div>
+      <div class="rating-row">${[1,2,3,4,5].map(n=>`<button class="rb${sc===n?' s'+n:''}" onclick="setScore('${fn.id}',${qi},${n},this)" data-fn="${fn.id}" data-qi="${qi}" data-v="${n}">${n}</button>`).join('')}</div>
+      <div class="rating-ends"><span>Not in place</span><span>Fully in place</span></div>
+      <textarea class="answer-ta" id="nt_${fn.id}_${qi}" placeholder="Add context or specifics... (optional)">${nt}</textarea>
+    </div>`;
+  });
+
+  h += `<div class="swot-wrap">
+    <div class="swot-head-row">
+      <div class="swot-title">${fn.name} — Strengths & Weaknesses</div>
+      <div class="swot-note">Opportunities & Threats optional</div>
+    </div>
+    <div class="swot-grid">
+      <div class="sc s"><label>Strengths <span class="req-star">*</span></label><textarea class="answer-ta" id="sw_${fn.id}_s" placeholder="What is already working well here...">${a.swot.s}</textarea></div>
+      <div class="sc w"><label>Weaknesses <span class="req-star">*</span></label><textarea class="answer-ta" id="sw_${fn.id}_w" placeholder="Where it is breaking down or missing...">${a.swot.w}</textarea></div>
+      <div class="sc o"><label>Opportunities</label><textarea class="answer-ta" id="sw_${fn.id}_o" placeholder="What could be better or built...">${a.swot.o}</textarea></div>
+      <div class="sc t"><label>Threats / Risks</label><textarea class="answer-ta" id="sw_${fn.id}_t" placeholder="What could hurt you here...">${a.swot.t}</textarea></div>
+    </div>
+  </div>`;
+
+  document.getElementById('fnContent').innerHTML = h;
+  document.getElementById('btnBack').style.visibility = cur===0?'hidden':'visible';
+  document.getElementById('btnNext').textContent = cur===5 ? 'View My Report →' : 'Next Function →';
+}
+
+function setScore(id,qi,val,btn){
+  ans[id].scores[qi]=val;
+  document.querySelectorAll(`[data-fn="${id}"][data-qi="${qi}"]`).forEach(b=>b.className='rb');
+  btn.classList.add('s'+val);
+}
+
+function setRC(id,rc,btn){
+  ans[id].rootCause=rc;
+  btn.closest('.root-cause-row').querySelectorAll('.rc-btn').forEach(b=>{b.className='rc-btn';});
+  btn.classList.add('sel-'+rc.toLowerCase());
+}
+
+function saveCur(){
+  const fn=FNS[cur], id=fn.id;
+  fn.questions.forEach((_,qi)=>{ const el=document.getElementById(`nt_${id}_${qi}`); if(el) ans[id].notes[qi]=el.value; });
+  ['s','w','o','t'].forEach(k=>{ const el=document.getElementById(`sw_${id}_${k}`); if(el) ans[id].swot[k]=el.value; });
+  const ow=document.getElementById(`own_${id}`); if(ow) ans[id].owner=ow.value;
+  const ug=document.getElementById(`urg_${id}`); if(ug) ans[id].urgency=ug.value;
+}
+
+function goNext(){ saveCur(); cur<5 ? showFn(cur+1) : showResults(); }
+function goBack(){ saveCur(); if(cur>0) showFn(cur-1); }
+
+function updateProgress(){
+  const pct=Math.round((cur/6)*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progLbl').textContent=FNS[cur].name;
+  document.getElementById('hdrCounter').textContent=`${cur+1} / 6`;
+}
+
+function avg(id){
+  const sc=Object.values(ans[id].scores);
+  if(!sc.length) return 0;
+  return +(sc.reduce((a,b)=>a+b,0)/FNS.find(f=>f.id===id).questions.length).toFixed(1);
+}
+
+function sc(v){ if(v<=1.5)return 'sc1'; if(v<=2.5)return 'sc2'; if(v<=3.5)return 'sc3'; if(v<=4.5)return 'sc4'; return 'sc5'; }
+function bc(v){ if(v<=1.5)return 'bc1'; if(v<=2.5)return 'bc2'; if(v<=3.5)return 'bc3'; if(v<=4.5)return 'bc4'; return 'bc5'; }
+function status(v){ if(v<=1.5)return 'Critical'; if(v<=2.5)return 'Needs work'; if(v<=3.5)return 'Building'; if(v<=4.5)return 'Solid'; return 'Strong'; }
+
+function priorityNote(f){
+  const fn=FNS.find(x=>x.id===f.id);
+  const low=fn.questions.filter((_,qi)=>(ans[f.id].scores[qi]||0)<=2);
+  if(low.length) return low[0].split('.')[0].substring(0,90)+(low[0].length>90?'...':'');
+  if(ans[f.id].swot.w) return ans[f.id].swot.w.substring(0,90)+(ans[f.id].swot.w.length>90?'...':'');
+  return status(f.avg)+' — expand below for detail.';
+}
+
+function showResults(){
+  document.getElementById('s-function').classList.remove('active');
+  document.getElementById('s-results').classList.add('active');
+  document.getElementById('hdrProgress').style.display='none';
+  document.getElementById('hdrCounter').textContent='Report';
+
+  const scores = FNS.map(f=>({...f,avg:avg(f.id)}));
+  const overall = +(scores.reduce((a,f)=>a+f.avg,0)/6).toFixed(1);
+  const sorted = [...scores].sort((a,b)=>{
+    const ua=parseInt(ans[a.id].urgency)||0, ub=parseInt(ans[b.id].urgency)||0;
+    if(ub!==ua) return ub-ua;
+    return a.avg-b.avg;
+  });
+  const today=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+
+  let h=`<div class="res-header">
+    <div class="eyebrow">Assessment Report · ${today}</div>
+    <h1>Business Structure Report</h1>
+    <div class="res-meta">${client.biz}${client.name?' · '+client.name:''}${client.industry?' · '+client.industry:''}${client.employees?' · '+client.employees+' employees':''}${client.revenue?' · '+client.revenue:''}</div>
+  </div>`;
+
+  if(client.concern){
+    h+=`<div class="res-concern"><strong>#1 Concern</strong>${client.concern}</div>`;
+  }
+
+  h+=`<div class="overall-wrap">
+    <div class="big-score"><div class="n">${overall}</div><div class="d">out of 5.0</div></div>
+    <div class="score-bars">${scores.map(f=>`
+      <div class="sbar-row">
+        <div class="sbar-lbl">${f.name}</div>
+        <div class="sbar-track"><div class="sbar-fill ${bc(f.avg)}" style="width:${(f.avg/5)*100}%"></div></div>
+        <div class="sbar-val ${sc(f.avg)}" style="background:transparent">${f.avg}</div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+
+  h+=`<div class="priority-list"><div class="section-title">Priority Fix List — Urgency + Score Combined</div>
+    ${sorted.map((f,i)=>{
+      const a=ans[f.id];
+      const urgTag=a.urgency?`<span class="fn-tag tag-urgency-${a.urgency}">${URGENCY_LABEL[a.urgency]}</span>`:'';
+      return `<div class="pitem">
+        <div class="prank">${i+1}</div>
+        <div class="pcontent">
+          <h4>${f.name}</h4>
+          <p>${priorityNote(f)}</p>
+          ${a.owner?`<div class="powner">Owner: ${a.owner}</div>`:''}
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
+          <div class="pbadge ${sc(f.avg)}">${f.avg} · ${status(f.avg)}</div>
+          ${urgTag}
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+
+  h+=`<div class="fn-cards"><div class="section-title">Function Detail</div>
+    ${scores.map(f=>{
+      const a=ans[f.id];
+      const fn=FNS.find(x=>x.id===f.id);
+      const rcTag=a.rootCause?`<span class="fn-tag tag-${a.rootCause.toLowerCase()}">Root cause: ${a.rootCause}</span>`:'';
+      const owTag=a.owner?`<span class="fn-tag tag-owner">${a.owner}</span>`:'';
+      const ugTag=a.urgency?`<span class="fn-tag tag-urgency-${a.urgency}">${URGENCY_LABEL[a.urgency]}</span>`:'';
+      const sw=a.swot;
+      return `<div class="fn-card">
+        <div class="fn-card-head" onclick="tog('${f.id}')">
+          <div class="fn-card-title">${f.name}</div>
+          <div class="fn-card-meta">
+            <span class="fn-pill ${sc(f.avg)}">${f.avg}/5 · ${status(f.avg)}</span>
+            <span class="chev" id="chev_${f.id}">▾</span>
+          </div>
+        </div>
+        <div class="fn-body" id="body_${f.id}">
+          <div class="fn-tag-row">${rcTag}${owTag}${ugTag}</div>
+          <div class="fn-swot">
+            <div class="fn-sc s"><div class="sh">Strengths</div><p>${sw.s||'—'}</p></div>
+            <div class="fn-sc w"><div class="sh">Weaknesses</div><p>${sw.w||'—'}</p></div>
+            <div class="fn-sc o"><div class="sh">Opportunities</div><p>${sw.o||'—'}</p></div>
+            <div class="fn-sc t"><div class="sh">Threats / Risks</div><p>${sw.t||'—'}</p></div>
+          </div>
+          <div class="fn-qa">${fn.questions.map((q,qi)=>{
+            const s=a.scores[qi]||0, n=a.notes[qi]||'';
+            return `<div class="fn-qa-item">
+              <div class="fn-qa-q">${q} <span class="fn-qa-score ${sc(s)}">${s}/5</span></div>
+              ${n?`<div class="fn-qa-a">${n}</div>`:''}
+            </div>`;
+          }).join('')}</div>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+
+  h+=`<div class="cta-block">
+    <h2>Ready to Fix This?</h2>
+    <p>You now know exactly where the gaps are. The next step is building the plan — and making sure the right structure is in place to close them.</p>
+    <div class="cta-row">
+      <a class="btn-cta" href="https://calendly.com/pivotyes" target="_blank">Book a Strategy Call</a>
+      <button class="btn-ghost" onclick="window.print()">Save as PDF</button>
+      <button class="btn-ghost" onclick="restart()">Start Over</button>
+    </div>
+  </div>`;
+
+  document.getElementById('resultsContent').innerHTML=h;
+  window.scrollTo(0,0);
+}
+
+function tog(id){
+  const b=document.getElementById('body_'+id), c=document.getElementById('chev_'+id);
+  b.classList.toggle('open');
+  c.style.transform=b.classList.contains('open')?'rotate(180deg)':'';
+}
+
+function restart(){
+  ans={}; client={}; cur=0;
+  document.getElementById('s-results').classList.remove('active');
+  document.getElementById('s-intro').classList.add('active');
+  document.getElementById('hdrProgress').style.display='none';
+  document.getElementById('hdrCounter').textContent='';
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
