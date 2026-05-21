@@ -528,6 +528,17 @@ textarea { min-height: 88px; resize: vertical; line-height: 1.6; }
   margin: 36px 0 32px;
 }
 
+/* ── CLIENT HEADER ── */
+.bp-client-name-display {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px; letter-spacing: 0.04em;
+  color: var(--black);
+}
+.bp-client-biz-display {
+  font-size: 13px; font-weight: 300;
+  color: var(--muted); margin-top: 2px;
+}
+
 /* ── DIFF TAG ── */
 .diff-badge {
   display: inline-block;
@@ -543,7 +554,7 @@ textarea { min-height: 88px; resize: vertical; line-height: 1.6; }
 <!-- TOP NAV -->
 <nav class="top-nav">
   <a href="#" class="brand" onclick="showScreen('landing')">PivotYes</a>
-  <span class="tool-name">Vision Builder</span>
+  <span class="tool-name">Vision Builder<span id="nav-client-name"></span></span>
 </nav>
 
 <!-- STEP BAR (hidden on landing) -->
@@ -568,6 +579,18 @@ textarea { min-height: 88px; resize: vertical; line-height: 1.6; }
     <span class="tool-tag">Owner Tool · Leadership &amp; Vision</span>
     <h1>The <em>Vision</em><br>Builder</h1>
     <p class="intro">Seven steps from mindset to blueprint. Know who you are, what you do, why you exist, and exactly where you're going — before you build anything else.</p>
+    <div class="client-fields">
+      <div class="two-col" style="max-width:480px;margin-bottom:20px">
+        <div>
+          <label class="fg-label" style="margin-bottom:6px;display:block">Your name</label>
+          <input type="text" id="client-name" placeholder="e.g. Sarah Cohen" oninput="updateClientHeader()">
+        </div>
+        <div>
+          <label class="fg-label" style="margin-bottom:6px;display:block">Business name</label>
+          <input type="text" id="client-biz" placeholder="e.g. Fleck Free" oninput="updateClientHeader()">
+        </div>
+      </div>
+    </div>
     <button class="btn-start" onclick="startTool()">I'm ready <span class="arrow">→</span></button>
 
     <div class="how-section">
@@ -1013,6 +1036,11 @@ textarea { min-height: 88px; resize: vertical; line-height: 1.6; }
     <h2 class="step-h">Your complete<br><em>blueprint.</em></h2>
     <p class="step-intro">Click any field to edit directly. This is your live north star document.</p>
 
+    <div id="bp-client-header" style="display:none;margin-bottom:24px">
+      <div class="bp-client-name-display"></div>
+      <div class="bp-client-biz-display"></div>
+    </div>
+
     <div class="bp-edit-notice">
       <span class="bp-edit-icon">✎</span> Click any card to edit its content inline.
     </div>
@@ -1096,6 +1124,25 @@ function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + name).classList.add('active');
   window.scrollTo(0, 0);
+}
+
+function updateClientHeader() {
+  const name = (document.getElementById('client-name') || {}).value || '';
+  const biz  = (document.getElementById('client-biz')  || {}).value || '';
+  // Nav
+  const navEl = document.getElementById('nav-client-name');
+  if (navEl) navEl.textContent = name ? ' · ' + name : '';
+  // Blueprint header
+  const hdr = document.getElementById('bp-client-header');
+  if (hdr) {
+    if (name || biz) {
+      hdr.style.display = 'block';
+      hdr.querySelector('.bp-client-name-display').textContent = name;
+      hdr.querySelector('.bp-client-biz-display').textContent = biz;
+    } else {
+      hdr.style.display = 'none';
+    }
+  }
 }
 
 function startTool() {
@@ -1315,6 +1362,7 @@ function buildBlueprint() {
   let missionStmt = '';
   if (mw) { missionStmt = mw; if (mwho) missionStmt += ' for ' + mwho; if (mo) missionStmt += ' — so that ' + mo + '.'; }
 
+  updateClientHeader();
   const out = document.getElementById('blueprint-output');
   out.innerHTML = '';
   let hasContent = false;
@@ -1412,7 +1460,10 @@ function getExportCSS() {
 function buildExportDoc(innerHTML) {
   var date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   var fonts = '<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">';
-  var header = '<div class="print-header"><div><div class="print-brand">PivotYes</div><div class="print-title">Vision <em>Blueprint</em></div></div><div class="print-date">Generated<br>' + date + '</div></div>';
+  var clientName = (document.getElementById('client-name') || {}).value || '';
+  var clientBiz  = (document.getElementById('client-biz')  || {}).value || '';
+  var clientLine = clientName || clientBiz ? '<div style="font-size:13px;font-weight:300;color:#6b6860;margin-top:4px">' + [clientName, clientBiz].filter(Boolean).join(' · ') + '</div>' : '';
+  var header = '<div class="print-header"><div><div class="print-brand">PivotYes</div><div class="print-title">Vision <em>Blueprint</em></div>' + clientLine + '</div><div class="print-date">Generated<br>' + date + '</div></div>';
   return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Vision Blueprint - PivotYes</title>' + fonts + '<style>' + getExportCSS() + '</style></head><body>' + header + innerHTML + '</body></html>';
 }
 
