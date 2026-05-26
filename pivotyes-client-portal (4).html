@@ -1,0 +1,2007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PivotYes — Client Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --red: #CC0000;
+    --red-dark: #990000;
+    --red-light: #FF3333;
+    --black: #0A0A0A;
+    --white: #FFFFFF;
+    --gray-50: #F8F8F8;
+    --gray-100: #F0F0F0;
+    --gray-200: #E0E0E0;
+    --gray-400: #999999;
+    --gray-600: #555555;
+    --gray-800: #222222;
+    --green: #1A7A4A;
+    --green-bg: #E8F5EE;
+    --yellow: #C47A00;
+    --yellow-bg: #FFF3DC;
+    --red-bg: #FDEAEA;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--gray-50);
+    color: var(--black);
+    min-height: 100vh;
+  }
+
+  /* ── TOP NAV ── */
+  .nav {
+    background: var(--black);
+    padding: 0 40px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--white);
+    letter-spacing: 3px;
+  }
+  .nav-brand span { color: var(--red); }
+  .nav-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--gray-400);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--black);
+    padding: 48px 40px 40px;
+    border-bottom: 3px solid var(--red);
+  }
+  .hero-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 40px;
+  }
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--red);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 64px;
+    color: var(--white);
+    line-height: 1;
+    letter-spacing: 2px;
+  }
+  .hero-title span { color: var(--red); }
+  .hero-subtitle {
+    font-size: 15px;
+    color: var(--gray-400);
+    margin-top: 10px;
+    font-weight: 300;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 32px;
+    align-items: flex-end;
+  }
+  .stat {
+    text-align: right;
+  }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px;
+    color: var(--white);
+    line-height: 1;
+  }
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--gray-400);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .stat-divider {
+    width: 1px;
+    height: 48px;
+    background: var(--gray-600);
+  }
+
+  /* ── MONTH TIMELINE ── */
+  .timeline-section {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 0 40px;
+  }
+  .timeline-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+  }
+  .month-tab {
+    padding: 20px 24px;
+    cursor: pointer;
+    border-right: 1px solid var(--gray-200);
+    transition: all 0.2s;
+    position: relative;
+    border-bottom: 3px solid transparent;
+  }
+  .month-tab:last-child { border-right: none; }
+  .month-tab:hover { background: var(--gray-50); }
+  .month-tab.active {
+    border-bottom-color: var(--red);
+    background: var(--white);
+  }
+  .month-tab.active .month-num { color: var(--red); }
+  .month-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--gray-200);
+    line-height: 1;
+    transition: color 0.2s;
+  }
+  .month-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--black);
+    margin-top: 2px;
+  }
+  .month-phase {
+    font-size: 11px;
+    color: var(--gray-400);
+    margin-top: 2px;
+  }
+  .month-badge {
+    display: inline-block;
+    background: var(--red);
+    color: var(--white);
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    padding: 2px 7px;
+    border-radius: 2px;
+    margin-top: 6px;
+    text-transform: uppercase;
+  }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 40px;
+  }
+
+  /* ── MONTH PANEL ── */
+  .month-panel { display: none; }
+  .month-panel.active { display: block; }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gray-400);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--gray-200);
+  }
+
+  /* ── ACCOMPLISHMENTS ── */
+  .accomplishments {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-left: 4px solid var(--green);
+    border-radius: 4px;
+    padding: 24px 28px;
+    margin-bottom: 32px;
+  }
+  .acc-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--green);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    font-family: 'DM Mono', monospace;
+  }
+  .acc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 10px;
+  }
+  .acc-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13.5px;
+    color: var(--gray-800);
+    line-height: 1.4;
+  }
+  .acc-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  /* ── PILLARS GRID ── */
+  .pillars-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .pillar-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .pillar-card:hover {
+    border-color: var(--red);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  }
+  .pillar-card.expanded {
+    border-color: var(--red);
+    box-shadow: 0 8px 24px rgba(204,0,0,0.12);
+  }
+  .pillar-card-top {
+    padding: 16px 18px 14px;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .pillar-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    background: var(--black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    font-size: 15px;
+  }
+  .pillar-icon.red { background: var(--red); }
+  .pillar-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--black);
+    line-height: 1.2;
+  }
+  .pillar-entity {
+    font-size: 11px;
+    color: var(--gray-400);
+    margin-top: 2px;
+    font-family: 'DM Mono', monospace;
+  }
+  .pillar-card-bottom {
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 20px;
+  }
+  .status-pill.active { background: var(--green-bg); color: var(--green); }
+  .status-pill.progress { background: var(--yellow-bg); color: var(--yellow); }
+  .status-pill.attention { background: var(--red-bg); color: var(--red); }
+  .status-pill::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .expand-arrow {
+    font-size: 12px;
+    color: var(--gray-400);
+    transition: transform 0.2s;
+  }
+  .pillar-card.expanded .expand-arrow { transform: rotate(180deg); color: var(--red); }
+
+  /* ── PILLAR DETAIL PANEL ── */
+  .detail-panel {
+    display: none;
+    grid-column: 1 / -1;
+    background: var(--white);
+    border: 1px solid var(--red);
+    border-radius: 6px;
+    padding: 28px 32px;
+    margin-top: -8px;
+    animation: slideDown 0.2s ease;
+  }
+  .detail-panel.open { display: block; }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .detail-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .detail-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 1px;
+    color: var(--black);
+  }
+  .detail-close {
+    width: 32px;
+    height: 32px;
+    background: var(--gray-100);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--gray-600);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  .detail-close:hover { background: var(--red); color: var(--white); }
+
+  .detail-cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 28px;
+  }
+  .detail-col {
+    background: var(--gray-50);
+    border-radius: 4px;
+    padding: 18px 20px;
+  }
+  .detail-col-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .detail-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--gray-800);
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+  .detail-item::before {
+    content: '▸';
+    color: var(--red);
+    font-size: 10px;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  /* ── MONTH HISTORY IN DETAIL ── */
+  .history-section {
+    border-top: 1px solid var(--gray-200);
+    padding-top: 20px;
+  }
+  .history-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gray-400);
+    margin-bottom: 16px;
+  }
+  .history-months {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .history-month {
+    border: 1px solid var(--gray-200);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .history-month.current { border-color: var(--red); }
+  .history-month-header {
+    padding: 8px 12px;
+    background: var(--gray-100);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    color: var(--gray-600);
+    text-transform: uppercase;
+  }
+  .history-month.current .history-month-header {
+    background: var(--red);
+    color: var(--white);
+  }
+  .history-month-body {
+    padding: 10px 12px;
+  }
+  .history-item {
+    font-size: 12px;
+    color: var(--gray-600);
+    margin-bottom: 5px;
+    line-height: 1.35;
+    display: flex;
+    gap: 6px;
+  }
+  .history-item::before {
+    content: '·';
+    color: var(--gray-400);
+    flex-shrink: 0;
+  }
+
+  /* ── NEXT STEPS ── */
+  .next-steps {
+    background: var(--black);
+    border-radius: 6px;
+    padding: 28px 32px;
+    margin-top: 8px;
+  }
+  .next-steps-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .next-steps-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--white);
+    letter-spacing: 2px;
+  }
+  .next-steps-month {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--red);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border: 1px solid var(--red);
+    border-radius: 2px;
+  }
+  .next-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+  }
+  .next-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 4px;
+    border-left: 2px solid var(--red);
+  }
+  .next-item-text {
+    font-size: 13px;
+    color: var(--white);
+    line-height: 1.35;
+    flex: 1;
+  }
+  .next-item-owner {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--gray-400);
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── WEEKLY TIMELINE ── */
+  .weekly-timeline {
+    margin-top: 8px;
+  }
+  .weekly-timeline-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .weekly-timeline-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--black);
+    letter-spacing: 2px;
+  }
+  .weekly-timeline-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--red);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border: 1px solid var(--red);
+    border-radius: 2px;
+  }
+  .weeks-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    position: relative;
+  }
+  /* connector line between weeks */
+  .weeks-grid::before {
+    content: '';
+    position: absolute;
+    top: 28px;
+    left: calc(12.5% + 16px);
+    right: calc(12.5% + 16px);
+    height: 2px;
+    background: var(--gray-200);
+    z-index: 0;
+  }
+  .week-card {
+    position: relative;
+    z-index: 1;
+    padding: 0 10px;
+  }
+  .week-card:first-child { padding-left: 0; }
+  .week-card:last-child  { padding-right: 0; }
+  .week-node {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 2px solid var(--gray-200);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    transition: all 0.2s;
+  }
+  .week-card.active .week-node {
+    background: var(--red);
+    border-color: var(--red);
+    box-shadow: 0 0 0 4px rgba(204,0,0,0.12);
+  }
+  .week-card.done .week-node {
+    background: var(--black);
+    border-color: var(--black);
+  }
+  .week-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    color: var(--gray-400);
+    line-height: 1;
+  }
+  .week-card.active .week-num,
+  .week-card.done .week-num { color: var(--white); }
+  .week-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    color: var(--gray-400);
+    letter-spacing: 0.5px;
+    margin-top: 1px;
+  }
+  .week-card.active .week-date { color: rgba(255,255,255,0.7); }
+  .week-card.done .week-date   { color: rgba(255,255,255,0.5); }
+  .week-theme {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: 10px;
+    line-height: 1.25;
+  }
+  .week-card.active .week-theme { color: var(--red); }
+  .week-bullets {
+    list-style: none;
+    padding: 0;
+  }
+  .week-bullets li {
+    font-size: 12px;
+    color: var(--gray-600);
+    line-height: 1.4;
+    margin-bottom: 6px;
+    padding-left: 12px;
+    position: relative;
+  }
+  .week-bullets li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--red);
+    font-size: 9px;
+    top: 2px;
+  }
+  .week-card.active .week-bullets li { color: var(--gray-800); }
+  @media(max-width:700px){
+    .weeks-grid { grid-template-columns: repeat(2,1fr); gap:20px; }
+    .weeks-grid::before { display:none; }
+  }
+
+  /* ── PEOPLE FOCUS SECTION ── */
+  .people-nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 0 40px;
+  }
+  .people-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    gap: 0;
+  }
+  .people-tab {
+    padding: 14px 24px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-400);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .people-tab:hover { color: var(--black); }
+  .people-tab.active { border-bottom-color: var(--red); color: var(--black); }
+  .people-panel { display: none; }
+  .people-panel.active { display: block; }
+  .people-section {
+    background: var(--white);
+    border-radius: 6px;
+    border: 1px solid var(--gray-200);
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .people-section-header {
+    background: var(--black);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .people-section-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 4px;
+    background: var(--red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .people-section-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    color: var(--white);
+    letter-spacing: 1px;
+  }
+  .people-section-role {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--gray-400);
+    letter-spacing: 1px;
+    margin-top: 1px;
+  }
+  .people-section-body {
+    padding: 20px 24px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .people-col-header {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+  .people-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 12.5px;
+    color: var(--gray-800);
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+  .people-item::before {
+    content: '▸';
+    color: var(--red);
+    font-size: 9px;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  .people-item.done { text-decoration: line-through; color: var(--gray-400); }
+  .people-item.done::before { color: var(--green); content: '✓'; }
+  .view-toggle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .view-btn {
+    padding: 7px 16px;
+    border: 1px solid var(--gray-200);
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    background: var(--white);
+    color: var(--gray-600);
+    transition: all 0.15s;
+  }
+  .view-btn.active { background: var(--black); color: var(--white); border-color: var(--black); }
+  @media(max-width:800px){ .people-section-body { grid-template-columns: 1fr; } }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: var(--black);
+    padding: 24px 40px;
+    margin-top: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .footer-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    color: var(--gray-600);
+    letter-spacing: 3px;
+  }
+  .footer-brand span { color: var(--red); }
+  .footer-note {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--gray-600);
+    letter-spacing: 1px;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .pillars-grid { grid-template-columns: repeat(2, 1fr); }
+    .detail-cols { grid-template-columns: 1fr; }
+    .history-months { grid-template-columns: repeat(2, 1fr); }
+    .hero-stats { display: none; }
+    .hero-title { font-size: 44px; }
+  }
+  @media (max-width: 600px) {
+    .pillars-grid { grid-template-columns: 1fr; }
+    .timeline-inner { grid-template-columns: repeat(3, 1fr); }
+    .main { padding: 24px 20px; }
+    .nav, .hero { padding-left: 20px; padding-right: 20px; }
+  }
+  /* ── EDIT MODE ── */
+  .edit-toolbar {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+  }
+  .edit-toolbar-inner {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-end;
+  }
+  .edit-toolbar-inner.open { display: flex; }
+  .edit-btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  }
+  .edit-btn-primary {
+    background: var(--black);
+    color: var(--white);
+  }
+  .edit-btn-primary:hover { background: var(--red); }
+  .edit-btn-primary.active { background: var(--red); }
+  .edit-btn-save {
+    background: var(--green);
+    color: var(--white);
+  }
+  .edit-btn-save:hover { background: #145e37; }
+  .edit-btn-cancel {
+    background: var(--gray-200);
+    color: var(--black);
+  }
+  .edit-btn-cancel:hover { background: var(--gray-400); color: var(--white); }
+  .edit-btn-add {
+    background: var(--white);
+    color: var(--black);
+    border: 1px solid var(--gray-200);
+    font-size: 12px;
+  }
+  .edit-hint {
+    background: rgba(0,0,0,0.85);
+    color: var(--white);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 6px 12px;
+    border-radius: 4px;
+  }
+  /* Editable elements */
+  body.edit-mode [data-editable] {
+    outline: 2px dashed transparent;
+    border-radius: 3px;
+    cursor: text;
+    transition: outline-color 0.15s, background 0.15s;
+  }
+  body.edit-mode [data-editable]:hover {
+    outline-color: var(--red);
+    background: rgba(204,0,0,0.04);
+  }
+  body.edit-mode [data-editable]:focus {
+    outline-color: var(--red);
+    background: rgba(204,0,0,0.06);
+    outline-style: solid;
+  }
+  body.edit-mode .edit-add-btn {
+    display: inline-flex !important;
+  }
+  .edit-add-btn {
+    display: none;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--red);
+    cursor: pointer;
+    padding: 4px 8px;
+    border: 1px dashed var(--red);
+    border-radius: 3px;
+    margin-top: 6px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.5px;
+    background: none;
+    transition: all 0.15s;
+  }
+  .edit-add-btn:hover { background: rgba(204,0,0,0.06); }
+  .edit-delete-btn {
+    display: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--red);
+    color: var(--white);
+    font-size: 10px;
+    border: none;
+    cursor: pointer;
+    margin-left: 6px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    vertical-align: middle;
+  }
+  body.edit-mode .edit-delete-btn { display: inline-flex; }
+  .edit-save-flash {
+    position: fixed;
+    top: 80px;
+    right: 28px;
+    background: var(--green);
+    color: var(--white);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    padding: 10px 20px;
+    border-radius: 4px;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .edit-save-flash.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand">PIVOT<span>YES</span></div>
+  <div class="nav-meta">Client Portal · Confidential</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-eyebrow">Engagement Progress Review</div>
+      <div class="hero-title">Health Garden<br/><span>Honix · Sweet Valley</span></div>
+      <div class="hero-subtitle">Joel Phillip & Moshe Lederer · PivotYes Consulting</div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">5</div>
+        <div class="stat-label">Months Active</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <div class="stat-num">8</div>
+        <div class="stat-label">Pillars</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <div class="stat-num">3</div>
+        <div class="stat-label">Entities</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="timeline-section">
+  <div class="timeline-inner">
+    <!-- Built dynamically from MONTHS data -->
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div id="panels-container"></div>
+</div>
+
+<!-- ── PEOPLE FOCUS SECTION ── -->
+<div style="background:var(--gray-50);border-top:3px solid var(--black);padding-top:0;margin-top:0">
+  <div style="max-width:1200px;margin:0 auto;padding:40px 40px 0">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px">Team Focus</div>
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--red);letter-spacing:2px;text-transform:uppercase;padding:3px 8px;border:1px solid var(--red);border-radius:2px">May — June</div>
+      <div style="flex:1;height:1px;background:var(--gray-200)"></div>
+    </div>
+  </div>
+  <div class="people-nav">
+    <div class="people-nav-inner">
+      <div class="people-tab active" onclick="showPeople('yossi')" id="ptab-yossi">⚙️ Yossi — Operations</div>
+      <div class="people-tab" onclick="showPeople('dina')" id="ptab-dina">💰 Dina — Finance & HR</div>
+      <div class="people-tab" onclick="showPeople('teresa')" id="ptab-teresa">📈 Teresa — Sales</div>
+      <div class="people-tab" onclick="showPeople('gisela')" id="ptab-gisela">📣 Gisela — Transition</div>
+    </div>
+  </div>
+
+  <div style="max-width:1200px;margin:0 auto;padding:32px 40px 40px">
+
+    <!-- YOSSI -->
+    <div class="people-panel active" id="ppanel-yossi">
+      <div class="people-section">
+        <div class="people-section-header">
+          <div class="people-section-icon">⚙️</div>
+          <div>
+            <div class="people-section-name">Yossi Ostreicher</div>
+            <div class="people-section-role">Operations Director · All Entities</div>
+          </div>
+        </div>
+        <div class="people-section-body">
+          <div>
+            <div class="people-col-header">This Week — May 26</div>
+            <div class="people-item">Management guidance session — 1:1 structure, how to lead each department head</div>
+            <div class="people-item">Sweet Valley — reinforce production process, Kayla replacement plan</div>
+            <div class="people-item">NetSuite Phase 1 follow-up — review CRM progress with Chaim</div>
+            <div class="people-item">Delegation clarity — what Yossi decides vs. escalates to Joel</div>
+            <div class="people-item">Asana — confirm all departments are using it daily</div>
+          </div>
+          <div>
+            <div class="people-col-header">May 26 — End of Month</div>
+            <div class="people-item">Warehouse restructure complete — new process documented</div>
+            <div class="people-item">SKU and item list organized across all entities</div>
+            <div class="people-item">NetSuite warehouse process changes begin</div>
+            <div class="people-item">Asana active in every department — no exceptions</div>
+            <div class="people-item">Sweet Valley ops restructured under Yossi fully</div>
+          </div>
+          <div>
+            <div class="people-col-header">June Focus</div>
+            <div class="people-item">NetSuite full warehouse implementation</div>
+            <div class="people-item">Certifications — SQF and Organic: status review and action plan</div>
+            <div class="people-item">Inventory accuracy confirmed across all 3 entities</div>
+            <div class="people-item">Full ops running independently — Yossi not dependent on Joel</div>
+            <div class="people-item">SOPs completed for Honix and Sweet Valley</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DINA -->
+    <div class="people-panel" id="ppanel-dina">
+      <div class="people-section">
+        <div class="people-section-header">
+          <div class="people-section-icon">💰</div>
+          <div>
+            <div class="people-section-name">Dina Grossinger</div>
+            <div class="people-section-role">Finance & HR Lead · All Entities</div>
+          </div>
+        </div>
+        <div class="people-section-body">
+          <div>
+            <div class="people-col-header">This Week — May 19</div>
+            <div class="people-item">Deliver clear financial report per entity to Joel & Moshe</div>
+            <div class="people-item">Bookkeeping restructure — HG bookkeeping moves to Rudy</div>
+            <div class="people-item">Confirm COGS method before NetSuite chart of accounts is set</div>
+            <div class="people-item">Define who does what in bookkeeping across all 3 entities</div>
+            <div class="people-item">HR — support Gisela transition and sales assistant hire</div>
+          </div>
+          <div>
+            <div class="people-col-header">May 26 — End of Month</div>
+            <div class="people-item">P&L delivered for each entity by May 5th — on cadence</div>
+            <div class="people-item">QuickBooks cleanup — reconciliation before NetSuite Phase 3</div>
+            <div class="people-item">Inter-entity billing documented: HG → Sweet Valley → Honix</div>
+            <div class="people-item">Sweet Valley outstanding balance to Honix — resolution plan</div>
+            <div class="people-item">Dina's own tasks set up in Asana with recurring deadlines</div>
+          </div>
+          <div>
+            <div class="people-col-header">June Focus</div>
+            <div class="people-item">June 1st — full financial report delivered per entity</div>
+            <div class="people-item">Bookkeeping split confirmed last week — Rudy (HG) · Ruchi (SV) · Dina (Honix)</div>
+            <div class="people-item">Cash flow report per entity — Honix / Sweet Valley / HG standalone</div>
+            <div class="people-item">NetSuite Phase 3 — Honix financial migration with Chaim</div>
+            <div class="people-item">Scorecard: each entity profitable? cash flow positive?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TERESA -->
+    <div class="people-panel" id="ppanel-teresa">
+      <div class="people-section">
+        <div class="people-section-header">
+          <div class="people-section-icon">📈</div>
+          <div>
+            <div class="people-section-name">Teresa Zingripoli</div>
+            <div class="people-section-role">Sales Director · Health Garden</div>
+          </div>
+        </div>
+        <div class="people-section-body">
+          <div>
+            <div class="people-col-header">This Week — May 19</div>
+            <div class="people-item">CRM scoping session with Chaim — pipeline stages defined</div>
+            <div class="people-item">Existing customer follow-up list prioritized and actioned</div>
+            <div class="people-item">Weekly sales report to Joel — actuals, not estimates</div>
+            <div class="people-item">Hire remote sales assistant — brief shared with Dina for recruiting</div>
+          </div>
+          <div>
+            <div class="people-col-header">May 26 — End of Month</div>
+            <div class="people-item">CRM live — all accounts and contacts imported</div>
+            <div class="people-item">Pipeline stages active: lead → follow-up → quote → close</div>
+            <div class="people-item">Lead ownership rules confirmed — Teresa vs. new VA</div>
+            <div class="people-item">Remote sales assistant hired — onboarding plan ready</div>
+          </div>
+          <div>
+            <div class="people-col-header">June Focus</div>
+            <div class="people-item">Remote sales assistant fully active — Teresa focused on closing</div>
+            <div class="people-item">Monthly revenue target set and tracked in CRM</div>
+            <div class="people-item">Broker tracking live in NetSuite</div>
+            <div class="people-item">New customer acquisition begins — with structure this time</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GISELA -->
+    <div class="people-panel" id="ppanel-gisela">
+      <div class="people-section">
+        <div class="people-section-header">
+          <div class="people-section-icon">📣</div>
+          <div>
+            <div class="people-section-name">Gisela Kahn</div>
+            <div class="people-section-role">Platforms & Marketing · Transition in Progress</div>
+          </div>
+        </div>
+        <div class="people-section-body">
+          <div>
+            <div class="people-col-header">This Week — May 19</div>
+            <div class="people-item">Transition plan confirmed — virtual admin takes over lead gen</div>
+            <div class="people-item">Gisela hands off lead generation responsibilities fully</div>
+            <div class="people-item">Platform scope confirmed: Amazon, Walmart, iHerb only</div>
+            <div class="people-item">Certification status reviewed: SQF, Organic — deadlines set</div>
+          </div>
+          <div>
+            <div class="people-col-header">May 26 — Transition Complete</div>
+            <div class="people-item">VA hired and handling lead gen — Gisela fully off it</div>
+            <div class="people-item">Gisela transition finalized by end of May</div>
+            <div class="people-item">Platform reporting format confirmed — weekly to Moshe</div>
+            <div class="people-item">Certification timelines documented and tracked</div>
+          </div>
+          <div>
+            <div class="people-col-header">June — New Structure</div>
+            <div class="people-item">Marketing plan live under new structure</div>
+            <div class="people-item">Product development priorities identified and assigned</div>
+            <div class="people-item">VA fully running admin and lead gen independently</div>
+            <div class="people-item">Platform performance reported monthly to leadership</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /people section -->
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-brand">PIVOT<span>YES</span> CONSULTING</div>
+  <div class="footer-note">Confidential · Health Garden · May 2026</div>
+</div>
+
+<script>
+// ── MONTHS DATA ────────────────────────────────────────────────────────────
+const MONTHS = [
+  {
+    num: 1, label: "February 2026", phase: "Foundation & Clarity",
+    isCurrent: false,
+    accomplishments: [
+      "Discovery meetings with all key team members across all entities",
+      "Team structure mapped — roles and ownership documented",
+      "Issues & Observations list created",
+      "High-level process mapping across Honix, Sweet Valley, Health Garden",
+      "Software needs assessment completed across all entities",
+      "Growth priorities aligned with Joel & Moshe",
+    ],
+    nextSteps: [],
+    weeks: []
+  },
+  {
+    num: 2, label: "March 2026", phase: "Implementation & Alignment",
+    isCurrent: false,
+    accomplishments: [
+      "Role adjustments communicated and documented across all entities",
+      "Recurring meeting cadence established and running",
+      "Core workflows updated and documented in Notion",
+      "Software map completed — each department knows their tools",
+      "Financial review completed with key findings documented",
+      "Leadership accountability structure defined and active",
+      "Asana activated across key roles for task and project tracking",
+    ],
+    nextSteps: [],
+    weeks: []
+  },
+  {
+    num: 3, label: "April 2026", phase: "Optimization & Structure",
+    isCurrent: false,
+    accomplishments: [
+      "Yossi Ostreicher onboarded as Ops Manager (April 14)",
+      "Teresa sales metrics & reporting structure implemented",
+      "Gisela feedback, improvement plan & weekly schedule delivered",
+      "NetSuite ERP kickoff (April 24) + CRM module kickoff (April 28)",
+      "Full financial review with Dina & Ruchi — P&L cadence set",
+      "Sweet Valley accountability plan reviewed with Joel & Kayla",
+      "Honix workflow simplified — NetSuite + Asana integration planned",
+      "Moshe takes Honix Sales · Joel focuses on Machinery — confirmed",
+      "Bookkeeping split decided: Rudy (HG) · Ruchi (SV) · Dina (Honix)",
+      "Kayla accountability checklist assigned",
+      "Remote sales assistant hire approved",
+    ],
+    nextSteps: [],
+    weeks: []
+  },
+  {
+    num: 4, label: "May 2026", phase: "Phase 2 — Active Now",
+    isCurrent: true,
+    accomplishments: [
+      "Accountability framework introduced — goals, owners, follow-through",
+      "Departments divided with clear objectives per role",
+      "KLO termination approved — Yossi takes warehouse management",
+      "Gisela transition in progress — virtual admin replacing lead gen role",
+      "CRM implementation kicked off with Chaim Pollak",
+      "Financial reports per entity — Dina leading cleanup",
+      "Bookkeeping restructure — HG bookkeeping moving to Rudy",
+    ],
+    nextSteps: [],
+    weeks: [
+      {
+        dates: "May 12–16",
+        theme: "Accountability Launched",
+        isActive: false,
+        isDone: true,
+        bullets: [
+          "Departments divided — ownership and objectives set per role",
+          "Goals introduced per department head",
+          "Meeting structure established — agendas, owners, follow-through",
+        ]
+      },
+      {
+        dates: "May 19–23",
+        theme: "Accountability & People Decisions",
+        isActive: false,
+        isDone: true,
+        bullets: [
+          "Leadership meeting — accountability reinforced, no more circles",
+          "Every goal has an owner · every owner reports back next session",
+          "Kayla (KLO) let go — Sweet Valley ops restructuring under Yossi",
+          "CRM implementation begins with Chaim Pollak this week",
+          "Dina delivers clear financial report per entity",
+          "Bookkeeping restructure — HG bookkeeping moves to Rudy",
+        ]
+      },
+      {
+        dates: "May 26–30",
+        theme: "Sales · Production · NetSuite · Yossi",
+        isActive: true,
+        isDone: false,
+        bullets: [
+          "Sales setup — Teresa pipeline active, CRM in use, sales assistant brief out",
+          "Production process reinforced — Sweet Valley workflow documented and running",
+          "NetSuite follow-up — Phase 1 CRM progress review with Chaim Pollak",
+          "Yossi management guidance — 1:1 structure, delegation, decision-making authority",
+        ]
+      },
+      {
+        dates: "May 30+",
+        theme: "Close Out & June Handoff",
+        isActive: false,
+        isDone: false,
+        bullets: [
+          "Month 4 accountability review — what stuck, what didn't",
+          "June plan confirmed with Joel & Moshe",
+          "Every open item has an owner and a date",
+        ]
+      },
+    ]
+  },
+  {
+    num: 5, label: "June 2026", phase: "Phase 3 — Growth & Clarity",
+    isCurrent: false,
+    accomplishments: [
+      "Full financial clarity per entity — each company stands alone",
+      "Cash flow report per entity — Health Garden · Honix · Sweet Valley",
+      "Marketing strategy fully live under new structure",
+      "Product development & new improvements identified and planned",
+      "NetSuite full implementation — warehouse processes live",
+      "New team structure running independently",
+    ],
+    nextSteps: [],
+    weeks: [
+      {
+        dates: "Jun 2–6",
+        theme: "Financial Clarity",
+        isActive: false,
+        isDone: false,
+        bullets: [
+          "Full P&L per entity — treat each as standalone company",
+          "Cash flow report built per entity",
+          "Bookkeeping roles confirmed and running",
+        ]
+      },
+      {
+        dates: "Jun 9–13",
+        theme: "Marketing & Product",
+        isActive: false,
+        isDone: false,
+        bullets: [
+          "Marketing plan live — new structure owns execution",
+          "Product development priorities identified",
+          "New improvements mapped and assigned",
+        ]
+      },
+      {
+        dates: "Jun 16–20",
+        theme: "NetSuite & Operations",
+        isActive: false,
+        isDone: false,
+        bullets: [
+          "NetSuite full implementation — warehouse processes live",
+          "Sweet Valley ops running under Yossi fully",
+          "Inventory accuracy confirmed across all entities",
+        ]
+      },
+      {
+        dates: "Jun 23–27",
+        theme: "Growth Review",
+        isActive: false,
+        isDone: false,
+        bullets: [
+          "Q2 review — goals vs. actuals per entity",
+          "Growth priorities set for Q3",
+          "Team accountability scorecard reviewed",
+        ]
+      },
+    ]
+  },
+];
+
+const CLIENT = {
+  currentMonth: (MONTHS.find(m => m.isCurrent) || MONTHS[MONTHS.length - 1]).num,
+  monthLabels: Object.fromEntries(MONTHS.map(m => [m.num, m.label]))
+};
+
+const PILLARS = [
+  {
+    id: "sales",
+    icon: "📈",
+    iconColor: "red",
+    name: "Sales",
+    entity: "Health Garden",
+    statuses: { 1: "progress", 2: "progress", 3: "active", 4: "active", 5: "active" },
+    statusLabels: { 1: "Assessing", 2: "In Progress", 3: "Active", 4: "Active", 5: "Active" },
+    roles:   ["Teresa Zingripoli — Sales Director", "Reports weekly to Joel & Moshe", "Gisela off sales, now owns platforms only"],
+    process: ["Recurring customer focus — not new acquisition", "Sales metrics & reporting implemented", "Customer list reviewed & prioritized"],
+    software:["NetSuite CRM — pipeline being built", "Asana for sales task accountability", "Follow-up cadence tracked in CRM"],
+    history: {
+      1: ["Discovery with Teresa", "Customer list reviewed", "Gap analysis on sales process"],
+      2: ["Weekly reporting structure set", "Recurring meeting cadence established", "Sales workflow documented"],
+      3: ["Metrics framework implemented", "Actual revenue numbers pulled", "Customer prioritization set"],
+      4: ["CRM pipeline build in progress", "Teresa fully accountable to Joel", "Follow-up cadence active"],
+      5: ["CRM live — full pipeline active", "Sales assistant hired and onboarded", "Monthly revenue targets set"],
+    }
+  },
+  {
+    id: "marketing",
+    icon: "📣",
+    iconColor: "red",
+    name: "Marketing",
+    entity: "Health Garden",
+    statuses: { 1: "progress", 2: "progress", 3: "progress", 4: "progress", 5: "active" },
+    statusLabels: { 1: "Assessing", 2: "Mapped", 3: "In Progress", 4: "Building", 5: "Active" },
+    roles:   ["Gisela Kahn — Amazon, Walmart, iHerb", "Owns certifications: SQF, Organic", "No longer on sales — platforms only"],
+    process: ["Marketing strategy being built Month 4", "Content calendar and campaign cadence TBD", "Platform ownership clearly defined"],
+    software:["Amazon Seller Central", "Walmart & iHerb platform tools", "Certification tracking system TBD"],
+    history: {
+      1: ["Gisela role assessed", "Platform list documented", "Commission dispute identified"],
+      2: ["Role clarified — off sales", "Compensation renegotiated", "Platform scope defined"],
+      3: ["Improvement plan delivered", "Weekly schedule created", "Rudy incident addressed"],
+      4: ["Marketing strategy in progress", "Content calendar being built", "Certification timelines reviewed"],
+      5: ["Marketing fully live under new structure", "Product development priorities mapped", "New improvements assigned and tracked"],
+    }
+  },
+  {
+    id: "ops-honix",
+    icon: "⚙️",
+    iconColor: "",
+    name: "Operations",
+    entity: "Honix",
+    statuses: { 1: "progress", 2: "progress", 3: "active", 4: "active", 5: "active" },
+    statusLabels: { 1: "Assessing", 2: "Restructuring", 3: "Active", 4: "Active" },
+    roles:   ["Joseph Phillip → pivoting to Sourcing/Sales", "Ruchi took over order processing & AP", "Yossi Ostreicher overseeing all entities"],
+    process: ["AP workflow: Santiago → Joseph → Ruchi → Dina", "Sales order SLA: 1-hour Asana response", "Honix workflow simplified and mapped"],
+    software:["Asana — task tracking & SLA management", "NetSuite Phase 3 (upcoming)", "GoFlow for marketplace/EDI (interim)"],
+    history: {
+      1: ["Joseph overloaded — gap identified", "Honix workflow mapped at high level", "Software needs assessed"],
+      2: ["Ruchi transition planned", "AP workflow documented", "Asana structure built for Honix"],
+      3: ["Ruchi fully owns order processing", "Honix workflow simplified", "NetSuite + Asana integration planned"],
+      4: ["SOPs in progress (Suri/PivotYes)", "NetSuite Phase 3 planned", "Joseph transition confirmed"],
+      5: ["Full SOPs documented", "NetSuite Phase 3 live", "Sourcing/sales role active"],
+    }
+  },
+  {
+    id: "ops-sv",
+    icon: "📦",
+    iconColor: "",
+    name: "Operations",
+    entity: "Sweet Valley",
+    statuses: { 1: "attention", 2: "attention", 3: "progress", 4: "progress", 5: "active" },
+    statusLabels: { 1: "Issues Found", 2: "Issues Found", 3: "Plan Active", 4: "Monitoring", 5: "Restructured" },
+    roles:   ["Kayla Hidalgo — Production Manager", "Accountability plan active and enforced", "Joel involved in daily AM/PM touchpoints"],
+    process: ["PO compliance enforced — no Honix inventory without PO", "Item codes and private labeling corrected", "~$110k+ outstanding balance to Honix flagged"],
+    software:["Nutrisoft — bug unresolved (Adjusted vs. New Qty)", "Google Sheet dual-entry as interim fix", "NetSuite Phase 4 (upcoming)"],
+    history: {
+      1: ["Production issues identified", "Inventory taken without POs flagged", "Item code errors documented"],
+      2: ["Accountability plan initiated", "Private labeling errors corrected", "Outstanding Honix balance flagged"],
+      3: ["Plan reviewed jointly (Joel + Kayla)", "Action items and ownership assigned", "Nutrisoft bug reported"],
+      4: ["Kayla monitoring ongoing", "Nutrisoft bug escalation pending", "NetSuite Phase 4 planned"],
+      5: ["New ops structure under Yossi running", "Warehouse process live in NetSuite", "Inventory accuracy confirmed"],
+    }
+  },
+  {
+    id: "ops-hg",
+    icon: "🏪",
+    iconColor: "",
+    name: "Operations",
+    entity: "Health Garden",
+    statuses: { 1: "progress", 2: "active", 3: "active", 4: "active", 5: "active" },
+    statusLabels: { 1: "Assessing", 2: "Running", 3: "Running", 4: "Active", 5: "Active" },
+    roles:   ["Rudy Rodriguez — HG Day-to-Day Ops", "Yossi Ostreicher — Ops Director overseeing all", "Patterson Management — 3PL partner"],
+    process: ["Order flow and fulfillment process documented", "SLAs in place across order processing", "GoFlow retained as interim middleware"],
+    software:["GoFlow — marketplace/EDI middleware", "Asana — daily task structure", "NetSuite Phase 5 (last phase)"],
+    history: {
+      1: ["Rudy role assessed", "Fulfillment flow documented", "3PL relationship mapped"],
+      2: ["Order flow updated", "Fulfillment SLAs set", "GoFlow decision made — keep interim"],
+      3: ["Yossi onboarded as oversight", "Daily ops rhythm confirmed", "NetSuite Phase 5 planned"],
+      4: ["Rudy running day-to-day", "Yossi fully active as director", "Asana daily structure being built"],
+      5: ["Rudy owns HG bookkeeping + ops", "Full Asana adoption confirmed", "NetSuite Phase 5 scoped"],
+    }
+  },
+  {
+    id: "finance",
+    icon: "💰",
+    iconColor: "red",
+    name: "Finance",
+    entity: "All Entities",
+    statuses: { 1: "attention", 2: "progress", 3: "progress", 4: "progress", 5: "active" },
+    statusLabels: { 1: "Cash Crisis", 2: "Stabilizing", 3: "Structured", 4: "Cleanup", 5: "Clear" },
+    roles:   ["Dina — Finance Manager & HR Lead", "Monthly P&L due by the 5th of each month", "Weekly cash flow reviews — Thursdays 1pm with Joel"],
+    process: ["AP workflow cleaned up and documented", "Financial reporting rebuilt (formulas corrected)", "COGS accuracy — historical issue, being resolved"],
+    software:["QuickBooks — all entities (MagTech hosted)", "Cleanup required before NetSuite migration", "NetSuite Phase 3 — financial migration planned"],
+    history: {
+      1: ["Severe cash crisis identified (Feb)", "Books reviewed across entities", "Moshe responsible for capital infusion"],
+      2: ["P&L cadence established", "Cash flow review structure set", "AP workflow cleaned up"],
+      3: ["Full financial review with Dina & Ruchi", "COGS issue flagged", "QuickBooks cleanup plan started"],
+      4: ["P&L per entity by May 5", "COGS resolution in progress", "QB cleanup before migration"],
+      5: ["Full financial clarity per entity", "Cash flow report per entity live", "Each entity treated as standalone"],
+    }
+  },
+  {
+    id: "hr",
+    icon: "👥",
+    iconColor: "",
+    name: "HR & People",
+    entity: "All Entities",
+    statuses: { 1: "progress", 2: "active", 3: "active", 4: "active", 5: "active" },
+    statusLabels: { 1: "Mapping", 2: "Structured", 3: "Active", 4: "Active", 5: "Active" },
+    roles:   ["Dina — HR Lead + recruiting", "Yossi Ostreicher — Ops Manager (April 14)", "Lizzie Brennan — Director of Ops assessment pending"],
+    process: ["Roles & Responsibilities doc created for all staff", "Improvement plans active: Gisela, Kayla", "Hiring plan being formalized with Dina"],
+    software:["Asana — onboarding & task structure", "Notion — roles, SOPs, company wiki", "HR process documented in Notion"],
+    history: {
+      1: ["Full team mapped across all entities", "Role misalignment identified", "Capacity issues documented"],
+      2: ["Role adjustments communicated", "Accountability ownership assigned", "HR process established with Dina"],
+      3: ["Yossi onboarded (April 14)", "Gisela improvement plan delivered", "Kayla accountability plan active"],
+      4: ["Yossi fully active", "Hiring plan in progress", "Lizzie Brennan decision pending"],
+      5: ["Sales assistant hired — Teresa team set", "VA hired — admin and lead gen covered", "Org structure stable across all entities"],
+    }
+  },
+  {
+    id: "leadership",
+    icon: "🏆",
+    iconColor: "red",
+    name: "Leadership & Vision",
+    entity: "Joel & Moshe",
+    statuses: { 1: "progress", 2: "active", 3: "active", 4: "active", 5: "active" },
+    statusLabels: { 1: "Aligning", 2: "Structured", 3: "Active", 4: "Active", 5: "Active" },
+    roles:   ["Joel Phillip — Owner, Health Garden", "Moshe Lederer — 45% Partner", "Weekly leadership session with PivotYes"],
+    process: ["Owners planning every Monday 11am", "Meeting cadence established across all roles", "KPIs & scorecard being set for May"],
+    software:["Asana — leadership accountability & agendas", "Notion — company wiki & decision log", "Goals & priorities tracked in Notion"],
+    history: {
+      1: ["Discovery sessions with Joel & Moshe", "Growth priorities aligned", "Engagement structure agreed"],
+      2: ["Meeting cadence set", "Communication norms established", "Delegation framework started"],
+      3: ["Teresa reporting to Joel weekly", "Yossi authority level defined", "Accountability systems reinforced"],
+      4: ["Moshe takes Honix Sales · Joel focuses on Machinery", "KPIs defined per entity", "Delegation plan confirmed"],
+      5: ["Q2 review — goals vs. actuals", "Growth priorities set for Q3", "Leadership running independently"],
+    }
+  }
+];
+
+// ── ENGINE ─────────────────────────────────────────────────────────────────
+
+const currentNum = (MONTHS.find(m => m.isCurrent) || MONTHS[MONTHS.length - 1]).num;
+const monthState = (num) => num < currentNum ? 'past' : num === currentNum ? 'current' : 'future';
+
+function buildTabs() {
+  const container = document.querySelector('.timeline-inner');
+  container.innerHTML = MONTHS.map(m => {
+    const state = monthState(m.num);
+    const clickHandler = `onclick="showMonth(${m.num})"`;
+    const opacity = state === 'future' ? 'opacity:0.6;' : '';
+    return `
+      <div class="month-tab ${state === 'current' ? 'active' : ''}"
+           ${clickHandler} id="tab-${m.num}" style="${opacity}">
+        <div class="month-num">${String(m.num).padStart(2,'0')}</div>
+        <div class="month-name">${m.label}</div>
+        <div class="month-phase">${m.phase}</div>
+        ${state === 'current' ? '<div class="month-badge">Current</div>' : ''}
+        ${state === 'future'  ? '<div class="month-badge" style="background:var(--gray-400)">Upcoming</div>' : ''}
+      </div>`;
+  }).join('');
+}
+
+function buildPanels() {
+  const container = document.getElementById('panels-container');
+  container.innerHTML = MONTHS.map(m => {
+    const state = monthState(m.num);
+
+    if (state === 'future') {
+      const dotColor = 'var(--gray-400)';
+      const accItems = m.accomplishments.map(a =>
+        `<div class="acc-item"><div class="acc-dot" style="background:${dotColor}"></div>${a}</div>`
+      ).join('');
+      const weeksHTML = (m.weeks && m.weeks.length) ? `
+        <div class="weekly-timeline">
+          <div class="weekly-timeline-header">
+            <div class="weekly-timeline-title">4-Week Focus Plan</div>
+            <div class="weekly-timeline-badge" style="border-color:var(--gray-400);color:var(--gray-400)">${m.label}</div>
+          </div>
+          <div class="weeks-grid">
+            ${m.weeks.map((w,i) => `
+              <div class="week-card">
+                <div class="week-node">
+                  <div class="week-num">${String(i+1).padStart(2,'0')}</div>
+                  <div class="week-date">${w.dates}</div>
+                </div>
+                <div class="week-theme" style="color:var(--gray-600)">${w.theme}</div>
+                <ul class="week-bullets">
+                  ${w.bullets.map(b=>`<li style="color:var(--gray-400)">${b}</li>`).join('')}
+                </ul>
+              </div>`).join('')}
+          </div>
+        </div>` : '';
+      return `
+        <div class="month-panel" id="panel-${m.num}">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+            <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gray-400)">Upcoming Plan</div>
+            <div style="flex:1;height:1px;background:var(--gray-200)"></div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;background:var(--gray-200);color:var(--gray-600);padding:2px 8px;border-radius:2px">🔒 Not Started</div>
+          </div>
+          <div class="accomplishments" style="border-left-color:var(--gray-400);opacity:0.75">
+            <div class="acc-title" style="color:var(--gray-400)">◎ Month ${m.num} — ${m.phase}</div>
+            <div class="acc-grid">${accItems}</div>
+          </div>
+          <div class="section-label">Planned Focus</div>
+          <div class="pillars-grid" id="grid-${m.num}"></div>
+          ${weeksHTML}
+        </div>`;
+    }
+
+    const isCurrent   = state === 'current';
+    const dotColor    = isCurrent ? 'var(--red)'       : 'var(--green)';
+    const borderColor = isCurrent ? 'var(--red)'       : 'var(--green)';
+    const titleStyle  = isCurrent ? 'color:var(--red)' : '';
+    const prefix      = isCurrent ? '▶' : '✓';
+    const sectionLabel = isCurrent ? 'Current Focus'              : 'What We Accomplished';
+    const pillarsLabel = isCurrent ? 'Pillars — Click to Explore' : 'Pillars — Status';
+    const accItems = m.accomplishments.map(a =>
+      `<div class="acc-item"><div class="acc-dot" style="background:${dotColor}"></div>${a}</div>`
+    ).join('');
+    const nextStepsHTML = (isCurrent && m.weeks && m.weeks.length) ? `
+      <div class="weekly-timeline">
+        <div class="weekly-timeline-header">
+          <div class="weekly-timeline-title">4-Week Focus Plan</div>
+          <div class="weekly-timeline-badge">${m.label}</div>
+        </div>
+        <div class="weeks-grid">
+          ${m.weeks.map((w, i) => {
+            const state = w.isActive ? 'active' : w.isDone ? 'done' : '';
+            return `
+              <div class="week-card ${state}">
+                <div class="week-node">
+                  <div class="week-num">${String(i+1).padStart(2,'0')}</div>
+                  <div class="week-date">${w.dates}</div>
+                </div>
+                <div class="week-theme">${w.theme}</div>
+                <ul class="week-bullets">
+                  ${w.bullets.map(b => `<li>${b}</li>`).join('')}
+                </ul>
+              </div>`;
+          }).join('')}
+        </div>
+      </div>` : '';
+    return `
+      <div class="month-panel ${isCurrent ? 'active' : ''}" id="panel-${m.num}">
+        <div class="section-label">${sectionLabel}</div>
+        <div class="accomplishments" style="border-left-color:${borderColor}">
+          <div class="acc-title" style="${titleStyle}">${prefix} Month ${m.num} — ${m.phase}</div>
+          <div class="acc-grid">${accItems}</div>
+        </div>
+        <div class="section-label">${pillarsLabel}</div>
+        <div class="pillars-grid" id="grid-${m.num}"></div>
+        ${nextStepsHTML}
+      </div>`;
+  }).join('');
+}
+function renderPillars(monthNum) {
+  const grid = document.getElementById(`grid-${monthNum}`);
+  if (!grid || grid.children.length > 0) return;
+
+  let html = '';
+  PILLARS.forEach((p, idx) => {
+    const status = p.statuses[monthNum];
+    const label = p.statusLabels[monthNum];
+    html += `
+      <div class="pillar-card" id="card-${monthNum}-${idx}" onclick="toggleDetail(${monthNum}, ${idx})">
+        <div class="pillar-card-top">
+          <div class="pillar-icon ${p.iconColor}">${p.icon}</div>
+          <div class="pillar-name">${p.name}</div>
+          <div class="pillar-entity">${p.entity}</div>
+        </div>
+        <div class="pillar-card-bottom">
+          <span class="status-pill ${status}">${label}</span>
+          <span class="expand-arrow">▾</span>
+        </div>
+      </div>`;
+
+    // After every 4 cards, insert a detail panel slot
+    if ((idx + 1) % 4 === 0 || idx === PILLARS.length - 1) {
+      const groupEnd = idx;
+      const groupStart = Math.floor(idx / 4) * 4;
+      html += `<div class="detail-panel" id="detail-${monthNum}-group-${Math.floor(idx/4)}"></div>`;
+    }
+  });
+
+  grid.innerHTML = html;
+}
+
+// ── TOGGLE DETAIL ──────────────────────────────────────────────────────────
+let openDetail = {};
+
+function toggleDetail(monthNum, pillarIdx) {
+  const key = `${monthNum}-${pillarIdx}`;
+  const groupIdx = Math.floor(pillarIdx / 4);
+  const panelId = `detail-${monthNum}-group-${groupIdx}`;
+  const panel = document.getElementById(panelId);
+  const card = document.getElementById(`card-${monthNum}-${pillarIdx}`);
+
+  // Close same panel
+  if (openDetail[monthNum] === pillarIdx) {
+    panel.classList.remove('open');
+    card.classList.remove('expanded');
+    openDetail[monthNum] = null;
+    return;
+  }
+
+  // Close any open panel in this month
+  if (openDetail[monthNum] !== null && openDetail[monthNum] !== undefined) {
+    const prevGroup = Math.floor(openDetail[monthNum] / 4);
+    const prevPanel = document.getElementById(`detail-${monthNum}-group-${prevGroup}`);
+    const prevCard = document.getElementById(`card-${monthNum}-${openDetail[monthNum]}`);
+    if (prevPanel) prevPanel.classList.remove('open');
+    if (prevCard) prevCard.classList.remove('expanded');
+  }
+
+  openDetail[monthNum] = pillarIdx;
+  const p = PILLARS[pillarIdx];
+
+  const historyHTML = [1,2,3,4].map(m => `
+    <div class="history-month ${m === 4 ? 'current' : ''}">
+      <div class="history-month-header">Month ${m} · ${['Feb','Mar','Apr','May'][m-1]}</div>
+      <div class="history-month-body">
+        ${(p.history[m] || []).map(item => `<div class="history-item">${item}</div>`).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  panel.innerHTML = `
+    <div class="detail-header">
+      <div class="detail-title">${p.icon} ${p.name} — ${p.entity}</div>
+      <button class="detail-close" onclick="closeDetail(${monthNum}, ${pillarIdx})">✕</button>
+    </div>
+    <div class="detail-cols">
+      <div class="detail-col">
+        <div class="detail-col-label">Roles & Ownership</div>
+        ${p.roles.map(r => `<div class="detail-item">${r}</div>`).join('')}
+      </div>
+      <div class="detail-col">
+        <div class="detail-col-label">Process & Workflow</div>
+        ${p.process.map(r => `<div class="detail-item">${r}</div>`).join('')}
+      </div>
+      <div class="detail-col">
+        <div class="detail-col-label">Software & Tools</div>
+        ${p.software.map(r => `<div class="detail-item">${r}</div>`).join('')}
+      </div>
+    </div>
+    <div class="history-section">
+      <div class="history-label">Month-by-Month History</div>
+      <div class="history-months">${historyHTML}</div>
+    </div>
+  `;
+
+  panel.classList.add('open');
+  card.classList.add('expanded');
+  setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+}
+
+function closeDetail(monthNum, pillarIdx) {
+  const groupIdx = Math.floor(pillarIdx / 4);
+  const panel = document.getElementById(`detail-${monthNum}-group-${groupIdx}`);
+  const card = document.getElementById(`card-${monthNum}-${pillarIdx}`);
+  if (panel) panel.classList.remove('open');
+  if (card) card.classList.remove('expanded');
+  openDetail[monthNum] = null;
+}
+
+function showMonth(num) {
+  document.querySelectorAll('.month-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.month-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(`tab-${num}`).classList.add('active');
+  document.getElementById(`panel-${num}`).classList.add('active');
+  renderPillars(num);
+}
+
+// ── INIT ────────────────────────────────────────────────────────────────────
+buildTabs();
+buildPanels();
+renderPillars(currentNum);
+
+function showPeople(id) {
+  document.querySelectorAll('.people-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.people-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(`ptab-${id}`).classList.add('active');
+  document.getElementById(`ppanel-${id}`).classList.add('active');
+}
+
+// ── EDIT MODE ──────────────────────────────────────────────────────────────
+
+let editModeOn = false;
+
+function toggleEditMode() {
+  editModeOn = !editModeOn;
+  document.body.classList.toggle('edit-mode', editModeOn);
+  document.getElementById('editToolbarInner').classList.toggle('open', editModeOn);
+  const btn = document.getElementById('editToggleBtn');
+  btn.classList.toggle('active', editModeOn);
+  btn.style.display = editModeOn ? 'none' : 'flex';
+
+  if (editModeOn) {
+    makeEditable();
+  } else {
+    removeEditable();
+  }
+}
+
+function makeEditable() {
+  // Make all text content editable
+  const selectors = [
+    '.acc-item', '.week-theme', '.week-bullets li',
+    '.people-item', '.people-section-name', '.people-section-role',
+    '.people-col-header', '.next-steps-month', '.detail-item',
+    '.hero-title', '.hero-subtitle', '.month-name', '.month-phase',
+    '.weekly-timeline-badge', '.stat-num'
+  ];
+
+  selectors.forEach(sel => {
+    document.querySelectorAll(sel).forEach(el => {
+      // Skip elements with child elements (like acc-item with acc-dot)
+      if (sel === '.acc-item') {
+        // Find the text node and wrap it
+        el.setAttribute('data-editable', 'true');
+        el.contentEditable = 'false'; // parent not editable
+
+        // Get text nodes only
+        const textNodes = [...el.childNodes].filter(n => n.nodeType === 3 && n.textContent.trim());
+        textNodes.forEach(tn => {
+          const span = document.createElement('span');
+          span.textContent = tn.textContent;
+          span.setAttribute('data-editable', 'true');
+          span.contentEditable = 'true';
+          span.setAttribute('data-original', tn.textContent);
+          tn.replaceWith(span);
+        });
+
+        // Add delete button
+        const del = document.createElement('button');
+        del.className = 'edit-delete-btn';
+        del.innerHTML = '×';
+        del.title = 'Delete this item';
+        del.onclick = (e) => { e.stopPropagation(); el.remove(); };
+        el.appendChild(del);
+
+      } else if (sel === '.people-item') {
+        el.setAttribute('data-editable', 'true');
+        el.contentEditable = 'false';
+
+        const textNodes = [...el.childNodes].filter(n => n.nodeType === 3 && n.textContent.trim());
+        textNodes.forEach(tn => {
+          const span = document.createElement('span');
+          span.textContent = tn.textContent;
+          span.setAttribute('data-editable', 'true');
+          span.contentEditable = 'true';
+          tn.replaceWith(span);
+        });
+
+        const del = document.createElement('button');
+        del.className = 'edit-delete-btn';
+        del.innerHTML = '×';
+        del.onclick = (e) => { e.stopPropagation(); el.remove(); };
+        el.appendChild(del);
+
+      } else if (sel === '.week-bullets li') {
+        el.setAttribute('data-editable', 'true');
+        el.contentEditable = 'true';
+
+        const del = document.createElement('button');
+        del.className = 'edit-delete-btn';
+        del.style.cssText = 'position:absolute;right:-20px;top:2px;';
+        del.innerHTML = '×';
+        del.onclick = (e) => { e.stopPropagation(); el.remove(); };
+        el.style.position = 'relative';
+        el.appendChild(del);
+
+      } else {
+        el.setAttribute('data-editable', 'true');
+        el.contentEditable = 'true';
+      }
+    });
+  });
+
+  // Add "add item" buttons after lists
+  document.querySelectorAll('.acc-grid').forEach(grid => {
+    if (!grid.querySelector('.edit-add-btn')) {
+      const btn = document.createElement('button');
+      btn.className = 'edit-add-btn';
+      btn.innerHTML = '+ Add item';
+      btn.onclick = () => addAccItem(grid);
+      grid.appendChild(btn);
+    }
+  });
+
+  document.querySelectorAll('.week-bullets').forEach(ul => {
+    if (!ul.querySelector('.edit-add-btn')) {
+      const btn = document.createElement('button');
+      btn.className = 'edit-add-btn';
+      btn.innerHTML = '+ Add bullet';
+      btn.style.display = 'block';
+      btn.onclick = () => addBullet(ul);
+      ul.appendChild(btn);
+    }
+  });
+
+  document.querySelectorAll('.people-section-body > div').forEach(col => {
+    if (!col.querySelector('.edit-add-btn')) {
+      const btn = document.createElement('button');
+      btn.className = 'edit-add-btn';
+      btn.innerHTML = '+ Add item';
+      btn.onclick = () => addPeopleItem(col);
+      col.appendChild(btn);
+    }
+  });
+}
+
+function removeEditable() {
+  document.querySelectorAll('[data-editable]').forEach(el => {
+    el.removeAttribute('data-editable');
+    el.removeAttribute('contenteditable');
+  });
+  document.querySelectorAll('.edit-delete-btn').forEach(b => b.remove());
+  document.querySelectorAll('.edit-add-btn').forEach(b => b.remove());
+}
+
+function addAccItem(grid) {
+  const item = document.createElement('div');
+  item.className = 'acc-item';
+  item.setAttribute('data-editable', 'true');
+
+  const dot = document.createElement('div');
+  dot.className = 'acc-dot';
+
+  const span = document.createElement('span');
+  span.textContent = 'New item — click to edit';
+  span.setAttribute('data-editable', 'true');
+  span.contentEditable = 'true';
+
+  const del = document.createElement('button');
+  del.className = 'edit-delete-btn';
+  del.innerHTML = '×';
+  del.onclick = (e) => { e.stopPropagation(); item.remove(); };
+
+  item.appendChild(dot);
+  item.appendChild(span);
+  item.appendChild(del);
+  grid.insertBefore(item, grid.querySelector('.edit-add-btn'));
+  span.focus();
+}
+
+function addBullet(ul) {
+  const li = document.createElement('li');
+  li.textContent = 'New bullet — click to edit';
+  li.setAttribute('data-editable', 'true');
+  li.contentEditable = 'true';
+  li.style.position = 'relative';
+
+  const del = document.createElement('button');
+  del.className = 'edit-delete-btn';
+  del.style.cssText = 'position:absolute;right:-20px;top:2px;';
+  del.innerHTML = '×';
+  del.onclick = (e) => { e.stopPropagation(); li.remove(); };
+  li.appendChild(del);
+
+  ul.insertBefore(li, ul.querySelector('.edit-add-btn'));
+  li.focus();
+}
+
+function addPeopleItem(col) {
+  const item = document.createElement('div');
+  item.className = 'people-item';
+  item.setAttribute('data-editable', 'true');
+
+  const span = document.createElement('span');
+  span.textContent = 'New item — click to edit';
+  span.setAttribute('data-editable', 'true');
+  span.contentEditable = 'true';
+
+  const del = document.createElement('button');
+  del.className = 'edit-delete-btn';
+  del.innerHTML = '×';
+  del.onclick = (e) => { e.stopPropagation(); item.remove(); };
+
+  item.appendChild(span);
+  item.appendChild(del);
+  col.insertBefore(item, col.querySelector('.edit-add-btn'));
+  span.focus();
+}
+
+function savePortal() {
+  // Clean up edit UI before saving
+  document.querySelectorAll('.edit-delete-btn, .edit-add-btn').forEach(el => el.remove());
+  document.querySelectorAll('[data-editable]').forEach(el => {
+    el.removeAttribute('data-editable');
+    el.removeAttribute('contenteditable');
+  });
+  document.body.classList.remove('edit-mode');
+  document.getElementById('editToolbarInner').classList.remove('open');
+  document.getElementById('editToggleBtn').style.display = 'flex';
+  document.getElementById('editToggleBtn').classList.remove('active');
+  editModeOn = false;
+
+  // Serialize the full page
+  const doctype = '<!DOCTYPE html>\n';
+  const html = doctype + document.documentElement.outerHTML;
+
+  // Use a data URI for reliability across all browsers and hosting environments
+  const encoded = encodeURIComponent(html);
+  const dataUri = 'data:text/html;charset=utf-8,' + encoded;
+
+  const a = document.createElement('a');
+  a.setAttribute('href', dataUri);
+  a.setAttribute('download', 'pivotyes-client-portal-updated.html');
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  // Flash confirmation
+  const flash = document.getElementById('saveFlash');
+  flash.classList.add('show');
+  setTimeout(() => flash.classList.remove('show'), 3000);
+}
+</script>
+
+<!-- EDIT TOOLBAR -->
+<div class="edit-toolbar" id="editToolbar">
+  <div class="edit-toolbar-inner" id="editToolbarInner">
+    <div class="edit-hint">✏️ Click any text to edit it directly</div>
+    <button class="edit-btn edit-btn-save" onclick="savePortal()">⬇️ Save & Download</button>
+    <button class="edit-btn edit-btn-cancel" onclick="toggleEditMode()">✕ Exit without saving</button>
+  </div>
+  <button class="edit-btn edit-btn-primary" id="editToggleBtn" onclick="toggleEditMode()">✏️ Edit Portal</button>
+</div>
+<div class="edit-save-flash" id="saveFlash">✓ Downloaded — upload to GitHub to publish</div>
+
+</body>
+</html>
