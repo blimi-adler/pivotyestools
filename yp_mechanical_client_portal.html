@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YP Mechanical — Client Portal | PivotYes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#0d0d0d;
+    --ink:#1a1a1a;
+    --red:#e02424;
+    --red-dark:#b91c1c;
+    --paper:#f7f6f3;
+    --card:#ffffff;
+    --line:#e3e1dc;
+    --gray:#6b6b6b;
+    --green:#1a7f4b;
+    --amber:#b45309;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);line-height:1.55;}
+
+  /* ===== HEADER ===== */
+  header{background:var(--black);color:#fff;padding:48px 24px 0;}
+  .header-inner{max-width:1060px;margin:0 auto;}
+  .brand{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #2c2c2c;padding-bottom:16px;}
+  .brand .logo{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;}
+  .brand .logo span{color:var(--red);}
+  .brand .tag{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:#9a9a9a;}
+  h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,8vw,96px);letter-spacing:1px;line-height:.95;margin:36px 0 8px;}
+  h1 em{font-style:normal;color:var(--red);}
+  .sub{display:flex;flex-wrap:wrap;gap:10px 28px;font-size:14px;color:#c9c9c9;margin-bottom:36px;}
+  .sub b{color:#fff;font-weight:500;}
+
+  /* ===== NAV TABS ===== */
+  nav{display:flex;flex-wrap:wrap;gap:0;}
+  nav button{
+    font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:1.5px;
+    background:transparent;color:#8d8d8d;border:none;border-bottom:3px solid transparent;
+    padding:14px 18px;cursor:pointer;transition:color .15s;
+  }
+  nav button:hover{color:#fff;}
+  nav button.active{color:#fff;border-bottom-color:var(--red);}
+  nav button:focus-visible{outline:2px solid var(--red);outline-offset:-2px;}
+
+  /* ===== MAIN ===== */
+  main{max-width:1060px;margin:0 auto;padding:48px 24px 80px;}
+  .panel{display:none;animation:fade .25s ease;}
+  .panel.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+  @media (prefers-reduced-motion:reduce){.panel{animation:none;}}
+
+  .eyebrow{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--red);font-weight:700;margin-bottom:6px;}
+  h2{font-family:'Bebas Neue',sans-serif;font-size:40px;letter-spacing:1px;margin-bottom:6px;}
+  .lede{font-size:16px;color:var(--gray);max-width:680px;margin-bottom:32px;}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:24px;}
+  .card h3{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;margin-bottom:12px;}
+  .card h3 .num{color:var(--red);margin-right:6px;}
+  .card ul{list-style:none;}
+  .card li{padding:7px 0 7px 20px;position:relative;font-size:14.5px;border-bottom:1px solid #f0efeb;}
+  .card li:last-child{border-bottom:none;}
+  .card li::before{content:"";position:absolute;left:0;top:14px;width:8px;height:8px;background:var(--red);border-radius:1px;}
+  .card li.done::before{background:var(--green);}
+  .card li.open::before{background:var(--amber);}
+  .card li b{font-weight:700;}
+
+  .status{display:inline-block;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:4px 10px;border-radius:99px;margin-bottom:14px;}
+  .status.done{background:#e3f3ea;color:var(--green);}
+  .status.active-s{background:#fde8e8;color:var(--red-dark);}
+  .status.next{background:#fdf0df;color:var(--amber);}
+  .status.hold{background:#eee;color:#666;}
+
+  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0 4px;}
+  .flow span{background:var(--black);color:#fff;font-size:12.5px;font-weight:500;padding:6px 12px;border-radius:6px;}
+  .flow i{color:var(--red);font-style:normal;font-weight:700;}
+
+  .legend{display:flex;gap:22px;margin:0 0 26px;font-size:12.5px;color:var(--gray);}
+  .legend span{display:flex;align-items:center;gap:7px;}
+  .dot{width:9px;height:9px;border-radius:2px;display:inline-block;}
+  .dot.g{background:var(--green);} .dot.r{background:var(--red);} .dot.a{background:var(--amber);}
+
+  .callout{background:var(--black);color:#fff;border-radius:10px;padding:26px 28px;margin-top:28px;}
+  .callout .eyebrow{color:var(--red);}
+  .callout p{font-size:15.5px;color:#d8d8d8;max-width:760px;}
+  .callout p b{color:#fff;}
+
+  .pending{border:2px dashed var(--red);background:#fff;border-radius:10px;padding:22px 26px;margin-top:28px;}
+  .pending h3{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--red-dark);margin-bottom:8px;}
+  .pending p{font-size:14px;color:var(--gray);}
+
+  table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:14px;}
+  th{background:var(--black);color:#fff;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1.5px;text-align:left;padding:12px 16px;font-weight:400;}
+  td{padding:12px 16px;border-bottom:1px solid #f0efeb;vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  td:first-child{font-weight:700;white-space:nowrap;}
+  .owner{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:#f0efeb;padding:3px 9px;border-radius:99px;white-space:nowrap;}
+
+  footer{background:var(--black);color:#8d8d8d;text-align:center;padding:26px;font-size:12.5px;letter-spacing:.5px;}
+  footer span{color:var(--red);}
+
+  @media(max-width:640px){
+    nav{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;}
+    nav button{white-space:nowrap;}
+    main{padding:36px 18px 60px;}
+  }
+  @media print{
+    nav{display:none;}
+    .panel{display:block !important;page-break-after:always;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <div class="logo">PIVOT<span>YES</span></div>
+      <div class="tag">Client Portal</div>
+    </div>
+    <h1>YP <em>Mechanical</em></h1>
+    <div class="sub">
+      <span><b>Yanky Putter</b> · Owner</span>
+      <span><b>HVAC</b> · Service &amp; Installation</span>
+      <span>Engagement: <b>March – June 2026</b></span>
+      <span>Updated: <b>June 12, 2026</b></span>
+    </div>
+    <nav>
+      <button class="active" data-tab="overview">Overview</button>
+      <button data-tab="operations">Operations</button>
+      <button data-tab="finance">Finance</button>
+      <button data-tab="hr">HR &amp; People</button>
+      <button data-tab="sales">Sales</button>
+      <button data-tab="marketing">Marketing</button>
+      <button data-tab="leadership">Leadership</button>
+      <button data-tab="next">Next Steps</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ================= OVERVIEW ================= -->
+<section class="panel active" id="overview">
+  <div class="eyebrow">Where We Are</div>
+  <h2>One Brain → One System</h2>
+  <p class="lede">YP Mechanical runs on Yanky's memory, urgency, and judgment. The engagement's job: get it out of his head, into documented systems, and prove the business can run without him in every decision.</p>
+
+  <div class="grid">
+    <div class="card">
+      <h3>The Goal</h3>
+      <ul>
+        <li>One source of truth — everything traceable, nothing lost</li>
+        <li>Yanky out of day-to-day dispatching and execution</li>
+        <li>A sellable business in 5 years — not subject to him</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>The Root Issue</h3>
+      <ul>
+        <li>Nothing documented — nothing can be handed off</li>
+        <li>No one owns anything end to end except Yanky</li>
+        <li>24/7 urgency mode — hard to delegate from that state</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>The Sequence</h3>
+      <ul>
+        <li class="done"><b>First:</b> document and systemize (Monday.com)</li>
+        <li class="open"><b>Then:</b> prove the process runs without him</li>
+        <li class="open"><b>Then:</b> hire and hand off (Service Manager)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="grid" style="margin-top:18px;">
+    <div class="card" style="grid-column:1/-1;">
+      <h3>Engagement Timeline</h3>
+      <ul>
+        <li class="done"><b>March 22</b> — Subcontractor model designed (fixed-fee, liability shifted) · Dovid's role flagged as misaligned</li>
+        <li class="done"><b>March 30</b> — Restructure finalized: Dovid's role eliminated, Peretz offer drafted, second crew under Manuel, Field Manager + bookkeeper named as priority hires</li>
+        <li class="done"><b>April 13</b> — Letting Go conversation with Dovid (Blimi present) · 1-month transition</li>
+        <li class="done"><b>April 22</b> — Bookkeeping outsourced (&lt;$500/week) · Trello-centric workflow designed · Peretz 3-year plan + 2-page subcontractor agreement finalized</li>
+        <li class="done"><b>May 31</b> — Chani promoted to In-Office Project Manager · ~273-call backlog triage started · two-account bank structure set</li>
+        <li class="done"><b>June 4</b> — Monday.com reset to basics: three mobile fixes, roles clarified (Suri / Joseph / Chani)</li>
+        <li class="done"><b>June 8–12</b> — Full workflows mapped in Monday · Clarion finance scope agreed · operator-to-owner strategy session</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="grid" style="margin-top:18px;">
+    <div class="card">
+      <h3>Three Tracks Running Now</h3>
+      <ul>
+        <li><b>Operations</b> — Monday.com build: service calls + installs</li>
+        <li><b>Finance</b> — bookkeeping overhaul with Clarion (Moshe Seidenfeld)</li>
+        <li><b>Leadership</b> — operator-to-owner transition</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Key People</h3>
+      <ul>
+        <li><b>Chani</b> — In-Office Project Manager · owns intake through collections</li>
+        <li><b>Peretz</b> — lead service technician · $150k offer + 3-year growth plan</li>
+        <li><b>Manuel</b> — installation subcontractor (SM Mechanical) · <b>Walter</b> leads second crew under his agreement</li>
+        <li><b>Yishai, Aaron</b> — technicians · part-time / Monday rollout pending</li>
+        <li><b>Suri</b> — PivotYes · Monday.com build, Yanky's single point of contact</li>
+        <li><b>Joseph</b> — website + Google Form integration</li>
+        <li><b>Moshe Seidenfeld</b> — Clarion · bookkeeping</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout">
+    <div class="eyebrow">Blimi's Read</div>
+    <p>Yanky is one of the most self-aware clients in the portfolio. The vision isn't the problem — documentation is. The risk is his urgency pulling him back into solving everything himself before the system proves itself. <b>The next 30 days decide it:</b> if Monday is working and he's in it daily, trust in the process builds — and that unlocks everything else.</p>
+  </div>
+
+</section>
+
+<!-- ================= OPERATIONS ================= -->
+<section class="panel" id="operations">
+  <div class="eyebrow">Function 3 of 6</div>
+  <h2>Operations</h2>
+  <p class="lede">The core build: replicate the real-world workflow in Monday.com — simple, mobile-usable, one source of truth. Complexity stripped back on June 4; full workflow mapped June 8.</p>
+  <div class="legend">
+    <span><i class="dot g"></i>Done</span>
+    <span><i class="dot r"></i>In progress</span>
+    <span><i class="dot a"></i>Up next</span>
+  </div>
+
+  <div class="grid">
+    <div class="card" style="grid-column:1/-1;">
+      <span class="status active-s">In Build</span>
+      <h3>Service Call Flow</h3>
+      <div class="flow">
+        <span>New Request</span><i>→</i><span>Intake Confirmed</span><i>→</i><span>Ready to Dispatch</span><i>→</i><span>In Progress</span><i>→</i><span>Needs Part</span><i>→</i><span>Completed</span><i>→</i><span>Ready to Bill</span>
+      </div>
+      <ul style="margin-top:14px;">
+        <li class="done">Service form requires all fields — name, address, phone, email</li>
+        <li class="done">Chani owns intake confirmation · Yanky owns dispatch (until Service Manager hired)</li>
+        <li class="done">"Needs Part" fires automatic alert to Chani — no board-watching</li>
+        <li class="done">Technicians get a clean card: address + issue only · mark done → pops back to main board</li>
+        <li class="open">Build + demo technician board before rollout to Aaron and Peretz</li>
+      </ul>
+    </div>
+
+    <div class="card" style="grid-column:1/-1;">
+      <span class="status done">Built in Monday</span>
+      <h3>Installation / New Lead Flow</h3>
+      <div class="flow">
+        <span>New Lead</span><i>→</i><span>Check Out Job</span><i>→</i><span>Need to Quote</span><i>→</i><span>Quote Sent</span><i>→</i><span>Lingering</span><i>→</i><span>Approved</span><i>→</i><span>Ready to Schedule</span><i>→</i><span>In Progress / On Hold</span><i>→</i><span>Completed</span><i>→</i><span>Ready to Invoice</span>
+      </div>
+      <ul style="margin-top:14px;">
+        <li class="done">Automation: Quote Sent → auto-moves to Lingering after 3 days + follow-up reminder</li>
+        <li class="done">"On Hold" always carries a note explaining why — no silent stalls</li>
+        <li class="done">Every incomplete job requires a populated reason field</li>
+        <li class="open">Invoicing: Chani clicks "create invoice" → auto-populates card data into QuickBooks</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <span class="status done">Decided · June 4</span>
+      <h3>Reset: Back to Basics</h3>
+      <ul>
+        <li class="done">Scrapped over-built features and WhatsApp integrations</li>
+        <li class="done">Phase 1 = stable and usable · Phase 2 = automations later</li>
+        <li class="done">No going back to Trello</li>
+        <li class="done">Three mobile fixes implemented: newest on top, key info at top of card, auto-timestamps</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <span class="status active-s">In Rollout</span>
+      <h3>Data &amp; Rollout</h3>
+      <ul>
+        <li class="done">Google Sheet cleaned up — ~286 cards sorted to correct stages</li>
+        <li class="done">Cleaned data imported into Monday.com</li>
+        <li class="done">Google Form → Monday connection live (Joseph)</li>
+        <li class="open"><b>Immediate:</b> test technician board → onboard Aaron + Peretz</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <span class="status active-s">In Progress</span>
+      <h3>Estimation Wizard</h3>
+      <ul>
+        <li>7-step estimation tool in build — GPS, equipment config, pricing, PDF export</li>
+        <li>Google Drive integration for saved estimates</li>
+        <li class="open">Finalize and deliver for field testing</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FINANCE ================= -->
+<section class="panel" id="finance">
+  <div class="eyebrow">Function 4 of 6</div>
+  <h2>Finance</h2>
+  <p class="lede">Scoped June 10 with Moshe Seidenfeld (Clarion): three projects — clean up the past, verify one claim, build the system going forward.</p>
+
+  <div class="grid">
+    <div class="card">
+      <span class="status next">Scoped</span>
+      <h3><span class="num">1</span>HCP Invoice Reconciliation</h3>
+      <ul>
+        <li>434 open invoices in HouseCall Pro — many likely paid via ACH link, never recorded in QuickBooks</li>
+        <li>Moshe verifies every HCP invoice against QuickBooks, applies missing payments</li>
+        <li>Then: mass reminder to true open balances with live QuickBooks payment link</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="status next">Scoped</span>
+      <h3><span class="num">2</span>2024–2025 Write-Up</h3>
+      <ul>
+        <li>Dovid's profit-sharing claim needs a defensible number</li>
+        <li>Quick cash-basis write-up on a simple QuickBooks ledger — no full audit</li>
+        <li>2026 books being completed first (~3–4 weeks) to establish a clean baseline</li>
+      </ul>
+    </div>
+    <div class="card" style="grid-column:1/-1;">
+      <span class="status next">Scoped</span>
+      <h3><span class="num">3</span>New Operational Bookkeeping System</h3>
+      <ul>
+        <li><b>AP:</b> all bills → central billing email → Clarion enters in QuickBooks → Thursday AP report for Yanky's approval → paid via Bill.com</li>
+        <li><b>AR:</b> Clarion records all payment types (ACH, Zelle, check, cash) · remote check deposits via photo/PDF</li>
+        <li><b>Access control:</b> Chani's QuickBooks access limited to AR — no visibility to bank balances</li>
+        <li><b>Job costing:</b> every bill must carry job address or name</li>
+        <li><b>Inventory gap:</b> Sortly unusable — new material tracking needed: bulk purchase → job allocation → returns</li>
+        <li><b>Future:</b> US-based AR support (9–5) for customer calls — revisit after the new workflow runs one month</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout">
+    <div class="eyebrow">To Activate</div>
+    <p>Moshe sends revised estimate → Yanky approves → Yanky grants viewer-only access to Chase checking, Chase credit card, Capital One credit card → <b>Blimi facilitates the setup meeting.</b></p>
+  </div>
+</section>
+
+<!-- ================= HR & PEOPLE ================= -->
+<section class="panel" id="hr">
+  <div class="eyebrow">Function 5 of 6</div>
+  <h2>HR &amp; People</h2>
+  <p class="lede">The people work follows the process work — but the groundwork is laid: agreements in place, roles being defined, growth paths drafted, and one exit handled cleanly.</p>
+
+  <div class="grid">
+    <div class="card">
+      <span class="status done">Delivered</span>
+      <h3>Subcontractors — Manuel + Walter</h3>
+      <ul>
+        <li class="done">Formal subcontractor agreement: fixed-fee per job (built off $115/hr internal rate), COI per job naming YP as additional insured, non-compete</li>
+        <li class="done">Shifts labor-law and insurance liability off YP — the scalable crew model</li>
+        <li class="done">Second installation crew: Walter leads under Manuel's agreement, 6-month probation</li>
+        <li class="done">Agreement condensed from 4 pages to 2 for clarity</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="status done">Delivered</span>
+      <h3>Growth Plan — Peretz</h3>
+      <ul>
+        <li class="done">Formal offer: $150k base + profit share — designed to match his ~$250k current income and earn his full commitment</li>
+        <li class="done"><b>Year 1:</b> $150k + rebate-processing bonus · part-time, keeps museum job</li>
+        <li class="done"><b>Year 2:</b> + profit share (10–15% above $200k service revenue) · full-time, exits museum job</li>
+        <li class="done"><b>Year 3+:</b> Service Manager with growing profit share</li>
+        <li>Self-funding role: ~34 service calls/month covers the salary</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="status done">Completed · April–May</span>
+      <h3>Letting Go — Dovid</h3>
+      <ul>
+        <li class="done">Role eliminated as strategic decision (March 30) — generalist role at ~$190k + profit share didn't fit the new specialized structure</li>
+        <li class="done">Conversation held April 13, Blimi present — framed as fit, not blame; talent acknowledged</li>
+        <li class="done">1-month transition (6-month wind-down rejected to keep momentum) · work computer cloned beforehand for data security</li>
+        <li class="done">Chani cross-trained on customer intake before the conversation — no operational gap</li>
+        <li>His profit-sharing claim → being verified under Finance Project 2 (2024–25 write-up)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="status active-s">In Progress</span>
+      <h3>Chani — In-Office Project Manager</h3>
+      <ul>
+        <li class="done">Promoted from assistant to In-Office Project Manager (May 31) — owns the full project lifecycle</li>
+        <li class="done">Scope: client intake, estimate drafting, lead tracking, collections, payroll (ADP), bill payments, rebate processing</li>
+        <li class="done">Daily 10:00 AM alignment meeting with Yanky</li>
+        <li class="done">Bank access: two-account structure — Chani works the operating account; Yanky keeps the primary private</li>
+        <li class="open">Cement ownership in Monday: she runs intake confirmation and invoicing end to end</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="status next">Up Next</span>
+      <h3>Technicians</h3>
+      <ul>
+        <li class="done">Peretz = lead service tech · Yishai stays part-time hourly helper</li>
+        <li>Dispatch via Monday card assignment — tech logs work, card pushes back to main board</li>
+        <li class="open">Aaron + Peretz onboard to Monday once demo board passes</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="status next">Active Search</span>
+      <h3>Field Manager — Priority Hire</h3>
+      <ul>
+        <li>Seasoned hire to own installations: material purchasing, inventory, warehouse, job-site coordination, client communication</li>
+        <li class="open">Yanky interviewing candidates — Aron and others in pipeline</li>
+        <li>This hire is what finally pulls Yanky out of daily field management</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SALES ================= -->
+<section class="panel" id="sales">
+  <div class="eyebrow">Function 1 of 6</div>
+  <h2>Sales</h2>
+  <p class="lede">Sales runs through the install pipeline — leads, quotes, follow-up. The fix is structure, not volume: no lead lost, no quote forgotten.</p>
+
+  <div class="grid">
+    <div class="card">
+      <span class="status active-s">In Build</span>
+      <h3>Lead-to-Quote Pipeline</h3>
+      <ul>
+        <li class="done">Full lead flow mapped in Monday: New Lead → Quote → Approved → Scheduled</li>
+        <li class="done">Quote follow-up automated — 3 days, then Lingering + reminder</li>
+        <li>Yanky reviews two boards daily: service calls + new leads</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="status active-s">In Progress</span>
+      <h3>Estimation Wizard</h3>
+      <ul>
+        <li>Standardized 7-step quoting in build: equipment config + pricing built in</li>
+        <li class="open">Goal: PDF estimates on the spot — consistent pricing, professional output</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="status next">Up Next</span>
+      <h3>Lead Intake</h3>
+      <ul>
+        <li class="open"><b>Immediate:</b> edit and simplify the Google Form for sales — fewer questions, faster submission</li>
+        <li class="done">Form → Monday connection live</li>
+        <li>All required fields enforced at entry — no chasing missing info</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MARKETING ================= -->
+<section class="panel" id="marketing">
+  <div class="eyebrow">Function 2 of 6</div>
+  <h2>Marketing</h2>
+  <p class="lede">Deliberately minimal scope. One decision made, one rebuild pending.</p>
+
+  <div class="grid">
+    <div class="card">
+      <span class="status active-s">Decided · In Rebuild</span>
+      <h3>Website → Landing Page</h3>
+      <ul>
+        <li class="done">Current website rejected — scrapped</li>
+        <li class="open">Rebuild as one clean landing page: 15-year company blurb + service request form. That's it.</li>
+        <li class="open">Service request form is the entry point into the Monday pipeline</li>
+        <li class="open">Yanky approves before it goes live (Joseph)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="status hold">Out of Scope For Now</span>
+      <h3>Everything Else</h3>
+      <ul>
+        <li>No campaigns, no content, no ad spend until operations stabilize</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LEADERSHIP ================= -->
+<section class="panel" id="leadership">
+  <div class="eyebrow">Function 6 of 6</div>
+  <h2>Leadership &amp; Vision</h2>
+  <p class="lede">The deepest track. The surface topic is software — the real topic is whether Yanky makes the shift from operator to owner.</p>
+
+  <div class="grid">
+    <div class="card">
+      <h3>What Yanky Wants</h3>
+      <ul>
+        <li>Out of his own head — one system, fully traceable</li>
+        <li>Out of dispatching and day-to-day execution</li>
+        <li>A sellable business in 5 years</li>
+        <li>People who own their positions like owners — not 9-to-5ers</li>
+        <li>To be the visionary — not the technician, not the dispatcher</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>What's Blocking Him</h3>
+      <ul>
+        <li>No documentation = nothing to hand off</li>
+        <li>24/7 urgency mode — can't delegate from there</li>
+        <li>Trust deficit — hasn't found people with skin in the game</li>
+        <li>He's both the problem and the only solution — and he knows it</li>
+      </ul>
+    </div>
+    <div class="card" style="grid-column:1/-1;">
+      <span class="status done">Agreed Direction</span>
+      <h3>The Path</h3>
+      <ul>
+        <li class="done"><b>Goal 1 only, right now:</b> documentation + one source of truth</li>
+        <li class="done">Goal 2 (people + delegation) comes after the process is visible and proven</li>
+        <li class="done">Urgency stays in the product — it comes out of the operating model</li>
+        <li class="done">Communication fixed: Yanky ↔ Suri direct — no broken telephone</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout">
+    <div class="eyebrow">The Key Insight</div>
+    <p><b>He can't hand off what isn't documented.</b> The path from operator to owner runs directly through the Monday.com build. Get it out of his head, prove the process works, then hand it to someone. He cannot hire his way out before the system exists.</p>
+  </div>
+</section>
+
+<!-- ================= NEXT STEPS ================= -->
+<section class="panel" id="next">
+  <div class="eyebrow">All Functions</div>
+  <h2>Next Steps</h2>
+  <p class="lede">Every open item, one place, one owner each.</p>
+
+  <table>
+    <thead><tr><th>Track</th><th>Action</th><th>Owner</th></tr></thead>
+    <tbody>
+      <tr><td>Operations</td><td><b>Immediate:</b> test the technician board, then onboard Aaron and Peretz</td><td><span class="owner">Suri + Yanky</span></td></tr>
+      <tr><td>Sales</td><td><b>Immediate:</b> edit and simplify the Google Form for sales</td><td><span class="owner">Suri</span></td></tr>
+      <tr><td>Operations</td><td>Finalize and deliver the estimation wizard for field testing</td><td><span class="owner">PivotYes</span></td></tr>
+      <tr><td>Finance</td><td>Send revised estimate covering all three projects</td><td><span class="owner">Moshe</span></td></tr>
+      <tr><td>Finance</td><td>Review + approve estimate; grant viewer-only bank access (Chase ×2, Capital One)</td><td><span class="owner">Yanky</span></td></tr>
+      <tr><td>Finance</td><td>Facilitate Clarion setup meeting once estimate approved</td><td><span class="owner">Blimi</span></td></tr>
+      <tr><td>Finance</td><td>Design new material/inventory tracking process (replace Sortly)</td><td><span class="owner">PivotYes</span></td></tr>
+      <tr><td>HR</td><td>Cement Chani's PM ownership inside Monday — intake confirmation + invoicing end to end</td><td><span class="owner">Suri + Chani</span></td></tr>
+      <tr><td>HR</td><td>Interview Field Manager candidates — Aron and others</td><td><span class="owner">Yanky</span></td></tr>
+      <tr><td>HR</td><td>Finalize Peretz acceptance + start date on the 3-year growth plan</td><td><span class="owner">Yanky</span></td></tr>
+      <tr><td>Marketing</td><td>Rebuild website as simple landing page with service request form</td><td><span class="owner">Joseph</span></td></tr>
+      <tr><td>Leadership</td><td>Identify what Yanky must document before anything can be handed off</td><td><span class="owner">Yanky + Blimi</span></td></tr>
+    </tbody>
+  </table>
+
+</section>
+
+</main>
+
+<footer>PIVOT<span>YES</span> · YP Mechanical Client Portal · Confidential · June 2026</footer>
+
+<script>
+  const tabs = document.querySelectorAll('nav button');
+  const panels = document.querySelectorAll('.panel');
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabs.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+  });
+</script>
+</body>
+</html>
