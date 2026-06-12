@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 6: Work Like It Means Something — PivotYes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    :root { --black:#0A0A0A; --ink:#1A1A1A; --white:#FFFFFF; --off-white:#F7F7F7; --red:#C8102E; --mid:#666666; --light:#AAAAAA; --rule:#E0E0E0; --rule-dk:#2A2A2A; }
+    html { scroll-behavior:smooth; }
+    body { font-family:'Inter',sans-serif; background:var(--white); color:var(--ink); line-height:1.75; }
+    .nav-strip { background:var(--black); padding:12px 40px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+    .nav-brand { font-size:11px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--white); }
+    .nav-program { font-size:11px; color:var(--light); letter-spacing:.06em; }
+    .nav-module-badge { background:var(--red); color:var(--white); font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; padding:5px 14px; border-radius:2px; }
+
+    .hero { background:var(--black); color:var(--white); padding:80px 40px 70px; position:relative; overflow:hidden; }
+    .hero::after { content:'6'; position:absolute; right:40px; top:50%; transform:translateY(-50%); font-family:'Playfair Display',serif; font-size:18rem; font-weight:900; color:rgba(255,255,255,.04); line-height:1; pointer-events:none; user-select:none; }
+    .hero-inner { max-width:700px; position:relative; z-index:1; }
+    .hero-eyebrow { display:flex; align-items:center; gap:12px; margin-bottom:24px; }
+    .hero-eyebrow .mod-label { font-size:10px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--red); }
+    .hero-eyebrow .sep { width:32px; height:1px; background:var(--rule-dk); }
+    .hero-eyebrow .skill-label { font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--light); }
+    .hero h1 { font-family:'Playfair Display',serif; font-size:clamp(2.4rem,6vw,4rem); font-weight:900; line-height:1.08; margin-bottom:18px; }
+    .hero h1 em { font-style:italic; color:var(--red); }
+    .hero-sub { font-size:1.05rem; color:rgba(255,255,255,.6); max-width:480px; line-height:1.7; margin-bottom:36px; }
+    .hero-stats { display:flex; gap:32px; flex-wrap:wrap; }
+    .hero-stat { display:flex; flex-direction:column; gap:3px; }
+    .hero-stat .val { font-size:.82rem; font-weight:600; color:var(--white); }
+    .hero-stat .lbl { font-size:.72rem; color:var(--light); letter-spacing:.06em; }
+
+    /* ── MODULE 3 DISTINCTION BANNER ── */
+    .distinction-banner {
+      background: var(--off-white);
+      border-top: 3px solid var(--red);
+      padding: 24px 32px;
+    }
+    .distinction-inner { max-width:800px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+    @media(max-width:580px){ .distinction-inner { grid-template-columns:1fr; } }
+    .dist-col .dist-tag { font-size:9px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; margin-bottom:6px; }
+    .dist-col.m3 .dist-tag { color:var(--light); }
+    .dist-col.m6 .dist-tag { color:var(--red); }
+    .dist-col .dist-title { font-size:.92rem; font-weight:700; color:var(--black); margin-bottom:4px; }
+    .dist-col .dist-body { font-size:.84rem; color:var(--mid); line-height:1.6; }
+
+    .page { max-width:800px; margin:0 auto; padding:0 32px; }
+    .block { padding:56px 0 0; }
+    .block:last-of-type { padding-bottom:80px; }
+    .block-label { font-size:10px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--red); margin-bottom:10px; }
+    .block-title { font-family:'Playfair Display',serif; font-size:clamp(1.4rem,2.8vw,1.85rem); font-weight:700; color:var(--black); line-height:1.2; margin-bottom:20px; }
+    .block-body { font-size:.96rem; color:var(--ink); line-height:1.8; }
+    .block-body p + p { margin-top:16px; }
+    .block-body strong { color:var(--black); font-weight:600; }
+    .rule { border:none; border-top:1px solid var(--rule); margin:56px 0 0; }
+    .pull-quote { border-left:4px solid var(--red); padding:20px 24px; margin:32px 0; background:var(--off-white); }
+    .pull-quote p { font-family:'Playfair Display',serif; font-size:1.2rem; font-style:italic; color:var(--black); line-height:1.5; }
+
+    /* ── MISSION / VALUES CARDS ── */
+    .mv-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:24px; }
+    @media(max-width:560px){ .mv-grid { grid-template-columns:1fr; } }
+    .mv-card { background:var(--white); border:1px solid var(--rule); padding:24px 20px; }
+    .mv-card.mission { border-top:3px solid var(--black); }
+    .mv-card.values { border-top:3px solid var(--red); }
+    .mv-card .mv-tag { font-size:9px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; margin-bottom:8px; }
+    .mv-card.mission .mv-tag { color:var(--black); }
+    .mv-card.values .mv-tag { color:var(--red); }
+    .mv-card h4 { font-size:.92rem; font-weight:700; color:var(--black); margin-bottom:8px; line-height:1.3; }
+    .mv-card p { font-size:.84rem; color:var(--mid); line-height:1.6; }
+
+    /* ── VALUES IN ACTION TABLE ── */
+    .values-table { width:100%; border-collapse:collapse; margin-top:24px; font-size:.87rem; }
+    .values-table thead tr { background:var(--black); }
+    .values-table thead th { padding:12px 16px; text-align:left; font-size:10px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--light); }
+    .values-table thead th:last-child { color:var(--red); }
+    .values-table tbody tr:nth-child(even) { background:var(--off-white); }
+    .values-table tbody td { padding:14px 16px; border-bottom:1px solid var(--rule); vertical-align:top; line-height:1.55; }
+    .values-table tbody tr:last-child td { border-bottom:none; }
+    .values-table tbody td:first-child { font-weight:600; color:var(--black); width:180px; }
+    .values-table tbody td:last-child { color:var(--ink); }
+
+    /* ── FRAMEWORK BOX ── */
+    .framework-box { background:var(--black); color:var(--white); border-radius:4px; padding:36px 32px; margin-top:24px; }
+    .framework-box .fb-label { font-size:10px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--red); margin-bottom:14px; }
+    .framework-box h3 { font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:700; margin-bottom:20px; line-height:1.3; }
+    .framework-steps { display:flex; flex-direction:column; gap:14px; }
+    .fw-step { display:grid; grid-template-columns:28px 1fr; gap:14px; align-items:start; }
+    .fw-step .fw-num { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; color:var(--red); line-height:1.3; }
+    .fw-step .fw-text { font-size:.9rem; color:rgba(255,255,255,.8); line-height:1.6; }
+    .fw-step .fw-text strong { color:var(--white); }
+
+    /* ── EXERCISE ── */
+    .exercise-block { background:var(--off-white); border:1px solid var(--rule); border-radius:4px; overflow:hidden; margin-top:24px; }
+    .exercise-header { background:var(--red); padding:14px 24px; display:flex; align-items:center; justify-content:space-between; }
+    .exercise-header .ex-title { font-size:11px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--white); }
+    .exercise-header .ex-type { font-size:10px; color:rgba(255,255,255,.7); letter-spacing:.1em; }
+    .exercise-body { padding:28px 28px 24px; }
+    .exercise-body .prompt { font-size:.96rem; color:var(--ink); line-height:1.75; margin-bottom:24px; }
+    .write-line-label { font-size:10px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--mid); margin-bottom:10px; }
+    .write-lines { display:flex; flex-direction:column; gap:12px; }
+    .write-line { border-bottom:1px solid var(--rule); height:36px; position:relative; }
+    .write-line::before { content:''; position:absolute; left:0; top:50%; width:6px; height:6px; background:var(--red); border-radius:50%; transform:translateY(-50%); opacity:.4; }
+
+    /* ── REFLECTION ── */
+    .reflection-block { border:1px solid var(--rule); border-left:4px solid var(--black); padding:24px 24px 20px; margin-top:20px; background:var(--white); }
+    .reflection-block .ref-label { font-size:10px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--black); margin-bottom:10px; }
+    .reflection-block .ref-q { font-family:'Playfair Display',serif; font-style:italic; font-size:1.05rem; color:var(--black); line-height:1.55; margin-bottom:16px; }
+    .reflection-block .ref-space { background:var(--off-white); border:1px dashed var(--rule); height:80px; padding:10px 12px; font-size:.78rem; color:var(--light); font-style:italic; }
+
+    /* ── COMPLETION BANNER ── */
+    .completion-banner { background:var(--black); color:var(--white); padding:56px 40px; text-align:center; margin-top:56px; }
+    .completion-banner .cb-eyebrow { font-size:10px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--red); margin-bottom:16px; }
+    .completion-banner h3 { font-family:'Playfair Display',serif; font-size:2rem; font-weight:900; line-height:1.2; margin-bottom:16px; }
+    .completion-banner h3 em { color:var(--red); font-style:italic; }
+    .completion-banner p { font-size:.95rem; color:rgba(255,255,255,.65); max-width:520px; margin:0 auto; line-height:1.75; }
+
+    .module-nav { background:var(--black); padding:28px 40px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+    .module-nav .nav-info { display:flex; flex-direction:column; gap:3px; }
+    .module-nav .nav-info .lbl { font-size:9px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--light); }
+    .module-nav .nav-info .title { font-size:.9rem; color:var(--white); font-weight:500; }
+    .nav-progress { display:flex; gap:6px; align-items:center; }
+    .nav-dot { width:8px; height:8px; border-radius:50%; background:var(--rule-dk); }
+    .nav-dot.active { background:var(--red); }
+    .nav-dot.done { background:var(--white); }
+    .footer { background:var(--off-white); border-top:1px solid var(--rule); text-align:center; padding:32px 24px; font-size:.78rem; color:var(--light); letter-spacing:.06em; }
+    .footer strong { color:var(--black); }
+    @media(max-width:500px){.hero{padding:56px 24px 52px;}.page{padding:0 20px;}.nav-strip{padding:12px 20px;}}
+  </style>
+</head>
+<body>
+
+<div class="nav-strip">
+  <span class="nav-brand">PivotYes</span>
+  <span class="nav-program">Communicate Like You Mean It</span>
+  <span class="nav-module-badge">Module 06</span>
+</div>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">
+      <span class="mod-label">Module 06</span><span class="sep"></span>
+      <span class="skill-label">Mission &amp; Values</span>
+    </div>
+    <h1>Work Like It<br><em>Means Something</em></h1>
+    <p class="hero-sub">Module 3 taught you to understand the goal of a task. This module asks a bigger question: do you understand why the organization exists — and does that shape how you show up every day?</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="val">~25 min</span><span class="lbl">To complete</span></div>
+      <div class="hero-stat"><span class="val">Read · Reflect · Write</span><span class="lbl">Format</span></div>
+      <div class="hero-stat"><span class="val">1 Takeaway</span><span class="lbl">To use tomorrow</span></div>
+    </div>
+  </div>
+</header>
+
+<!-- DISTINCTION BANNER -->
+<div class="distinction-banner">
+  <div class="distinction-inner">
+    <div class="dist-col m3">
+      <div class="dist-tag">Module 3 — Know the Goal</div>
+      <div class="dist-title">Understanding the assignment</div>
+      <div class="dist-body">Before you start a task, do you understand what it's supposed to accomplish? That's zoom-in thinking — essential for doing the right work.</div>
+    </div>
+    <div class="dist-col m6">
+      <div class="dist-tag">Module 6 — Work Like It Means Something</div>
+      <div class="dist-title">Understanding the mission</div>
+      <div class="dist-body">Do you understand why the organization exists, what it stands for, and how your role serves that purpose? That's zoom-out thinking — essential for being the right person in the role.</div>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+
+  <div class="block">
+    <p class="block-label">The Core Idea</p>
+    <h2 class="block-title">Mission and values aren't wall decorations</h2>
+    <div class="block-body">
+      <p>Most organizations have a mission statement. Most employees have read it once — maybe at orientation — and haven't thought about it since. That's a missed opportunity, because mission and values, when you actually internalize them, change how you make decisions every single day.</p>
+      <p>They answer the questions no job description can answer: <strong>How do I handle this situation no one prepared me for? What do I do when two things are competing for my attention? How do I treat this customer, this colleague, this problem?</strong> Values are the operating system underneath the rules. When you know them — really know them — you don't need someone to tell you what to do in every situation. You already know.</p>
+    </div>
+    <div class="pull-quote">
+      <p>"Values aren't what you say when things are easy. They're what you do when things are hard and no one is watching."</p>
+    </div>
+    <div class="block-body">
+      <p>And here's the communication piece: people who are anchored in the mission communicate differently. They explain their decisions in terms of what the organization is trying to build. They push back when something doesn't align. They bring ideas that move the mission forward — not just ideas that make their job easier. <strong>That's the kind of team member every organization needs more of.</strong></p>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <div class="block">
+    <p class="block-label">Two Anchors</p>
+    <h2 class="block-title">Mission vs. Values — what each one does</h2>
+    <div class="mv-grid">
+      <div class="mv-card mission">
+        <div class="mv-tag">Mission</div>
+        <h4>Why the organization exists</h4>
+        <p>The mission is the direction. It answers: what are we building, who are we building it for, and why does it matter? It's what gets people out of bed in the morning beyond a paycheck. When you know the mission, you can point your work toward it — even when no one is directing you.</p>
+      </div>
+      <div class="mv-card values">
+        <div class="mv-tag">Values</div>
+        <h4>How the organization operates</h4>
+        <p>Values are the rules of the road. They answer: when two things compete, what wins? How do we treat people? What do we refuse to compromise on? Values make decisions predictable — and they make a team trustworthy, because everyone is working from the same code.</p>
+      </div>
+      <div class="mv-card mission">
+        <div class="mv-tag">Mission in practice</div>
+        <h4>"We help small businesses build structure so they can grow."</h4>
+        <p>When you know this is the mission, you don't just complete tasks — you ask: does this actually help the client build something that lasts? That question changes your output.</p>
+      </div>
+      <div class="mv-card values">
+        <div class="mv-tag">Values in practice</div>
+        <h4>"We're direct, honest, and we care about people."</h4>
+        <p>When these are your values, you don't wait to be told to speak up. You don't sugarcoat hard feedback. You don't treat clients like transactions. The value drives the behavior.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <div class="block">
+    <p class="block-label">Values in Action</p>
+    <h2 class="block-title">What it looks like when values drive communication</h2>
+    <div class="block-body"><p>Values only matter when they show up in behavior. Here's what value-driven communication actually looks like on the ground.</p></div>
+
+    <table class="values-table">
+      <thead>
+        <tr>
+          <th>The Value</th>
+          <th>What it looks like when it drives how you communicate</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Honesty</td>
+          <td>You say what's true even when it's uncomfortable. You don't soften feedback until it loses meaning. You flag problems early instead of hoping they go away.</td>
+        </tr>
+        <tr>
+          <td>Respect</td>
+          <td>You give people your full attention. You don't dismiss ideas before hearing them out. You deliver hard feedback without contempt.</td>
+        </tr>
+        <tr>
+          <td>Excellence</td>
+          <td>You say "I want to make sure this is right before I send it" and mean it. You don't submit work you know is below your standard just to hit a deadline.</td>
+        </tr>
+        <tr>
+          <td>Ownership</td>
+          <td>When something goes wrong in your area, you say "that's mine — here's what happened and here's what I'm doing about it." No deflecting, no blame-shifting.</td>
+        </tr>
+        <tr>
+          <td>Care</td>
+          <td>You notice when someone on the team is struggling and say something. You deliver information in a way that considers how the other person will receive it.</td>
+        </tr>
+        <tr>
+          <td>Growth</td>
+          <td>You ask for feedback instead of waiting for a review. You say "I want to understand what I could have done better here" — and mean it.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="rule" />
+
+  <div class="block">
+    <p class="block-label">The Tool</p>
+    <h2 class="block-title">Three ways to communicate from the mission</h2>
+    <div class="framework-box">
+      <div class="fb-label">Mission-Driven Communication</div>
+      <h3>Show that you understand what this organization is building.</h3>
+      <div class="framework-steps">
+        <div class="fw-step">
+          <span class="fw-num">1</span>
+          <span class="fw-text"><strong>Name the mission when you explain your decisions.</strong> "I prioritized this because it directly serves what we're here to do." One sentence connects your work to the why. It signals that you think at that level.</span>
+        </div>
+        <div class="fw-step">
+          <span class="fw-num">2</span>
+          <span class="fw-text"><strong>Use values as your reasoning, not just your feelings.</strong> Instead of "I don't feel right about this," say: "This doesn't align with how we've committed to treating clients — I want to flag it before we move forward."</span>
+        </div>
+        <div class="fw-step">
+          <span class="fw-num">3</span>
+          <span class="fw-text"><strong>Bring ideas that serve the mission, not just your role.</strong> "I've been thinking about how we could do this in a way that better serves what we're building" — that's a different conversation than "here's how to make my job easier."</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <div class="block">
+    <p class="block-label">Your Turn</p>
+    <h2 class="block-title">Core exercises</h2>
+
+    <div class="exercise-block">
+      <div class="exercise-header">
+        <span class="ex-title">Exercise 6A — Your Mission &amp; Values</span>
+        <span class="ex-type">Writing · 10 min</span>
+      </div>
+      <div class="exercise-body">
+        <p class="prompt">Write the mission of your organization in your own words — not the official statement, but what you actually understand it to mean. Then write two or three values you believe this organization operates by. If you're not sure, that gap is important. It means you need to ask.</p>
+        <div class="write-line-label">The mission of this organization, in my own words:</div>
+        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div></div>
+        <div class="write-line-label" style="margin-top:20px;">Two or three values this organization operates by:</div>
+        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div><div class="write-line"></div></div>
+        <div class="write-line-label" style="margin-top:20px;">Is there a gap between the stated values and how things actually operate day to day? What is it?</div>
+        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div></div>
+      </div>
+    </div>
+
+    <div class="exercise-block" style="margin-top:16px;">
+      <div class="exercise-header">
+        <span class="ex-title">Exercise 6B — Values Under Pressure</span>
+        <span class="ex-type">Writing · 8 min</span>
+      </div>
+      <div class="exercise-body">
+        <p class="prompt">Think of a recent situation at work that felt uncomfortable or unclear — a difficult conversation, a decision you weren't sure about, a moment where you didn't know the right thing to do. Now look at the values you wrote above. Which value, if you had led with it, would have made the path clearer? Write what you would have said or done differently.</p>
+        <div class="write-line-label">The situation:</div>
+        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div></div>
+        <div class="write-line-label" style="margin-top:20px;">The value that applied:</div>
+        <div class="write-lines"><div class="write-line"></div></div>
+        <div class="write-line-label" style="margin-top:20px;">What I would have said or done differently, leading with that value:</div>
+        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div><div class="write-line"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <div class="block">
+    <p class="block-label">Go Deeper</p>
+    <h2 class="block-title">Reflection</h2>
+    <div class="reflection-block">
+      <div class="ref-label">Reflection 1</div>
+      <p class="ref-q">"Do you actually believe in this organization's mission? Not whether you agree with it on paper — but whether it shapes how you show up. If yes, what does that look like? If no, what's missing?"</p>
+      <div class="ref-space">Write your answer here...</div>
+    </div>
+    <div class="reflection-block" style="margin-top:14px;">
+      <div class="ref-label">Reflection 2</div>
+      <p class="ref-q">"Think of a time when someone on your team made a decision or said something that clearly came from their values — not the rulebook. What was the impact? How did it make you feel about them?"</p>
+      <div class="ref-space">Write your answer here...</div>
+    </div>
+    <div class="reflection-block" style="margin-top:14px;">
+      <div class="ref-label">Reflection 3</div>
+      <p class="ref-q">"If someone watched how you communicate at work for one week — what values would they conclude you operate by? Are those the values you want to be known for?"</p>
+      <div class="ref-space">Write your answer here...</div>
+    </div>
+  </div>
+
+  <div class="completion-banner">
+    <div class="cb-eyebrow">Program Complete</div>
+    <h3>You've done the work.<br>Now <em>live it.</em></h3>
+    <p>Six modules. Six skills. The skills only stick when you use them in the real moments — the hard conversation, the unclear task, the thing you almost let slide. Go back to the module that felt hardest. Run the exercise again. And the next time you're not sure what to do — start with the values.</p>
+  </div>
+
+</div>
+
+<div class="module-nav">
+  <div class="nav-info"><span class="lbl">Previous</span><span class="title">Module 5 — What Good Looks Like</span></div>
+  <div class="nav-progress">
+    <div class="nav-dot done"></div><div class="nav-dot done"></div><div class="nav-dot done"></div>
+    <div class="nav-dot done"></div><div class="nav-dot done"></div><div class="nav-dot active"></div>
+  </div>
+  <div class="nav-info" style="text-align:right;"><span class="lbl">Final Module</span><span class="title">Program Complete</span></div>
+</div>
+
+<footer class="footer">
+  <p><strong>PivotYes</strong> · Communicate Like You Mean It · Module 06 of 06</p>
+  <p style="margin-top:4px;">pivotyesconsulting.com</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 1: Say What You Mean — PivotYes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:    #0A0A0A;
+      --ink:      #1A1A1A;
+      --white:    #FFFFFF;
+      --off-white:#F7F7F7;
+      --red:      #C8102E;
+      --red-lt:   #FFF0F2;
+      --red-deep: #9B0C23;
+      --mid:      #666666;
+      --light:    #AAAAAA;
+      --rule:     #E0E0E0;
+      --rule-dk:  #2A2A2A;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--white);
+      color: var(--ink);
+      line-height: 1.75;
+    }
+
+    /* ── TOP NAV STRIP ── */
+    .nav-strip {
+      background: var(--black);
+      padding: 12px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .nav-brand {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--white);
+    }
+    .nav-program {
+      font-size: 11px;
+      color: var(--light);
+      letter-spacing: .06em;
+    }
+    .nav-module-badge {
+      background: var(--red);
+      color: var(--white);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 2px;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--black);
+      color: var(--white);
+      padding: 80px 40px 70px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '1';
+      position: absolute;
+      right: 40px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Playfair Display', serif;
+      font-size: 18rem;
+      font-weight: 900;
+      color: rgba(255,255,255,.04);
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+    .hero-inner {
+      max-width: 700px;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .hero-eyebrow .mod-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--red);
+    }
+    .hero-eyebrow .sep {
+      width: 32px;
+      height: 1px;
+      background: var(--rule-dk);
+    }
+    .hero-eyebrow .skill-label {
+      font-size: 10px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--light);
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 900;
+      line-height: 1.08;
+      margin-bottom: 18px;
+    }
+    .hero h1 em {
+      font-style: italic;
+      color: var(--red);
+    }
+    .hero-sub {
+      font-size: 1.05rem;
+      color: rgba(255,255,255,.6);
+      max-width: 480px;
+      line-height: 1.7;
+      margin-bottom: 36px;
+    }
+    .hero-stats {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .hero-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .hero-stat .val {
+      font-size: .82rem;
+      font-weight: 600;
+      color: var(--white);
+    }
+    .hero-stat .lbl {
+      font-size: .72rem;
+      color: var(--light);
+      letter-spacing: .06em;
+    }
+
+    /* ── LAYOUT ── */
+    .page {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    /* ── SECTION SPACING ── */
+    .block {
+      padding: 56px 0 0;
+    }
+    .block:last-of-type { padding-bottom: 80px; }
+
+    .block-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 10px;
+    }
+    .block-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.4rem, 2.8vw, 1.85rem);
+      font-weight: 700;
+      color: var(--black);
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+    .block-body {
+      font-size: .96rem;
+      color: var(--ink);
+      line-height: 1.8;
+    }
+    .block-body p + p { margin-top: 16px; }
+    .block-body strong { color: var(--black); font-weight: 600; }
+
+    /* ── DIVIDER ── */
+    .rule {
+      border: none;
+      border-top: 1px solid var(--rule);
+      margin: 56px 0 0;
+    }
+
+    /* ── PULL QUOTE ── */
+    .pull-quote {
+      border-left: 4px solid var(--red);
+      padding: 20px 24px;
+      margin: 32px 0;
+      background: var(--off-white);
+    }
+    .pull-quote p {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-style: italic;
+      color: var(--black);
+      line-height: 1.5;
+    }
+
+    /* ── INSIGHT CARDS ── */
+    .insight-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 24px;
+    }
+    @media (max-width: 560px) { .insight-grid { grid-template-columns: 1fr; } }
+
+    .insight-card {
+      border: 1px solid var(--rule);
+      border-top: 3px solid var(--black);
+      padding: 22px 20px;
+      background: var(--white);
+    }
+    .insight-card.red-top { border-top-color: var(--red); }
+    .insight-card h4 {
+      font-size: .88rem;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 8px;
+      letter-spacing: .02em;
+    }
+    .insight-card p {
+      font-size: .84rem;
+      color: var(--mid);
+      line-height: 1.6;
+    }
+
+    /* ── CONTRAST TABLE ── */
+    .contrast-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 24px;
+      font-size: .88rem;
+    }
+    .contrast-table thead tr {
+      background: var(--black);
+      color: var(--white);
+    }
+    .contrast-table thead th {
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+    .contrast-table thead th:first-child { color: var(--light); }
+    .contrast-table thead th:last-child { color: var(--red); }
+    .contrast-table tbody tr:nth-child(even) { background: var(--off-white); }
+    .contrast-table tbody td {
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--rule);
+      line-height: 1.55;
+      vertical-align: top;
+    }
+    .contrast-table tbody td:first-child { color: var(--mid); }
+    .contrast-table tbody td:last-child { color: var(--black); font-weight: 500; }
+
+    /* ── THE FRAMEWORK BOX ── */
+    .framework-box {
+      background: var(--black);
+      color: var(--white);
+      border-radius: 4px;
+      padding: 36px 32px;
+      margin-top: 24px;
+    }
+    .framework-box .fb-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 14px;
+    }
+    .framework-box h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      line-height: 1.3;
+    }
+    .framework-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .fw-step {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+    .fw-step .fw-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--red);
+      line-height: 1.3;
+    }
+    .fw-step .fw-text {
+      font-size: .9rem;
+      color: rgba(255,255,255,.8);
+      line-height: 1.6;
+    }
+    .fw-step .fw-text strong { color: var(--white); }
+
+    /* ── EXERCISE ── */
+    .exercise-block {
+      background: var(--off-white);
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 24px;
+    }
+    .exercise-header {
+      background: var(--red);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .exercise-header .ex-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--white);
+    }
+    .exercise-header .ex-type {
+      font-size: 10px;
+      color: rgba(255,255,255,.7);
+      letter-spacing: .1em;
+    }
+    .exercise-body {
+      padding: 28px 28px 24px;
+    }
+    .exercise-body .prompt {
+      font-size: .96rem;
+      color: var(--ink);
+      line-height: 1.75;
+      margin-bottom: 24px;
+    }
+    .write-line-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 10px;
+    }
+    .write-lines {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .write-line {
+      border-bottom: 1px solid var(--rule);
+      height: 36px;
+      position: relative;
+    }
+    .write-line::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 6px;
+      height: 6px;
+      background: var(--red);
+      border-radius: 50%;
+      transform: translateY(-50%);
+      opacity: .4;
+    }
+
+    /* ── REFLECTION ── */
+    .reflection-block {
+      border: 1px solid var(--rule);
+      border-left: 4px solid var(--black);
+      padding: 24px 24px 20px;
+      margin-top: 20px;
+      background: var(--white);
+    }
+    .reflection-block .ref-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--black);
+      margin-bottom: 10px;
+    }
+    .reflection-block .ref-q {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--black);
+      line-height: 1.55;
+      margin-bottom: 16px;
+    }
+    .reflection-block .ref-space {
+      background: var(--off-white);
+      border: 1px dashed var(--rule);
+      height: 80px;
+      padding: 10px 12px;
+      font-size: .78rem;
+      color: var(--light);
+      font-style: italic;
+    }
+
+    /* ── REAL WORLD SCENARIOS ── */
+    .scenario-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 24px;
+    }
+    .scenario-item {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border: 1px solid var(--rule);
+      overflow: hidden;
+      border-radius: 2px;
+    }
+    @media (max-width: 580px) { .scenario-item { grid-template-columns: 1fr; } }
+    .scenario-col {
+      padding: 18px 20px;
+    }
+    .scenario-col.unclear {
+      background: var(--off-white);
+      border-right: 1px solid var(--rule);
+    }
+    .scenario-col.clear { background: var(--white); }
+    .scenario-col .s-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .scenario-col.unclear .s-label { color: var(--light); }
+    .scenario-col.clear .s-label { color: var(--red); }
+    .scenario-col p {
+      font-size: .86rem;
+      line-height: 1.6;
+    }
+    .scenario-col.unclear p { color: var(--mid); font-style: italic; }
+    .scenario-col.clear p { color: var(--black); font-weight: 500; }
+
+    /* ── WORD SWAP TABLE ── */
+    .word-swap-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 24px;
+    }
+    .ws-header {
+      padding: 12px 20px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+    .ws-header.stop { background: var(--black); color: var(--light); }
+    .ws-header.use  { background: var(--red);   color: var(--white); }
+    .ws-row {
+      display: contents;
+    }
+    .ws-cell {
+      padding: 13px 20px;
+      font-size: .87rem;
+      line-height: 1.5;
+      border-top: 1px solid var(--rule);
+    }
+    .ws-cell.stop {
+      background: var(--off-white);
+      color: var(--mid);
+      font-style: italic;
+      border-right: 1px solid var(--rule);
+    }
+    .ws-cell.use {
+      background: var(--white);
+      color: var(--black);
+      font-weight: 500;
+    }
+    .ws-note {
+      font-size: .78rem;
+      color: var(--light);
+      font-style: italic;
+      display: block;
+      margin-top: 3px;
+      font-weight: 400;
+    }
+
+    /* ── ANSWER FORMULA ── */
+    .answer-formula {
+      background: var(--off-white);
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 24px;
+    }
+    .af-header {
+      background: var(--black);
+      padding: 16px 24px;
+    }
+    .af-header .af-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 6px;
+    }
+    .af-header h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--white);
+      font-family: 'Playfair Display', serif;
+    }
+    .af-steps {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .af-step {
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+    .af-step .af-num {
+      width: 36px;
+      height: 36px;
+      background: var(--red);
+      color: var(--white);
+      font-weight: 700;
+      font-size: .85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .af-step .af-content h5 {
+      font-size: .88rem;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 4px;
+    }
+    .af-step .af-content p {
+      font-size: .84rem;
+      color: var(--mid);
+      line-height: 1.6;
+    }
+    .af-step .af-content .af-example {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 5px 12px;
+      background: var(--white);
+      border: 1px solid var(--rule);
+      border-left: 3px solid var(--red);
+      font-size: .82rem;
+      color: var(--black);
+      font-style: italic;
+    }
+    .af-trap {
+      margin: 0 24px 24px;
+      background: var(--white);
+      border: 1px solid var(--rule);
+      border-left: 3px solid var(--black);
+      padding: 14px 16px;
+    }
+    .af-trap .trap-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--black);
+      margin-bottom: 6px;
+    }
+    .af-trap p {
+      font-size: .84rem;
+      color: var(--mid);
+      line-height: 1.6;
+    }
+
+    /* ── TAKEAWAY BOX ── */
+    .takeaway-box {
+      background: var(--red);
+      color: var(--white);
+      padding: 32px 32px;
+      margin-top: 56px;
+      border-radius: 2px;
+    }
+    .takeaway-box .tk-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.6);
+      margin-bottom: 10px;
+    }
+    .takeaway-box h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 10px;
+    }
+    .takeaway-box p {
+      font-size: .95rem;
+      color: rgba(255,255,255,.85);
+      line-height: 1.7;
+      max-width: 560px;
+    }
+
+    /* ── MODULE NAV ── */
+    .module-nav {
+      background: var(--black);
+      padding: 28px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .module-nav .nav-info {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .module-nav .nav-info .lbl {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--light);
+    }
+    .module-nav .nav-info .title {
+      font-size: .9rem;
+      color: var(--white);
+      font-weight: 500;
+    }
+    .nav-progress {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .nav-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--rule-dk);
+    }
+    .nav-dot.active { background: var(--red); }
+    .nav-dot.done { background: var(--white); }
+
+    /* ── FOOTER ── */
+    .footer {
+      background: var(--off-white);
+      border-top: 1px solid var(--rule);
+      text-align: center;
+      padding: 32px 24px;
+      font-size: .78rem;
+      color: var(--light);
+      letter-spacing: .06em;
+    }
+    .footer strong { color: var(--black); }
+
+    @media (max-width: 500px) {
+      .hero { padding: 56px 24px 52px; }
+      .page { padding: 0 20px; }
+      .nav-strip { padding: 12px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV STRIP -->
+<div class="nav-strip">
+  <span class="nav-brand">PivotYes</span>
+  <span class="nav-program">Communicate Like You Mean It</span>
+  <span class="nav-module-badge">Module 01</span>
+</div>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">
+      <span class="mod-label">Module 01</span>
+      <span class="sep"></span>
+      <span class="skill-label">Clarity &amp; Directness</span>
+    </div>
+    <h1>Say What<br>You <em>Mean</em></h1>
+    <p class="hero-sub">Stop hedging. Stop overexplaining. Stop softening the truth until it disappears. Say the thing — clearly, completely, and without apology.</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="val">~25 min</span>
+        <span class="lbl">To complete</span>
+      </div>
+      <div class="hero-stat">
+        <span class="val">Read · Reflect · Write</span>
+        <span class="lbl">Format</span>
+      </div>
+      <div class="hero-stat">
+        <span class="val">1 Takeaway</span>
+        <span class="lbl">To use tomorrow</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+
+  <!-- THE CORE IDEA -->
+  <div class="block">
+    <p class="block-label">The Core Idea</p>
+    <h2 class="block-title">Why smart people say less than they mean</h2>
+    <div class="block-body">
+      <p>Most communication problems aren't intelligence problems. They're clarity problems. And most clarity problems aren't about vocabulary or speaking ability — they're about <strong>fear</strong>.</p>
+      <p>Fear of being wrong. Fear of sounding too blunt. Fear of making someone uncomfortable. So we hedge. We add "sort of" and "kind of" and "I don't know if this makes sense but…" We circle the point three times before we land on it. We say what we think the other person wants to hear instead of what we actually mean.</p>
+      <p>And here's what that costs: <strong>trust, time, and results.</strong> When you're unclear, people fill in the blanks with their own assumptions. And they're usually wrong. Then you're managing confusion instead of doing the work.</p>
+    </div>
+
+    <div class="pull-quote">
+      <p>"The kindest thing you can do in a conversation is be clear. Confusion isn't gentle — it's just delayed frustration."</p>
+    </div>
+
+    <div class="block-body">
+      <p>Directness is not rudeness. The people you most respect tell you the truth — and they do it like they care about you. That's the skill this module builds. Not bluntness. <strong>Clarity with humanity.</strong></p>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <!-- WHY WE HEDGE -->
+  <div class="block">
+    <p class="block-label">Understanding the Problem</p>
+    <h2 class="block-title">Five reasons we don't say what we mean</h2>
+    <div class="insight-grid">
+      <div class="insight-card red-top">
+        <h4>We want to be liked</h4>
+        <p>Direct communication feels risky when approval is uncertain. We soften to protect the relationship — but erode it instead by being unclear.</p>
+      </div>
+      <div class="insight-card red-top">
+        <h4>We're afraid of being wrong</h4>
+        <p>Hedging leaves an out. "I sort of thought maybe..." is harder to be held to. Clarity requires owning what you actually think.</p>
+      </div>
+      <div class="insight-card red-top">
+        <h4>We haven't organized our thoughts</h4>
+        <p>Unclear communication is usually a sign that unclear thinking happened first. The words are vague because the idea isn't fully formed yet.</p>
+      </div>
+      <div class="insight-card red-top">
+        <h4>We were never taught otherwise</h4>
+        <p>Most of us learned to communicate by watching others. If those models were indirect, we inherited the habit without knowing it.</p>
+      </div>
+      <div class="insight-card red-top">
+        <h4>We underestimate our own credibility</h4>
+        <p>Sometimes people hedge because they don't trust that their point is worth stating plainly. It is. Say it like you mean it — and it lands that way.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <!-- WHAT IT LOOKS LIKE -->
+  <div class="block">
+    <p class="block-label">Side by Side</p>
+    <h2 class="block-title">Unclear vs. clear — real examples</h2>
+    <p style="font-size:.9rem; color:var(--mid); margin-bottom:4px;">These are real patterns. You've said some version of the left column. The right column is what you meant.</p>
+
+    <div class="scenario-list">
+      <div class="scenario-item">
+        <div class="scenario-col unclear">
+          <div class="s-label">Unclear</div>
+          <p>"I was kind of wondering if maybe we could talk about the deadline at some point when you have a second..."</p>
+        </div>
+        <div class="scenario-col clear">
+          <div class="s-label">Clear</div>
+          <p>"I need to talk to you about the deadline — can we connect today?"</p>
+        </div>
+      </div>
+      <div class="scenario-item">
+        <div class="scenario-col unclear">
+          <div class="s-label">Unclear</div>
+          <p>"I don't know, this might not be the right way to do it, but I was thinking we could try something different, possibly..."</p>
+        </div>
+        <div class="scenario-col clear">
+          <div class="s-label">Clear</div>
+          <p>"I have an idea I'd like to run by you — I think there's a better approach here."</p>
+        </div>
+      </div>
+      <div class="scenario-item">
+        <div class="scenario-col unclear">
+          <div class="s-label">Unclear</div>
+          <p>"I'm fine with whatever, it doesn't really matter to me, either way works..."</p>
+        </div>
+        <div class="scenario-col clear">
+          <div class="s-label">Clear</div>
+          <p>"I actually have a preference here — I'd rather do it this way, and here's why."</p>
+        </div>
+      </div>
+      <div class="scenario-item">
+        <div class="scenario-col unclear">
+          <div class="s-label">Unclear</div>
+          <p>"Oh, yeah, sure, that's fine, totally, no problem at all..." (when it's actually a problem)</p>
+        </div>
+        <div class="scenario-col clear">
+          <div class="s-label">Clear</div>
+          <p>"That's going to be a challenge for me — can we figure out an alternative?"</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <!-- WORDS TO AVOID -->
+  <div class="block">
+    <p class="block-label">The Language Audit</p>
+    <h2 class="block-title">Words that kill your credibility — and what to say instead</h2>
+    <div class="block-body">
+      <p>Most filler words aren't random. They're habits that developed as a way to soften, stall, or avoid committing to what you actually mean. The first step is recognizing them. The second step is replacing them — intentionally, every time.</p>
+      <p>This isn't about sounding perfect. It's about sounding like you mean what you say.</p>
+    </div>
+
+    <div class="word-swap-grid">
+      <div class="ws-header stop">Stop saying this</div>
+      <div class="ws-header use">Say this instead</div>
+
+      <div class="ws-cell stop">"Whatever"<span class="ws-note">Signals disengagement or passive resistance</span></div>
+      <div class="ws-cell use">"I'm okay with either option" or "I actually have a preference — here it is"</div>
+
+      <div class="ws-cell stop">"I'm not sure, but..."<span class="ws-note">Undermines everything that follows before you've said it</span></div>
+      <div class="ws-cell use">"Here's what I think:" or "My best read on this is..."</div>
+
+      <div class="ws-cell stop">"Like..." (as a filler)<span class="ws-note">Fragments your sentences and signals unpreparedness</span></div>
+      <div class="ws-cell use">Pause. Breathe. Then say the next word.</div>
+
+      <div class="ws-cell stop">"Um / Uh / So..."<span class="ws-note">Bought-time fillers that erode confidence and authority</span></div>
+      <div class="ws-cell use">Silence is better than filler. A pause reads as thoughtfulness, not weakness.</div>
+
+      <div class="ws-cell stop">"Does that make sense?"<span class="ws-note">Puts the burden on the listener and signals self-doubt</span></div>
+      <div class="ws-cell use">"What questions do you have?" or "I want to make sure this is clear — where should I go deeper?"</div>
+
+      <div class="ws-cell stop">"Sorry to bother you, but..."<span class="ws-note">Pre-apologizes for your own existence in the conversation</span></div>
+      <div class="ws-cell use">"Quick question:" or just lead with the question directly</div>
+
+      <div class="ws-cell stop">"Kind of / Sort of"<span class="ws-note">Hedges your own statement before anyone pushes back</span></div>
+      <div class="ws-cell use">Remove it completely. Say the thing without the qualifier.</div>
+
+      <div class="ws-cell stop">"Honestly..." / "To be honest..."<span class="ws-note">Implies you're not honest the rest of the time</span></div>
+      <div class="ws-cell use">Just be honest. No announcement needed.</div>
+
+      <div class="ws-cell stop">"I could be wrong, but..."<span class="ws-note">Discredits your point before making it</span></div>
+      <div class="ws-cell use">"Here's my perspective:" — then own it. You can invite pushback after.</div>
+
+      <div class="ws-cell stop">"No problem!" (when there is one)<span class="ws-note">Signals agreement you don't actually have</span></div>
+      <div class="ws-cell use">"That's going to be a challenge — let me tell you what I can do."</div>
+    </div>
+
+    <div class="exercise-block" style="margin-top:28px;">
+      <div class="exercise-header">
+        <span class="ex-title">Exercise 1C — Your Personal Filler List</span>
+        <span class="ex-type">Self-Audit · 8 min</span>
+      </div>
+      <div class="exercise-body">
+        <p class="prompt">Everyone has their own go-to fillers. The ones above are common — but yours might be different. Think about a recent conversation at work. Better yet, record yourself for 2 minutes explaining something to someone. Listen back.</p>
+        <p class="prompt">Write your top three filler words or phrases below. Then write the replacement you'll use instead — starting today.</p>
+
+        <div class="write-line-label">My filler word / phrase #1:</div>
+        <div class="write-lines">
+          <div class="write-line"></div>
+        </div>
+        <div class="write-line-label" style="margin-top: 14px;">I'll replace it with:</div>
+        <div class="write-lines">
+          <div class="write-line"></div>
+        </div>
+
+        <div class="write-line-label" style="margin-top: 22px;">My filler word / phrase #2:</div>
+        <div class="write-lines">
+          <div class="write-line"></div>
+        </div>
+        <div class="write-line-label" style="margin-top: 14px;">I'll replace it with:</div>
+        <div class="write-lines">
+          <div class="write-line"></div>
+        </div>
+
+        <div class="write-line-label" style="margin-top: 22px;">My filler word / phrase #3:</div>
+        <div class="write-lines">
+          <div class="write-line"></div>
+        </div>
+        <div class="write-line-label" style="margin-top: 14px;">I'll replace it with:</div>
+        <div class="write-lines">
+          <div class="write-line"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <!-- THE FRAMEWORK -->
+  <div class="block">
+    <p class="block-label">The Tool</p>
+    <h2 class="block-title">The one sentence structure that works every time</h2>
+    <div class="block-body">
+      <p>When you're not sure how to say something directly without it sounding harsh, use this structure. It works in every professional context — with your manager, a colleague, a client, or a team member.</p>
+    </div>
+
+    <div class="framework-box">
+      <div class="fb-label">The Clear Statement Formula</div>
+      <h3>State the point. Give the reason. Name the need.</h3>
+      <div class="framework-steps">
+        <div class="fw-step">
+          <span class="fw-num">1</span>
+          <span class="fw-text"><strong>State the point plainly.</strong> Say what you actually think or what the situation actually is. No softening, no hedging. One sentence.</span>
+        </div>
+        <div class="fw-step">
+          <span class="fw-num">2</span>
+          <span class="fw-text"><strong>Give the reason briefly.</strong> One sentence explaining why. Not a justification — just context. This is what separates direct from dismissive.</span>
+        </div>
+        <div class="fw-step">
+          <span class="fw-num">3</span>
+          <span class="fw-text"><strong>Name the need or next step.</strong> What do you need from the other person, or what happens next? Don't leave the conversation open-ended.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="block-body" style="margin-top: 20px;">
+      <p><strong>Example:</strong> "I need more time on this project <em>(point)</em> because the scope changed significantly last week <em>(reason)</em> — can we push the deadline by three days? <em>(need)</em>"</p>
+      <p style="margin-top:12px;"><strong>Example:</strong> "I disagree with this approach <em>(point)</em> because I've seen it create confusion downstream in past projects <em>(reason)</em> — I'd like five minutes to walk you through what I'm seeing <em>(need)</em>."</p>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <!-- EXERCISE -->
+  <div class="block">
+    <p class="block-label">Your Turn</p>
+    <h2 class="block-title">Core exercises</h2>
+
+    <div class="exercise-block">
+      <div class="exercise-header">
+        <span class="ex-title">Exercise 1A — Rewrite It</span>
+        <span class="ex-type">Writing · 10 min</span>
+      </div>
+      <div class="exercise-body">
+        <p class="prompt">Think of a real situation where you said something but weren't sure the other person understood. Rewrite it using the Clear Statement Formula: Point · Reason · Need. Two sentences. No more.</p>
+
+        <div class="write-line-label">What you actually said (or didn't say):</div>
+        <div class="write-lines">
+          <div class="write-line"></div>
+          <div class="write-line"></div>
+        </div>
+
+        <div class="write-line-label" style="margin-top:24px;">The rewrite — Point · Reason · Need:</div>
+        <div class="write-lines">
+          <div class="write-line"></div>
+          <div class="write-line"></div>
+        </div>
+
+        <div class="write-line-label" style="margin-top:24px;">Now say the rewrite out loud. Slowly. What did you notice — did you add softeners back in? Did you rush through it?</div>
+        <div class="write-lines">
+          <div class="write-line"></div>
+          <div class="write-line"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <!-- REFLECTION -->
+  <div class="block">
+    <p class="block-label">Go Deeper</p>
+    <h2 class="block-title">Reflection</h2>
+    <p style="font-size:.9rem; color:var(--mid); margin-bottom: 4px;">Exercises build the skill. Reflection builds the understanding. Take 5 minutes with these.</p>
+
+    <div class="reflection-block">
+      <div class="ref-label">Reflection 1</div>
+      <p class="ref-q">"When you hold back from saying what you really think — what is the fear underneath that?"</p>
+      <div class="ref-space">Write your answer here...</div>
+    </div>
+
+    <div class="reflection-block" style="margin-top:14px;">
+      <div class="ref-label">Reflection 2</div>
+      <p class="ref-q">"Is there a person or situation at work where you consistently hold back? What would change if you said what you actually meant — just once?"</p>
+      <div class="ref-space">Write your answer here...</div>
+    </div>
+
+    <div class="reflection-block" style="margin-top:14px;">
+      <div class="ref-label">Reflection 3</div>
+      <p class="ref-q">"Where in your work do you communicate most clearly? Where do you struggle the most — and why do you think that is?"</p>
+      <div class="ref-space">Write your answer here...</div>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <!-- ANSWERING QUESTIONS DIRECTLY -->
+  <div class="block">
+    <p class="block-label">In the Moment</p>
+    <h2 class="block-title">When someone asks you a question — answer it first</h2>
+    <div class="block-body">
+      <p>One of the most common communication breakdowns at work isn't about what people say — it's about the order they say it in. Someone asks a direct question. Instead of answering it, the person gives background, context, a caveat, a story — and the answer arrives (if it arrives at all) somewhere at the end.</p>
+      <p>By then, the other person has already stopped listening closely. They asked a question. They needed an answer. Everything else was noise.</p>
+      <p><strong>The rule is simple: answer the question first. Context comes after.</strong></p>
+    </div>
+
+    <div class="pull-quote">
+      <p>"Answer first. Explain second. Stop when they have what they need."</p>
+    </div>
+
+    <div class="answer-formula">
+      <div class="af-header">
+        <div class="af-label">The Answer-First Formula</div>
+        <h4>Lead with the answer. Follow with the context. Know when to stop.</h4>
+      </div>
+      <div class="af-steps">
+        <div class="af-step">
+          <span class="af-num">1</span>
+          <div class="af-content">
+            <h5>Answer the question directly — in one sentence</h5>
+            <p>Whatever was asked, answer it first. Yes or no. A date. A number. A decision. Give them what they came for before you explain anything.</p>
+            <span class="af-example">"The report will be ready Thursday."</span>
+          </div>
+        </div>
+        <div class="af-step">
+          <span class="af-num">2</span>
+          <div class="af-content">
+            <h5>Add one sentence of relevant context — only if needed</h5>
+            <p>If the answer alone could be misunderstood, add the one piece of context that closes the gap. Not three pieces. One.</p>
+            <span class="af-example">"The report will be ready Thursday — I'm waiting on two numbers from Accounting that I expect by Wednesday."</span>
+          </div>
+        </div>
+        <div class="af-step">
+          <span class="af-num">3</span>
+          <div class="af-content">
+            <h5>Stop. Let them respond.</h5>
+            <p>You don't have to fill every silence. Once the answer is given, let the other person decide if they need more. They'll ask if they do. Stopping is not weakness — it's control.</p>
+            <span class="af-example">Full stop. No "...does that make sense?" No filler.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercise-block" style="margin-top:28px;">
+      <div class="exercise-header">
+        <span class="ex-title">Exercise 1D — Answer First</span>
+        <span class="ex-type">Writing · 5 min</span>
+      </div>
+      <div class="exercise-body">
+        <p class="prompt">You're asked: <em>"Are you on track with the project?"</em> — or use a real question someone asked you recently. Write your Answer-First response: one sentence answer, one sentence of context only if needed, then stop.</p>
+
+        <div class="write-line-label">The question:</div>
+        <div class="write-lines">
+          <div class="write-line"></div>
+        </div>
+
+        <div class="write-line-label" style="margin-top:20px;">Your Answer-First response (answer + context if needed):</div>
+        <div class="write-lines">
+          <div class="write-line"></div>
+          <div class="write-line"></div>
+        </div>
+
+        <div class="write-line-label" style="margin-top:20px;">What was your instinct to add that you stopped yourself from adding?</div>
+        <div class="write-lines">
+          <div class="write-line"></div>
+          <div class="write-line"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAKEAWAY -->
+  <div class="takeaway-box">
+    <div class="tk-label">Tomorrow's Takeaway — Three Things to Practice</div>
+    <h3>Use all three in the next real conversation you have.</h3>
+    <p><strong style="color:rgba(255,255,255,.95);">1. Cut the filler.</strong> Before your next conversation, pick one word from your personal filler list and commit to not using it. Just one. Notice how many times you catch yourself reaching for it.</p>
+    <p style="margin-top:12px;"><strong style="color:rgba(255,255,255,.95);">2. Answer first.</strong> The next time someone asks you a direct question, answer it in your first sentence. Resist the urge to give context before the answer. Answer. Then context. Then stop.</p>
+    <p style="margin-top:12px;"><strong style="color:rgba(255,255,255,.95);">3. Drop the hedge.</strong> Notice the moment before you soften something — "I don't know if this is right, but…" — pause, delete it, and say the thing directly. See what actually happens when you do.</p>
+  </div>
+
+</div><!-- /page -->
+
+<!-- MODULE NAV -->
+<div class="module-nav">
+  <div class="nav-info">
+    <span class="lbl">Current</span>
+    <span class="title">Module 1 — Say What You Mean</span>
+  </div>
+  <div class="nav-progress">
+    <div class="nav-dot active"></div>
+    <div class="nav-dot"></div>
+    <div class="nav-dot"></div>
+    <div class="nav-dot"></div>
+    <div class="nav-dot"></div>
+    <div class="nav-dot"></div>
+  </div>
+  <div class="nav-info" style="text-align:right;">
+    <span class="lbl">Next</span>
+    <span class="title">Module 2 — Ask Before You Assume</span>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p><strong>PivotYes</strong> · Communicate Like You Mean It · Module 01 of 06</p>
+  <p style="margin-top:4px;">pivotyesconsulting.com</p>
+</footer>
+
+</body>
+</html>

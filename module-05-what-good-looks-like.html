@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 5: What Good Looks Like — PivotYes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    :root { --black:#0A0A0A; --ink:#1A1A1A; --white:#FFFFFF; --off-white:#F7F7F7; --red:#C8102E; --mid:#666666; --light:#AAAAAA; --rule:#E0E0E0; --rule-dk:#2A2A2A; }
+    html { scroll-behavior:smooth; }
+    body { font-family:'Inter',sans-serif; background:var(--white); color:var(--ink); line-height:1.75; }
+    .nav-strip { background:var(--black); padding:12px 40px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+    .nav-brand { font-size:11px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--white); }
+    .nav-program { font-size:11px; color:var(--light); letter-spacing:.06em; }
+    .nav-module-badge { background:var(--red); color:var(--white); font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; padding:5px 14px; border-radius:2px; }
+    .hero { background:var(--black); color:var(--white); padding:80px 40px 70px; position:relative; overflow:hidden; }
+    .hero::after { content:'5'; position:absolute; right:40px; top:50%; transform:translateY(-50%); font-family:'Playfair Display',serif; font-size:18rem; font-weight:900; color:rgba(255,255,255,.04); line-height:1; pointer-events:none; user-select:none; }
+    .hero-inner { max-width:700px; position:relative; z-index:1; }
+    .hero-eyebrow { display:flex; align-items:center; gap:12px; margin-bottom:24px; }
+    .hero-eyebrow .mod-label { font-size:10px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--red); }
+    .hero-eyebrow .sep { width:32px; height:1px; background:var(--rule-dk); }
+    .hero-eyebrow .skill-label { font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--light); }
+    .hero h1 { font-family:'Playfair Display',serif; font-size:clamp(2.4rem,6vw,4rem); font-weight:900; line-height:1.08; margin-bottom:18px; }
+    .hero h1 em { font-style:italic; color:var(--red); }
+    .hero-sub { font-size:1.05rem; color:rgba(255,255,255,.6); max-width:480px; line-height:1.7; margin-bottom:36px; }
+    .hero-stats { display:flex; gap:32px; flex-wrap:wrap; }
+    .hero-stat { display:flex; flex-direction:column; gap:3px; }
+    .hero-stat .val { font-size:.82rem; font-weight:600; color:var(--white); }
+    .hero-stat .lbl { font-size:.72rem; color:var(--light); letter-spacing:.06em; }
+    .page { max-width:800px; margin:0 auto; padding:0 32px; }
+    .block { padding:56px 0 0; }
+    .block:last-of-type { padding-bottom:80px; }
+    .block-label { font-size:10px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--red); margin-bottom:10px; }
+    .block-title { font-family:'Playfair Display',serif; font-size:clamp(1.4rem,2.8vw,1.85rem); font-weight:700; color:var(--black); line-height:1.2; margin-bottom:20px; }
+    .block-body { font-size:.96rem; color:var(--ink); line-height:1.8; }
+    .block-body p + p { margin-top:16px; }
+    .block-body strong { color:var(--black); font-weight:600; }
+    .rule { border:none; border-top:1px solid var(--rule); margin:56px 0 0; }
+    .pull-quote { border-left:4px solid var(--red); padding:20px 24px; margin:32px 0; background:var(--off-white); }
+    .pull-quote p { font-family:'Playfair Display',serif; font-size:1.2rem; font-style:italic; color:var(--black); line-height:1.5; }
+    .standard-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:24px; }
+    @media(max-width:560px){.standard-grid{grid-template-columns:1fr;}}
+    .standard-card { border:1px solid var(--rule); padding:22px 20px; background:var(--white); }
+    .standard-card.done { border-top:3px solid var(--light); }
+    .standard-card.excellent { border-top:3px solid var(--red); }
+    .standard-card .sc-tag { font-size:9px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; margin-bottom:8px; }
+    .standard-card.done .sc-tag { color:var(--light); }
+    .standard-card.excellent .sc-tag { color:var(--red); }
+    .standard-card h4 { font-size:.92rem; font-weight:700; color:var(--black); margin-bottom:8px; }
+    .standard-card p { font-size:.84rem; color:var(--mid); line-height:1.6; }
+    .checklist { display:flex; flex-direction:column; gap:12px; margin-top:24px; }
+    .check-item { display:grid; grid-template-columns:28px 1fr; gap:12px; align-items:start; padding:16px; background:var(--off-white); border:1px solid var(--rule); border-radius:4px; }
+    .check-box { width:20px; height:20px; border:2px solid var(--rule); border-radius:3px; flex-shrink:0; margin-top:2px; }
+    .check-item p { font-size:.88rem; color:var(--ink); line-height:1.6; }
+    .check-item p strong { color:var(--black); }
+    .exercise-block { background:var(--off-white); border:1px solid var(--rule); border-radius:4px; overflow:hidden; margin-top:24px; }
+    .exercise-header { background:var(--red); padding:14px 24px; display:flex; align-items:center; justify-content:space-between; }
+    .exercise-header .ex-title { font-size:11px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--white); }
+    .exercise-header .ex-type { font-size:10px; color:rgba(255,255,255,.7); letter-spacing:.1em; }
+    .exercise-body { padding:28px 28px 24px; }
+    .exercise-body .prompt { font-size:.96rem; color:var(--ink); line-height:1.75; margin-bottom:24px; }
+    .write-line-label { font-size:10px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--mid); margin-bottom:10px; }
+    .write-lines { display:flex; flex-direction:column; gap:12px; }
+    .write-line { border-bottom:1px solid var(--rule); height:36px; position:relative; }
+    .write-line::before { content:''; position:absolute; left:0; top:50%; width:6px; height:6px; background:var(--red); border-radius:50%; transform:translateY(-50%); opacity:.4; }
+    .reflection-block { border:1px solid var(--rule); border-left:4px solid var(--black); padding:24px 24px 20px; margin-top:20px; background:var(--white); }
+    .reflection-block .ref-label { font-size:10px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--black); margin-bottom:10px; }
+    .reflection-block .ref-q { font-family:'Playfair Display',serif; font-style:italic; font-size:1.05rem; color:var(--black); line-height:1.55; margin-bottom:16px; }
+    .reflection-block .ref-space { background:var(--off-white); border:1px dashed var(--rule); height:80px; padding:10px 12px; font-size:.78rem; color:var(--light); font-style:italic; }
+    .takeaway-box { background:var(--red); color:var(--white); padding:32px; margin-top:56px; border-radius:2px; }
+    .takeaway-box .tk-label { font-size:10px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:rgba(255,255,255,.6); margin-bottom:10px; }
+    .takeaway-box h3 { font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:700; line-height:1.3; margin-bottom:10px; }
+    .takeaway-box p { font-size:.95rem; color:rgba(255,255,255,.85); line-height:1.7; max-width:560px; }
+    .module-nav { background:var(--black); padding:28px 40px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+    .module-nav .nav-info { display:flex; flex-direction:column; gap:3px; }
+    .module-nav .nav-info .lbl { font-size:9px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--light); }
+    .module-nav .nav-info .title { font-size:.9rem; color:var(--white); font-weight:500; }
+    .nav-progress { display:flex; gap:6px; align-items:center; }
+    .nav-dot { width:8px; height:8px; border-radius:50%; background:var(--rule-dk); }
+    .nav-dot.active { background:var(--red); }
+    .nav-dot.done { background:var(--white); }
+    .footer { background:var(--off-white); border-top:1px solid var(--rule); text-align:center; padding:32px 24px; font-size:.78rem; color:var(--light); letter-spacing:.06em; }
+    .footer strong { color:var(--black); }
+    @media(max-width:500px){.hero{padding:56px 24px 52px;}.page{padding:0 20px;}.nav-strip{padding:12px 20px;}}
+  </style>
+</head>
+<body>
+
+<div class="nav-strip">
+  <span class="nav-brand">PivotYes</span>
+  <span class="nav-program">Communicate Like You Mean It</span>
+  <span class="nav-module-badge">Module 05</span>
+</div>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">
+      <span class="mod-label">Module 05</span><span class="sep"></span>
+      <span class="skill-label">A Taste for Excellence</span>
+    </div>
+    <h1>What Good <em>Looks Like</em></h1>
+    <p class="hero-sub">Excellence isn't perfectionism. It's knowing the standard — and holding yourself to it before anyone checks your work.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="val">~25 min</span><span class="lbl">To complete</span></div>
+      <div class="hero-stat"><span class="val">Read · Reflect · Write</span><span class="lbl">Format</span></div>
+      <div class="hero-stat"><span class="val">1 Takeaway</span><span class="lbl">To use tomorrow</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+
+  <div class="block">
+    <p class="block-label">The Core Idea</p>
+    <h2 class="block-title">The gap between done and done well</h2>
+    <div class="block-body">
+      <p>Most work gets completed. Very little work is excellent. The gap isn't usually talent or effort — it's standard. The person who produces excellent work has a clear internal picture of what "good" looks like for this task, and they don't stop until they've reached it. That picture doesn't come from someone checking their work. It comes from them.</p>
+      <p><strong>Excellence is a habit of self-measurement.</strong> It's the moment before you hand something over when you ask yourself: is this my best work, or just finished work? Those are not the same question, and the people who know the difference are the ones others want on their team.</p>
+    </div>
+    <div class="pull-quote">
+      <p>"Done is not a standard. Done well is. Know the difference before you hand it over."</p>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <div class="block">
+    <p class="block-label">Two Standards</p>
+    <h2 class="block-title">Completed vs. excellent — what each looks like</h2>
+    <div class="standard-grid">
+      <div class="standard-card done">
+        <div class="sc-tag">Completed</div>
+        <h4>It's finished and handed over</h4>
+        <p>Technically done. All boxes checked. No obvious errors. Submitted on time. The person receiving it can work with it — but you know it could have been sharper.</p>
+      </div>
+      <div class="standard-card excellent">
+        <div class="sc-tag">Excellent</div>
+        <h4>It's finished and it's right</h4>
+        <p>Done — and you'd be proud to put your name on it. You caught the thing that almost slipped. You gave it ten more minutes. It does exactly what it needs to do, clearly and completely.</p>
+      </div>
+      <div class="standard-card done">
+        <div class="sc-tag">Completed</div>
+        <h4>Answers the question asked</h4>
+        <p>Responds to the literal request. Gets the job done technically but doesn't go beyond the instruction.</p>
+      </div>
+      <div class="standard-card excellent">
+        <div class="sc-tag">Excellent</div>
+        <h4>Answers the question — and anticipates the next one</h4>
+        <p>Thinks ahead. Notices what the person will need after they receive this. Includes it without being asked.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <div class="block">
+    <p class="block-label">The Tool</p>
+    <h2 class="block-title">The self-review checklist — use before you submit anything</h2>
+    <div class="checklist">
+      <div class="check-item">
+        <div class="check-box"></div>
+        <p><strong>Is the main point clear in the first sentence or the first glance?</strong> The person receiving this shouldn't have to search for what matters.</p>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <p><strong>Have I checked for the one thing that could be wrong?</strong> Every piece of work has a weak point. Find it before someone else does.</p>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <p><strong>Is this as concise as it can be?</strong> Cut anything that doesn't add meaning. Length is not thoroughness.</p>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <p><strong>Does this do what it was supposed to do?</strong> Go back to the original goal — does this work actually achieve it?</p>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <p><strong>Would I be comfortable if this had my name on it publicly?</strong> If the answer is "mostly" — it needs ten more minutes.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <div class="block">
+    <p class="block-label">Your Turn</p>
+    <h2 class="block-title">Core exercises</h2>
+
+    <div class="exercise-block">
+      <div class="exercise-header">
+        <span class="ex-title">Exercise 5A — The Gap Analysis</span>
+        <span class="ex-type">Writing · 8 min</span>
+      </div>
+      <div class="exercise-body">
+        <p class="prompt">Think of a recent piece of work you submitted. Honestly — was it completed, or was it excellent? Write what "excellent" would have looked like for that specific piece. What was the gap, and what would it have taken to close it?</p>
+        <div class="write-line-label">The work you submitted:</div>
+        <div class="write-lines"><div class="write-line"></div></div>
+        <div class="write-line-label" style="margin-top:20px;">What excellent would have looked like:</div>
+        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div></div>
+        <div class="write-line-label" style="margin-top:20px;">What stood between where you landed and excellent:</div>
+        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div></div>
+      </div>
+    </div>
+
+    <div class="exercise-block" style="margin-top:16px;">
+      <div class="exercise-header">
+        <span class="ex-title">Exercise 5B — Define Your Standard</span>
+        <span class="ex-type">Writing · 8 min</span>
+      </div>
+      <div class="exercise-body">
+        <p class="prompt">For the main type of work you do — write your personal definition of excellent. Not in general terms. Specifically: what does excellent look like for that work? What would you see, hear, or measure? This becomes your standard.</p>
+        <div class="write-line-label">In my work, excellent looks like:</div>
+        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div><div class="write-line"></div></div>
+        <div class="write-line-label" style="margin-top:20px;">The one thing I most often let slide that I could stop letting slide:</div>
+        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <div class="block">
+    <p class="block-label">Go Deeper</p>
+    <h2 class="block-title">Reflection</h2>
+    <div class="reflection-block">
+      <div class="ref-label">Reflection 1</div>
+      <p class="ref-q">"Think of someone whose work you genuinely respect. What specific things do they do that show their standard — before anyone checks?"</p>
+      <div class="ref-space">Write your answer here...</div>
+    </div>
+    <div class="reflection-block" style="margin-top:14px;">
+      <div class="ref-label">Reflection 2</div>
+      <p class="ref-q">"When you settle for 'good enough' — what's usually driving that? Time? Energy? Belief that it won't matter? What would it take to change that pattern?"</p>
+      <div class="ref-space">Write your answer here...</div>
+    </div>
+    <div class="reflection-block" style="margin-top:14px;">
+      <div class="ref-label">Reflection 3</div>
+      <p class="ref-q">"What would it mean for your reputation at work if people knew you consistently delivered excellent — not just completed — work?"</p>
+      <div class="ref-space">Write your answer here...</div>
+    </div>
+  </div>
+
+  <div class="takeaway-box">
+    <div class="tk-label">Tomorrow's Takeaway</div>
+    <h3>Before you submit your next piece of work — run the checklist.</h3>
+    <p>Five questions. Two minutes. Ask yourself: Is the main point clear? Have I checked the weak point? Is it as concise as it can be? Does it achieve the goal? Would I put my name on this? If the answer to any of them is "not quite" — take ten more minutes.</p>
+  </div>
+
+</div>
+
+<div class="module-nav">
+  <div class="nav-info"><span class="lbl">Previous</span><span class="title">Module 4 — Own Your Gaps</span></div>
+  <div class="nav-progress">
+    <div class="nav-dot done"></div><div class="nav-dot done"></div><div class="nav-dot done"></div>
+    <div class="nav-dot done"></div><div class="nav-dot active"></div><div class="nav-dot"></div>
+  </div>
+  <div class="nav-info" style="text-align:right;"><span class="lbl">Next</span><span class="title">Module 6 — See the Bigger Picture</span></div>
+</div>
+
+<footer class="footer">
+  <p><strong>PivotYes</strong> · Communicate Like You Mean It · Module 05 of 06</p>
+  <p style="margin-top:4px;">pivotyesconsulting.com</p>
+</footer>
+</body>
+</html>

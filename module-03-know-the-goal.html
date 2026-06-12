@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 3: Know the Goal — PivotYes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    :root { --black:#0A0A0A; --ink:#1A1A1A; --white:#FFFFFF; --off-white:#F7F7F7; --red:#C8102E; --mid:#666666; --light:#AAAAAA; --rule:#E0E0E0; --rule-dk:#2A2A2A; }
+    html { scroll-behavior:smooth; }
+    body { font-family:'Inter',sans-serif; background:var(--white); color:var(--ink); line-height:1.75; }
+    .nav-strip { background:var(--black); padding:12px 40px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+    .nav-brand { font-size:11px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--white); }
+    .nav-program { font-size:11px; color:var(--light); letter-spacing:.06em; }
+    .nav-module-badge { background:var(--red); color:var(--white); font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; padding:5px 14px; border-radius:2px; }
+    .hero { background:var(--black); color:var(--white); padding:80px 40px 70px; position:relative; overflow:hidden; }
+    .hero::after { content:'3'; position:absolute; right:40px; top:50%; transform:translateY(-50%); font-family:'Playfair Display',serif; font-size:18rem; font-weight:900; color:rgba(255,255,255,.04); line-height:1; pointer-events:none; user-select:none; }
+    .hero-inner { max-width:700px; position:relative; z-index:1; }
+    .hero-eyebrow { display:flex; align-items:center; gap:12px; margin-bottom:24px; }
+    .hero-eyebrow .mod-label { font-size:10px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--red); }
+    .hero-eyebrow .sep { width:32px; height:1px; background:var(--rule-dk); }
+    .hero-eyebrow .skill-label { font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--light); }
+    .hero h1 { font-family:'Playfair Display',serif; font-size:clamp(2.4rem,6vw,4rem); font-weight:900; line-height:1.08; margin-bottom:18px; }
+    .hero h1 em { font-style:italic; color:var(--red); }
+    .hero-sub { font-size:1.05rem; color:rgba(255,255,255,.6); max-width:480px; line-height:1.7; margin-bottom:36px; }
+    .hero-stats { display:flex; gap:32px; flex-wrap:wrap; }
+    .hero-stat { display:flex; flex-direction:column; gap:3px; }
+    .hero-stat .val { font-size:.82rem; font-weight:600; color:var(--white); }
+    .hero-stat .lbl { font-size:.72rem; color:var(--light); letter-spacing:.06em; }
+    .page { max-width:800px; margin:0 auto; padding:0 32px; }
+    .block { padding:56px 0 0; }
+    .block:last-of-type { padding-bottom:80px; }
+    .block-label { font-size:10px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--red); margin-bottom:10px; }
+    .block-title { font-family:'Playfair Display',serif; font-size:clamp(1.4rem,2.8vw,1.85rem); font-weight:700; color:var(--black); line-height:1.2; margin-bottom:20px; }
+    .block-body { font-size:.96rem; color:var(--ink); line-height:1.8; }
+    .block-body p + p { margin-top:16px; }
+    .block-body strong { color:var(--black); font-weight:600; }
+    .rule { border:none; border-top:1px solid var(--rule); margin:56px 0 0; }
+    .pull-quote { border-left:4px solid var(--red); padding:20px 24px; margin:32px 0; background:var(--off-white); }
+    .pull-quote p { font-family:'Playfair Display',serif; font-size:1.2rem; font-style:italic; color:var(--black); line-height:1.5; }
+    .insight-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:24px; }
+    @media(max-width:560px){.insight-grid{grid-template-columns:1fr;}}
+    .insight-card { border:1px solid var(--rule); border-top:3px solid var(--red); padding:22px 20px; background:var(--white); }
+    .insight-card h4 { font-size:.88rem; font-weight:700; color:var(--black); margin-bottom:8px; }
+    .insight-card p { font-size:.84rem; color:var(--mid); line-height:1.6; }
+    .levels-stack { display:flex; flex-direction:column; gap:0; margin-top:24px; border:1px solid var(--rule); border-radius:4px; overflow:hidden; }
+    .level-row { display:grid; grid-template-columns:120px 1fr; border-bottom:1px solid var(--rule); }
+    .level-row:last-child { border-bottom:none; }
+    .level-label { background:var(--black); color:var(--white); padding:18px 16px; display:flex; align-items:center; }
+    .level-label span { font-size:10px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--red); }
+    .level-content { padding:18px 20px; background:var(--white); }
+    .level-content .lc-title { font-size:.88rem; font-weight:700; color:var(--black); margin-bottom:4px; }
+    .level-content .lc-body { font-size:.84rem; color:var(--mid); line-height:1.6; }
+    .level-content .lc-eg { display:inline-block; margin-top:6px; font-size:.82rem; color:var(--black); font-style:italic; }
+    .framework-box { background:var(--black); color:var(--white); border-radius:4px; padding:36px 32px; margin-top:24px; }
+    .framework-box .fb-label { font-size:10px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--red); margin-bottom:14px; }
+    .framework-box h3 { font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:700; margin-bottom:20px; line-height:1.3; }
+    .framework-steps { display:flex; flex-direction:column; gap:14px; }
+    .fw-step { display:grid; grid-template-columns:28px 1fr; gap:14px; align-items:start; }
+    .fw-step .fw-num { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; color:var(--red); line-height:1.3; }
+    .fw-step .fw-text { font-size:.9rem; color:rgba(255,255,255,.8); line-height:1.6; }
+    .fw-step .fw-text strong { color:var(--white); }
+    .exercise-block { background:var(--off-white); border:1px solid var(--rule); border-radius:4px; overflow:hidden; margin-top:24px; }
+    .exercise-header { background:var(--red); padding:14px 24px; display:flex; align-items:center; justify-content:space-between; }
+    .exercise-header .ex-title { font-size:11px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--white); }
+    .exercise-header .ex-type { font-size:10px; color:rgba(255,255,255,.7); letter-spacing:.1em; }
+    .exercise-body { padding:28px 28px 24px; }
+    .exercise-body .prompt { font-size:.96rem; color:var(--ink); line-height:1.75; margin-bottom:24px; }
+    .write-line-label { font-size:10px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--mid); margin-bottom:10px; }
+    .write-lines { display:flex; flex-direction:column; gap:12px; }
+    .write-line { border-bottom:1px solid var(--rule); height:36px; position:relative; }
+    .write-line::before { content:''; position:absolute; left:0; top:50%; width:6px; height:6px; background:var(--red); border-radius:50%; transform:translateY(-50%); opacity:.4; }
+    .reflection-block { border:1px solid var(--rule); border-left:4px solid var(--black); padding:24px 24px 20px; margin-top:20px; background:var(--white); }
+    .reflection-block .ref-label { font-size:10px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--black); margin-bottom:10px; }
+    .reflection-block .ref-q { font-family:'Playfair Display',serif; font-style:italic; font-size:1.05rem; color:var(--black); line-height:1.55; margin-bottom:16px; }
+    .reflection-block .ref-space { background:var(--off-white); border:1px dashed var(--rule); height:80px; padding:10px 12px; font-size:.78rem; color:var(--light); font-style:italic; }
+    .takeaway-box { background:var(--red); color:var(--white); padding:32px; margin-top:56px; border-radius:2px; }
+    .takeaway-box .tk-label { font-size:10px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:rgba(255,255,255,.6); margin-bottom:10px; }
+    .takeaway-box h3 { font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:700; line-height:1.3; margin-bottom:10px; }
+    .takeaway-box p { font-size:.95rem; color:rgba(255,255,255,.85); line-height:1.7; max-width:560px; }
+    .module-nav { background:var(--black); padding:28px 40px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+    .module-nav .nav-info { display:flex; flex-direction:column; gap:3px; }
+    .module-nav .nav-info .lbl { font-size:9px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--light); }
+    .module-nav .nav-info .title { font-size:.9rem; color:var(--white); font-weight:500; }
+    .nav-progress { display:flex; gap:6px; align-items:center; }
+    .nav-dot { width:8px; height:8px; border-radius:50%; background:var(--rule-dk); }
+    .nav-dot.active { background:var(--red); }
+    .nav-dot.done { background:var(--white); }
+    .footer { background:var(--off-white); border-top:1px solid var(--rule); text-align:center; padding:32px 24px; font-size:.78rem; color:var(--light); letter-spacing:.06em; }
+    .footer strong { color:var(--black); }
+    @media(max-width:500px){.hero{padding:56px 24px 52px;}.page{padding:0 20px;}.nav-strip{padding:12px 20px;}}
+  </style>
+</head>
+<body>
+
+<div class="nav-strip">
+  <span class="nav-brand">PivotYes</span>
+  <span class="nav-program">Communicate Like You Mean It</span>
+  <span class="nav-module-badge">Module 03</span>
+</div>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">
+      <span class="mod-label">Module 03</span>
+      <span class="sep"></span>
+      <span class="skill-label">Understanding What's Needed</span>
+    </div>
+    <h1>Know the <em>Goal</em></h1>
+    <p class="hero-sub">Busy isn't the same as useful. The most important thing you can do before you start working is understand what you're actually working toward.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="val">~25 min</span><span class="lbl">To complete</span></div>
+      <div class="hero-stat"><span class="val">Read · Reflect · Write</span><span class="lbl">Format</span></div>
+      <div class="hero-stat"><span class="val">1 Takeaway</span><span class="lbl">To use tomorrow</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+
+  <div class="block">
+    <p class="block-label">The Core Idea</p>
+    <h2 class="block-title">The difference between the task and the goal</h2>
+    <div class="block-body">
+      <p>Every task has two layers. The first layer is the instruction — what you were told to do. The second layer is the goal — why it matters, what it's supposed to produce, what problem it's solving. Most people operate entirely at the first layer. They complete the instruction and call it done.</p>
+      <p>The people who move fastest and make the biggest impact operate at the second layer. They understand the goal well enough that when the instruction turns out to be wrong — or incomplete, or outdated — they can adjust without needing to be retold everything. <strong>Goal-level thinking is what separates execution from contribution.</strong></p>
+    </div>
+    <div class="pull-quote">
+      <p>"Perfect execution of the wrong task is still failure. Know what you're solving for before you start solving."</p>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <div class="block">
+    <p class="block-label">The Two Levels</p>
+    <h2 class="block-title">Task thinking vs. goal thinking</h2>
+    <div class="block-body"><p>Here's what the difference looks like in practice — same situation, two different ways of showing up.</p></div>
+    <div class="levels-stack">
+      <div class="level-row">
+        <div class="level-label"><span>Task Level</span></div>
+        <div class="level-content">
+          <div class="lc-title">Follows the instruction exactly as given</div>
+          <div class="lc-body">Waits to be told what to do next. Completes the task, reports back. If something is unclear, either guesses or gets stuck.</div>
+          <span class="lc-eg">"You asked me to send the report — I sent it."</span>
+        </div>
+      </div>
+      <div class="level-row">
+        <div class="level-label"><span>Goal Level</span></div>
+        <div class="level-content">
+          <div class="lc-title">Understands what the task is in service of</div>
+          <div class="lc-body">Asks what's needed before starting. Flags when the task won't achieve the goal. Brings context and judgment, not just effort.</div>
+          <span class="lc-eg">"The report is sent. I noticed one number looked off — I flagged it before you present."</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <div class="block">
+    <p class="block-label">The Tool</p>
+    <h2 class="block-title">Four questions that reveal the real goal</h2>
+    <div class="framework-box">
+      <div class="fb-label">The Goal Clarifier</div>
+      <h3>Ask these before you execute anything significant.</h3>
+      <div class="framework-steps">
+        <div class="fw-step">
+          <span class="fw-num">1</span>
+          <span class="fw-text"><strong>What's this for?</strong> Not "what is it" — but why does it exist? Who will use it? What decision does it inform?</span>
+        </div>
+        <div class="fw-step">
+          <span class="fw-num">2</span>
+          <span class="fw-text"><strong>What does a good outcome look like — specifically?</strong> Not "done well" but what you'd see, hear, or measure if it worked.</span>
+        </div>
+        <div class="fw-step">
+          <span class="fw-num">3</span>
+          <span class="fw-text"><strong>What would make this not useful?</strong> What would cause this work to miss even if it's technically complete? Knowing this early prevents late surprises.</span>
+        </div>
+        <div class="fw-step">
+          <span class="fw-num">4</span>
+          <span class="fw-text"><strong>Who else is affected by this?</strong> Understanding downstream impact changes how you approach the work — and what you flag along the way.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <div class="block">
+    <p class="block-label">Your Turn</p>
+    <h2 class="block-title">Core exercises</h2>
+
+    <div class="exercise-block">
+      <div class="exercise-header">
+        <span class="ex-title">Exercise 3A — Task vs. Goal</span>
+        <span class="ex-type">Writing · 8 min</span>
+      </div>
+      <div class="exercise-body">
+        <p class="prompt">Pick a task you completed recently. Write the instruction you were given. Then write the actual goal it was in service of. Were they the same? If you had focused on the goal instead of the task, would anything have been different?</p>
+        <div class="write-line-label">The instruction you were given:</div>
+        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div></div>
+        <div class="write-line-label" style="margin-top:20px;">The actual goal it was serving:</div>
+        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div></div>
+        <div class="write-line-label" style="margin-top:20px;">What would you have done differently with goal-level thinking?</div>
+        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div></div>
+      </div>
+    </div>
+
+    <div class="exercise-block" style="margin-top:16px;">
+      <div class="exercise-header">
+        <span class="ex-title">Exercise 3B — Confirm the Goal Out Loud</span>
+        <span class="ex-type">Practice · 5 min</span>
+      </div>
+      <div class="exercise-body">
+        <p class="prompt">Think of something you're working on right now. Write one sentence that states the goal — not the task. Start with: "The goal here is to..." Then check it with whoever assigned the work. See if your read matches theirs.</p>
+        <div class="write-line-label">The goal here is to:</div>
+        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div></div>
+        <div class="write-line-label" style="margin-top:20px;">What did you learn when you checked it?</div>
+        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <div class="block">
+    <p class="block-label">Go Deeper</p>
+    <h2 class="block-title">Reflection</h2>
+    <div class="reflection-block">
+      <div class="ref-label">Reflection 1</div>
+      <p class="ref-q">"Have you ever completed something perfectly and still felt like you missed the point? What was actually missing?"</p>
+      <div class="ref-space">Write your answer here...</div>
+    </div>
+    <div class="reflection-block" style="margin-top:14px;">
+      <div class="ref-label">Reflection 2</div>
+      <p class="ref-q">"In your current role, how often do you know the 'why' behind what you're asked to do? What would change if you always did?"</p>
+      <div class="ref-space">Write your answer here...</div>
+    </div>
+    <div class="reflection-block" style="margin-top:14px;">
+      <div class="ref-label">Reflection 3</div>
+      <p class="ref-q">"What's one area in your work where you could shift from task-level to goal-level thinking — starting this week?"</p>
+      <div class="ref-space">Write your answer here...</div>
+    </div>
+  </div>
+
+  <div class="takeaway-box">
+    <div class="tk-label">Tomorrow's Takeaway</div>
+    <h3>Before your next task — write the goal in one sentence.</h3>
+    <p>"The goal here is to ___." Say it to the person who gave you the work. If your sentence matches what they meant, you're aligned. If it doesn't — you just saved yourself a lot of wasted effort.</p>
+  </div>
+
+</div>
+
+<div class="module-nav">
+  <div class="nav-info"><span class="lbl">Previous</span><span class="title">Module 2 — Ask Before You Assume</span></div>
+  <div class="nav-progress">
+    <div class="nav-dot done"></div><div class="nav-dot done"></div><div class="nav-dot active"></div>
+    <div class="nav-dot"></div><div class="nav-dot"></div><div class="nav-dot"></div>
+  </div>
+  <div class="nav-info" style="text-align:right;"><span class="lbl">Next</span><span class="title">Module 4 — Own Your Gaps</span></div>
+</div>
+
+<footer class="footer">
+  <p><strong>PivotYes</strong> · Communicate Like You Mean It · Module 03 of 06</p>
+  <p style="margin-top:4px;">pivotyesconsulting.com</p>
+</footer>
+</body>
+</html>

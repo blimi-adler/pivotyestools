@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 4: Own Your Gaps — PivotYes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    :root { --black:#0A0A0A; --ink:#1A1A1A; --white:#FFFFFF; --off-white:#F7F7F7; --red:#C8102E; --mid:#666666; --light:#AAAAAA; --rule:#E0E0E0; --rule-dk:#2A2A2A; }
+    html { scroll-behavior:smooth; }
+    body { font-family:'Inter',sans-serif; background:var(--white); color:var(--ink); line-height:1.75; }
+    .nav-strip { background:var(--black); padding:12px 40px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+    .nav-brand { font-size:11px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--white); }
+    .nav-program { font-size:11px; color:var(--light); letter-spacing:.06em; }
+    .nav-module-badge { background:var(--red); color:var(--white); font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; padding:5px 14px; border-radius:2px; }
+    .hero { background:var(--black); color:var(--white); padding:80px 40px 70px; position:relative; overflow:hidden; }
+    .hero::after { content:'4'; position:absolute; right:40px; top:50%; transform:translateY(-50%); font-family:'Playfair Display',serif; font-size:18rem; font-weight:900; color:rgba(255,255,255,.04); line-height:1; pointer-events:none; user-select:none; }
+    .hero-inner { max-width:700px; position:relative; z-index:1; }
+    .hero-eyebrow { display:flex; align-items:center; gap:12px; margin-bottom:24px; }
+    .hero-eyebrow .mod-label { font-size:10px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--red); }
+    .hero-eyebrow .sep { width:32px; height:1px; background:var(--rule-dk); }
+    .hero-eyebrow .skill-label { font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--light); }
+    .hero h1 { font-family:'Playfair Display',serif; font-size:clamp(2.4rem,6vw,4rem); font-weight:900; line-height:1.08; margin-bottom:18px; }
+    .hero h1 em { font-style:italic; color:var(--red); }
+    .hero-sub { font-size:1.05rem; color:rgba(255,255,255,.6); max-width:480px; line-height:1.7; margin-bottom:36px; }
+    .hero-stats { display:flex; gap:32px; flex-wrap:wrap; }
+    .hero-stat { display:flex; flex-direction:column; gap:3px; }
+    .hero-stat .val { font-size:.82rem; font-weight:600; color:var(--white); }
+    .hero-stat .lbl { font-size:.72rem; color:var(--light); letter-spacing:.06em; }
+    .page { max-width:800px; margin:0 auto; padding:0 32px; }
+    .block { padding:56px 0 0; }
+    .block:last-of-type { padding-bottom:80px; }
+    .block-label { font-size:10px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--red); margin-bottom:10px; }
+    .block-title { font-family:'Playfair Display',serif; font-size:clamp(1.4rem,2.8vw,1.85rem); font-weight:700; color:var(--black); line-height:1.2; margin-bottom:20px; }
+    .block-body { font-size:.96rem; color:var(--ink); line-height:1.8; }
+    .block-body p + p { margin-top:16px; }
+    .block-body strong { color:var(--black); font-weight:600; }
+    .rule { border:none; border-top:1px solid var(--rule); margin:56px 0 0; }
+    .pull-quote { border-left:4px solid var(--red); padding:20px 24px; margin:32px 0; background:var(--off-white); }
+    .pull-quote p { font-family:'Playfair Display',serif; font-size:1.2rem; font-style:italic; color:var(--black); line-height:1.5; }
+    .insight-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:24px; }
+    @media(max-width:560px){.insight-grid{grid-template-columns:1fr;}}
+    .insight-card { border:1px solid var(--rule); border-top:3px solid var(--red); padding:22px 20px; background:var(--white); }
+    .insight-card h4 { font-size:.88rem; font-weight:700; color:var(--black); margin-bottom:8px; }
+    .insight-card p { font-size:.84rem; color:var(--mid); line-height:1.6; }
+    .phrase-swap { display:flex; flex-direction:column; gap:12px; margin-top:24px; }
+    .swap-row { display:grid; grid-template-columns:1fr 1fr; border:1px solid var(--rule); border-radius:4px; overflow:hidden; }
+    @media(max-width:560px){.swap-row{grid-template-columns:1fr;}}
+    .swap-cell { padding:16px 18px; font-size:.88rem; line-height:1.6; }
+    .swap-cell.weak { background:var(--off-white); color:var(--mid); font-style:italic; border-right:1px solid var(--rule); }
+    .swap-cell.strong { background:var(--white); color:var(--black); font-weight:500; }
+    .swap-header { display:grid; grid-template-columns:1fr 1fr; }
+    .swap-header span { font-size:10px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; padding:8px 18px; }
+    .swap-header .sh-weak { color:var(--light); }
+    .swap-header .sh-strong { color:var(--red); }
+    .framework-box { background:var(--black); color:var(--white); border-radius:4px; padding:36px 32px; margin-top:24px; }
+    .framework-box .fb-label { font-size:10px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--red); margin-bottom:14px; }
+    .framework-box h3 { font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:700; margin-bottom:20px; line-height:1.3; }
+    .framework-steps { display:flex; flex-direction:column; gap:14px; }
+    .fw-step { display:grid; grid-template-columns:28px 1fr; gap:14px; align-items:start; }
+    .fw-step .fw-num { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; color:var(--red); line-height:1.3; }
+    .fw-step .fw-text { font-size:.9rem; color:rgba(255,255,255,.8); line-height:1.6; }
+    .fw-step .fw-text strong { color:var(--white); }
+    .exercise-block { background:var(--off-white); border:1px solid var(--rule); border-radius:4px; overflow:hidden; margin-top:24px; }
+    .exercise-header { background:var(--red); padding:14px 24px; display:flex; align-items:center; justify-content:space-between; }
+    .exercise-header .ex-title { font-size:11px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--white); }
+    .exercise-header .ex-type { font-size:10px; color:rgba(255,255,255,.7); letter-spacing:.1em; }
+    .exercise-body { padding:28px 28px 24px; }
+    .exercise-body .prompt { font-size:.96rem; color:var(--ink); line-height:1.75; margin-bottom:24px; }
+    .write-line-label { font-size:10px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--mid); margin-bottom:10px; }
+    .write-lines { display:flex; flex-direction:column; gap:12px; }
+    .write-line { border-bottom:1px solid var(--rule); height:36px; position:relative; }
+    .write-line::before { content:''; position:absolute; left:0; top:50%; width:6px; height:6px; background:var(--red); border-radius:50%; transform:translateY(-50%); opacity:.4; }
+    .reflection-block { border:1px solid var(--rule); border-left:4px solid var(--black); padding:24px 24px 20px; margin-top:20px; background:var(--white); }
+    .reflection-block .ref-label { font-size:10px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--black); margin-bottom:10px; }
+    .reflection-block .ref-q { font-family:'Playfair Display',serif; font-style:italic; font-size:1.05rem; color:var(--black); line-height:1.55; margin-bottom:16px; }
+    .reflection-block .ref-space { background:var(--off-white); border:1px dashed var(--rule); height:80px; padding:10px 12px; font-size:.78rem; color:var(--light); font-style:italic; }
+    .takeaway-box { background:var(--red); color:var(--white); padding:32px; margin-top:56px; border-radius:2px; }
+    .takeaway-box .tk-label { font-size:10px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:rgba(255,255,255,.6); margin-bottom:10px; }
+    .takeaway-box h3 { font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:700; line-height:1.3; margin-bottom:10px; }
+    .takeaway-box p { font-size:.95rem; color:rgba(255,255,255,.85); line-height:1.7; max-width:560px; }
+    .module-nav { background:var(--black); padding:28px 40px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+    .module-nav .nav-info { display:flex; flex-direction:column; gap:3px; }
+    .module-nav .nav-info .lbl { font-size:9px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--light); }
+    .module-nav .nav-info .title { font-size:.9rem; color:var(--white); font-weight:500; }
+    .nav-progress { display:flex; gap:6px; align-items:center; }
+    .nav-dot { width:8px; height:8px; border-radius:50%; background:var(--rule-dk); }
+    .nav-dot.active { background:var(--red); }
+    .nav-dot.done { background:var(--white); }
+    .footer { background:var(--off-white); border-top:1px solid var(--rule); text-align:center; padding:32px 24px; font-size:.78rem; color:var(--light); letter-spacing:.06em; }
+    .footer strong { color:var(--black); }
+    @media(max-width:500px){.hero{padding:56px 24px 52px;}.page{padding:0 20px;}.nav-strip{padding:12px 20px;}}
+  </style>
+</head>
+<body>
+
+<div class="nav-strip">
+  <span class="nav-brand">PivotYes</span>
+  <span class="nav-program">Communicate Like You Mean It</span>
+  <span class="nav-module-badge">Module 04</span>
+</div>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">
+      <span class="mod-label">Module 04</span><span class="sep"></span>
+      <span class="skill-label">Expressing Needs Without Apology</span>
+    </div>
+    <h1>Own Your <em>Gaps</em></h1>
+    <p class="hero-sub">Asking for what you need is a professional skill, not a weakness. Pretending you don't need anything is the real risk — to you and to the team.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="val">~25 min</span><span class="lbl">To complete</span></div>
+      <div class="hero-stat"><span class="val">Read · Reflect · Write</span><span class="lbl">Format</span></div>
+      <div class="hero-stat"><span class="val">1 Takeaway</span><span class="lbl">To use tomorrow</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+
+  <div class="block">
+    <p class="block-label">The Core Idea</p>
+    <h2 class="block-title">Why hiding your needs costs everyone</h2>
+    <div class="block-body">
+      <p>When you don't say what you need, two things happen. First, you don't get it. Second, the people around you can't do their jobs properly because they're working with incomplete information. A team where people hide their gaps isn't a strong team — it's a team where problems compound silently until they surface as emergencies.</p>
+      <p><strong>Asking for what you need isn't a burden on others. It's how good work actually gets done.</strong> The professional who says "I need clarity on this before I go further" gets better results than the one who powers through uncertain and produces work that misses the mark.</p>
+    </div>
+    <div class="pull-quote">
+      <p>"The people who advocate clearly for what they need aren't high-maintenance. They're the ones you can actually count on."</p>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <div class="block">
+    <p class="block-label">Understanding the Problem</p>
+    <h2 class="block-title">Why we stay silent when we need something</h2>
+    <div class="insight-grid">
+      <div class="insight-card">
+        <h4>Fear of looking incapable</h4>
+        <p>Asking for help can feel like admitting you can't handle it. But the most capable people ask the most questions — because they know the stakes.</p>
+      </div>
+      <div class="insight-card">
+        <h4>Not wanting to be a burden</h4>
+        <p>You don't want to slow someone else down. But silence that causes a mistake slows everyone down far more.</p>
+      </div>
+      <div class="insight-card">
+        <h4>Not knowing how to ask</h4>
+        <p>Some people genuinely don't have the language. They feel the gap but don't know how to name it professionally.</p>
+      </div>
+      <div class="insight-card">
+        <h4>Hoping it will resolve itself</h4>
+        <p>The optimism that says "maybe it'll be fine." It usually isn't — and now the problem is bigger and closer to the deadline.</p>
+      </div>
+      <div class="insight-card">
+        <h4>Past experience of being dismissed</h4>
+        <p>If you've been shut down before, you stop asking. That's a learned response — and this module helps unlearn it.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <div class="block">
+    <p class="block-label">The Language</p>
+    <h2 class="block-title">How to ask for what you need — professionally</h2>
+    <div class="block-body"><p>The difference between asking confidently and asking apologetically is the language you use. Here's the shift.</p></div>
+    <div class="swap-header">
+      <span class="sh-weak">Apologetic (avoid)</span>
+      <span class="sh-strong">Professional (use this)</span>
+    </div>
+    <div class="phrase-swap">
+      <div class="swap-row">
+        <div class="swap-cell weak">"Sorry, I know this is probably a dumb question, but..."</div>
+        <div class="swap-cell strong">"I have a question before I move forward:"</div>
+      </div>
+      <div class="swap-row">
+        <div class="swap-cell weak">"I hate to ask, but I'm kind of stuck..."</div>
+        <div class="swap-cell strong">"I need some direction on this — can we take five minutes?"</div>
+      </div>
+      <div class="swap-row">
+        <div class="swap-cell weak">"I don't know if this makes sense to ask for, but I need more time..."</div>
+        <div class="swap-cell strong">"I need two more days on this to do it right."</div>
+      </div>
+      <div class="swap-row">
+        <div class="swap-cell weak">"You're probably too busy, but if you get a chance..."</div>
+        <div class="swap-cell strong">"I need fifteen minutes with you this week — when works?"</div>
+      </div>
+      <div class="swap-row">
+        <div class="swap-cell weak">"I might be missing something obvious, but this doesn't make sense to me..."</div>
+        <div class="swap-cell strong">"I need more context on this before I can move forward accurately."</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <div class="block">
+    <p class="block-label">The Tool</p>
+    <h2 class="block-title">The Need Statement formula</h2>
+    <div class="framework-box">
+      <div class="fb-label">Say It Simply and Directly</div>
+      <h3>I need ___ so that I can ___.</h3>
+      <div class="framework-steps">
+        <div class="fw-step">
+          <span class="fw-num">1</span>
+          <span class="fw-text"><strong>Name the need specifically.</strong> Not "some help" — but what, exactly. More time? A decision? A resource? Clarity on one point?</span>
+        </div>
+        <div class="fw-step">
+          <span class="fw-num">2</span>
+          <span class="fw-text"><strong>Connect it to the outcome.</strong> "So that I can ___" shows this isn't personal — it's about the work. It turns your need into a shared interest.</span>
+        </div>
+        <div class="fw-step">
+          <span class="fw-num">3</span>
+          <span class="fw-text"><strong>Stop there.</strong> No over-explaining. No apologizing. You've said what you need and why it matters. Let the other person respond.</span>
+        </div>
+      </div>
+    </div>
+    <div class="block-body" style="margin-top:20px;">
+      <p><strong>Example:</strong> "I need clarity on the budget limit so that I can give you three real options instead of guesses."</p>
+      <p style="margin-top:12px;"><strong>Example:</strong> "I need an extra day on this so that I can verify the numbers before they go to the client."</p>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <div class="block">
+    <p class="block-label">Your Turn</p>
+    <h2 class="block-title">Core exercises</h2>
+
+    <div class="exercise-block">
+      <div class="exercise-header">
+        <span class="ex-title">Exercise 4A — The Unasked Ask</span>
+        <span class="ex-type">Writing · 8 min</span>
+      </div>
+      <div class="exercise-body">
+        <p class="prompt">Write down something you've needed at work recently that you didn't ask for. Why didn't you ask? Now write it as a Need Statement: "I need ___ so that I can ___." Read it back out loud.</p>
+        <div class="write-line-label">What you needed but didn't ask for:</div>
+        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div></div>
+        <div class="write-line-label" style="margin-top:20px;">Why you didn't ask:</div>
+        <div class="write-lines"><div class="write-line"></div></div>
+        <div class="write-line-label" style="margin-top:20px;">The Need Statement — I need ___ so that I can ___:</div>
+        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div></div>
+      </div>
+    </div>
+
+    <div class="exercise-block" style="margin-top:16px;">
+      <div class="exercise-header">
+        <span class="ex-title">Exercise 4B — This Week's Need</span>
+        <span class="ex-type">Practice · 5 min</span>
+      </div>
+      <div class="exercise-body">
+        <p class="prompt">Identify one thing you need this week to do your work well. Write the Need Statement. Then commit to actually asking for it — today or tomorrow.</p>
+        <div class="write-line-label">I need ___ so that I can ___:</div>
+        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div></div>
+        <div class="write-line-label" style="margin-top:20px;">Who do I need to ask, and when will I do it?</div>
+        <div class="write-lines"><div class="write-line"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <div class="block">
+    <p class="block-label">Go Deeper</p>
+    <h2 class="block-title">Reflection</h2>
+    <div class="reflection-block">
+      <div class="ref-label">Reflection 1</div>
+      <p class="ref-q">"When someone on your team asks you for what they need — how does it actually make you feel about them? Does it raise or lower your confidence in them?"</p>
+      <div class="ref-space">Write your answer here...</div>
+    </div>
+    <div class="reflection-block" style="margin-top:14px;">
+      <div class="ref-label">Reflection 2</div>
+      <p class="ref-q">"Think of a time you stayed silent about a need and it cost you or the team. What would you do differently now?"</p>
+      <div class="ref-space">Write your answer here...</div>
+    </div>
+    <div class="reflection-block" style="margin-top:14px;">
+      <div class="ref-label">Reflection 3</div>
+      <p class="ref-q">"What would it take for you to feel comfortable asking for what you need — every time, without apology?"</p>
+      <div class="ref-space">Write your answer here...</div>
+    </div>
+  </div>
+
+  <div class="takeaway-box">
+    <div class="tk-label">Tomorrow's Takeaway</div>
+    <h3>Find one thing you need this week — and ask for it.</h3>
+    <p>Use the formula: "I need ___ so that I can ___." No apology before it. No over-explaining after it. Say it, stop, and let the other person respond.</p>
+  </div>
+
+</div>
+
+<div class="module-nav">
+  <div class="nav-info"><span class="lbl">Previous</span><span class="title">Module 3 — Know the Goal</span></div>
+  <div class="nav-progress">
+    <div class="nav-dot done"></div><div class="nav-dot done"></div><div class="nav-dot done"></div>
+    <div class="nav-dot active"></div><div class="nav-dot"></div><div class="nav-dot"></div>
+  </div>
+  <div class="nav-info" style="text-align:right;"><span class="lbl">Next</span><span class="title">Module 5 — What Good Looks Like</span></div>
+</div>
+
+<footer class="footer">
+  <p><strong>PivotYes</strong> · Communicate Like You Mean It · Module 04 of 06</p>
+  <p style="margin-top:4px;">pivotyesconsulting.com</p>
+</footer>
+</body>
+</html>

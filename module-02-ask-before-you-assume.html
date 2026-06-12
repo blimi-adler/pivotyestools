@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 2: Ask Before You Assume — PivotYes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --black:#0A0A0A; --ink:#1A1A1A; --white:#FFFFFF; --off-white:#F7F7F7;
+      --red:#C8102E; --red-deep:#9B0C23; --mid:#666666; --light:#AAAAAA;
+      --rule:#E0E0E0; --rule-dk:#2A2A2A;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family:'Inter',sans-serif; background:var(--white); color:var(--ink); line-height:1.75; }
+    .nav-strip { background:var(--black); padding:12px 40px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+    .nav-brand { font-size:11px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--white); }
+    .nav-program { font-size:11px; color:var(--light); letter-spacing:.06em; }
+    .nav-module-badge { background:var(--red); color:var(--white); font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; padding:5px 14px; border-radius:2px; }
+    .hero { background:var(--black); color:var(--white); padding:80px 40px 70px; position:relative; overflow:hidden; }
+    .hero::after { content:'2'; position:absolute; right:40px; top:50%; transform:translateY(-50%); font-family:'Playfair Display',serif; font-size:18rem; font-weight:900; color:rgba(255,255,255,.04); line-height:1; pointer-events:none; user-select:none; }
+    .hero-inner { max-width:700px; position:relative; z-index:1; }
+    .hero-eyebrow { display:flex; align-items:center; gap:12px; margin-bottom:24px; }
+    .hero-eyebrow .mod-label { font-size:10px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--red); }
+    .hero-eyebrow .sep { width:32px; height:1px; background:var(--rule-dk); }
+    .hero-eyebrow .skill-label { font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--light); }
+    .hero h1 { font-family:'Playfair Display',serif; font-size:clamp(2.4rem,6vw,4rem); font-weight:900; line-height:1.08; margin-bottom:18px; }
+    .hero h1 em { font-style:italic; color:var(--red); }
+    .hero-sub { font-size:1.05rem; color:rgba(255,255,255,.6); max-width:480px; line-height:1.7; margin-bottom:36px; }
+    .hero-stats { display:flex; gap:32px; flex-wrap:wrap; }
+    .hero-stat { display:flex; flex-direction:column; gap:3px; }
+    .hero-stat .val { font-size:.82rem; font-weight:600; color:var(--white); }
+    .hero-stat .lbl { font-size:.72rem; color:var(--light); letter-spacing:.06em; }
+    .page { max-width:800px; margin:0 auto; padding:0 32px; }
+    .block { padding:56px 0 0; }
+    .block:last-of-type { padding-bottom:80px; }
+    .block-label { font-size:10px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--red); margin-bottom:10px; }
+    .block-title { font-family:'Playfair Display',serif; font-size:clamp(1.4rem,2.8vw,1.85rem); font-weight:700; color:var(--black); line-height:1.2; margin-bottom:20px; }
+    .block-body { font-size:.96rem; color:var(--ink); line-height:1.8; }
+    .block-body p + p { margin-top:16px; }
+    .block-body strong { color:var(--black); font-weight:600; }
+    .rule { border:none; border-top:1px solid var(--rule); margin:56px 0 0; }
+    .pull-quote { border-left:4px solid var(--red); padding:20px 24px; margin:32px 0; background:var(--off-white); }
+    .pull-quote p { font-family:'Playfair Display',serif; font-size:1.2rem; font-style:italic; color:var(--black); line-height:1.5; }
+    .insight-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:24px; }
+    @media(max-width:560px){.insight-grid{grid-template-columns:1fr;}}
+    .insight-card { border:1px solid var(--rule); border-top:3px solid var(--red); padding:22px 20px; background:var(--white); }
+    .insight-card h4 { font-size:.88rem; font-weight:700; color:var(--black); margin-bottom:8px; }
+    .insight-card p { font-size:.84rem; color:var(--mid); line-height:1.6; }
+    .question-types { display:flex; flex-direction:column; gap:0; border:1px solid var(--rule); border-radius:4px; overflow:hidden; margin-top:24px; }
+    .qt-row { display:grid; grid-template-columns:140px 1fr 1fr; border-bottom:1px solid var(--rule); }
+    .qt-row:last-child { border-bottom:none; }
+    .qt-row.header { background:var(--black); }
+    .qt-cell { padding:14px 16px; font-size:.86rem; }
+    .qt-row.header .qt-cell { font-size:10px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--light); }
+    .qt-row.header .qt-cell:last-child { color:var(--red); }
+    .qt-cell.type { font-weight:600; color:var(--black); border-right:1px solid var(--rule); background:var(--off-white); font-size:.84rem; }
+    .qt-cell.avoid { color:var(--mid); font-style:italic; border-right:1px solid var(--rule); }
+    .qt-cell.use { color:var(--black); font-weight:500; }
+    .framework-box { background:var(--black); color:var(--white); border-radius:4px; padding:36px 32px; margin-top:24px; }
+    .framework-box .fb-label { font-size:10px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--red); margin-bottom:14px; }
+    .framework-box h3 { font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:700; margin-bottom:20px; line-height:1.3; }
+    .framework-steps { display:flex; flex-direction:column; gap:14px; }
+    .fw-step { display:grid; grid-template-columns:28px 1fr; gap:14px; align-items:start; }
+    .fw-step .fw-num { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; color:var(--red); line-height:1.3; }
+    .fw-step .fw-text { font-size:.9rem; color:rgba(255,255,255,.8); line-height:1.6; }
+    .fw-step .fw-text strong { color:var(--white); }
+    .exercise-block { background:var(--off-white); border:1px solid var(--rule); border-radius:4px; overflow:hidden; margin-top:24px; }
+    .exercise-header { background:var(--red); padding:14px 24px; display:flex; align-items:center; justify-content:space-between; }
+    .exercise-header .ex-title { font-size:11px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--white); }
+    .exercise-header .ex-type { font-size:10px; color:rgba(255,255,255,.7); letter-spacing:.1em; }
+    .exercise-body { padding:28px 28px 24px; }
+    .exercise-body .prompt { font-size:.96rem; color:var(--ink); line-height:1.75; margin-bottom:24px; }
+    .write-line-label { font-size:10px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--mid); margin-bottom:10px; }
+    .write-lines { display:flex; flex-direction:column; gap:12px; }
+    .write-line { border-bottom:1px solid var(--rule); height:36px; position:relative; }
+    .write-line::before { content:''; position:absolute; left:0; top:50%; width:6px; height:6px; background:var(--red); border-radius:50%; transform:translateY(-50%); opacity:.4; }
+    .reflection-block { border:1px solid var(--rule); border-left:4px solid var(--black); padding:24px 24px 20px; margin-top:20px; background:var(--white); }
+    .reflection-block .ref-label { font-size:10px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--black); margin-bottom:10px; }
+    .reflection-block .ref-q { font-family:'Playfair Display',serif; font-style:italic; font-size:1.05rem; color:var(--black); line-height:1.55; margin-bottom:16px; }
+    .reflection-block .ref-space { background:var(--off-white); border:1px dashed var(--rule); height:80px; padding:10px 12px; font-size:.78rem; color:var(--light); font-style:italic; }
+    .takeaway-box { background:var(--red); color:var(--white); padding:32px 32px; margin-top:56px; border-radius:2px; }
+    .takeaway-box .tk-label { font-size:10px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:rgba(255,255,255,.6); margin-bottom:10px; }
+    .takeaway-box h3 { font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:700; line-height:1.3; margin-bottom:10px; }
+    .takeaway-box p { font-size:.95rem; color:rgba(255,255,255,.85); line-height:1.7; max-width:560px; }
+    .module-nav { background:var(--black); padding:28px 40px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+    .module-nav .nav-info { display:flex; flex-direction:column; gap:3px; }
+    .module-nav .nav-info .lbl { font-size:9px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--light); }
+    .module-nav .nav-info .title { font-size:.9rem; color:var(--white); font-weight:500; }
+    .nav-progress { display:flex; gap:6px; align-items:center; }
+    .nav-dot { width:8px; height:8px; border-radius:50%; background:var(--rule-dk); }
+    .nav-dot.active { background:var(--red); }
+    .nav-dot.done { background:var(--white); }
+    .footer { background:var(--off-white); border-top:1px solid var(--rule); text-align:center; padding:32px 24px; font-size:.78rem; color:var(--light); letter-spacing:.06em; }
+    .footer strong { color:var(--black); }
+    @media(max-width:500px){.hero{padding:56px 24px 52px;}.page{padding:0 20px;}.nav-strip{padding:12px 20px;}.qt-row{grid-template-columns:100px 1fr;}.qt-cell.use{display:none;}}
+  </style>
+</head>
+<body>
+
+<div class="nav-strip">
+  <span class="nav-brand">PivotYes</span>
+  <span class="nav-program">Communicate Like You Mean It</span>
+  <span class="nav-module-badge">Module 02</span>
+</div>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">
+      <span class="mod-label">Module 02</span>
+      <span class="sep"></span>
+      <span class="skill-label">Asking Great Questions</span>
+    </div>
+    <h1>Ask Before You <em>Assume</em></h1>
+    <p class="hero-sub">The question you don't ask costs more than the one you do. Curiosity is not weakness — it's the fastest path to getting things right.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="val">~25 min</span><span class="lbl">To complete</span></div>
+      <div class="hero-stat"><span class="val">Read · Reflect · Write</span><span class="lbl">Format</span></div>
+      <div class="hero-stat"><span class="val">1 Takeaway</span><span class="lbl">To use tomorrow</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+
+  <div class="block">
+    <p class="block-label">The Core Idea</p>
+    <h2 class="block-title">Why assuming feels safer — and why it isn't</h2>
+    <div class="block-body">
+      <p>Assuming feels efficient. You get the instruction, you fill in the blanks, you start moving. No questions asked, no time lost. Except when the blanks get filled in wrong — and they often do — you've spent time solving the wrong problem.</p>
+      <p>The real cost of assuming isn't the mistake. It's the rework, the misalignment, the quiet erosion of trust when someone realizes you were guessing instead of asking. <strong>One well-placed question at the start saves hours of correction at the end.</strong></p>
+    </div>
+    <div class="pull-quote">
+      <p>"Asking a question doesn't signal that you don't know. It signals that you care enough to get it right."</p>
+    </div>
+    <div class="block-body">
+      <p>People who ask great questions are not the ones who know the least. They're usually the ones who understand the most — because they've made a habit of closing the gap between what they think they know and what's actually true.</p>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <div class="block">
+    <p class="block-label">Understanding the Problem</p>
+    <h2 class="block-title">Five reasons we assume instead of ask</h2>
+    <div class="insight-grid">
+      <div class="insight-card">
+        <h4>We don't want to look uninformed</h4>
+        <p>Asking a question can feel like admitting a gap. But guessing wrong and needing to redo the work looks far worse.</p>
+      </div>
+      <div class="insight-card">
+        <h4>We think we already know</h4>
+        <p>Past experience creates shortcuts. The problem is that this situation might not be the same as the last one — and the difference matters.</p>
+      </div>
+      <div class="insight-card">
+        <h4>We don't want to bother anyone</h4>
+        <p>We assume the other person is too busy. But a 30-second question now is always better than a 30-minute mistake later.</p>
+      </div>
+      <div class="insight-card">
+        <h4>We don't know what to ask</h4>
+        <p>Sometimes the gap isn't confidence — it's not knowing which question to ask. This module fixes that.</p>
+      </div>
+      <div class="insight-card">
+        <h4>We're moving too fast</h4>
+        <p>Speed feels productive. But rushing past a clarifying question is how smart people end up doing brilliant work on the wrong thing.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <div class="block">
+    <p class="block-label">The Skill</p>
+    <h2 class="block-title">What makes a question great</h2>
+    <div class="block-body">
+      <p>Not all questions are equal. A great question is open enough to invite a real answer, specific enough to get useful information, and purposeful — asked because you need to know, not because you're stalling.</p>
+    </div>
+
+    <div class="question-types">
+      <div class="qt-row header">
+        <div class="qt-cell">Type</div>
+        <div class="qt-cell">Avoid this</div>
+        <div class="qt-cell">Ask this instead</div>
+      </div>
+      <div class="qt-row">
+        <div class="qt-cell type">Clarifying</div>
+        <div class="qt-cell avoid">"So you want me to just do X, right?"</div>
+        <div class="qt-cell use">"Before I start — what does success look like here?"</div>
+      </div>
+      <div class="qt-row">
+        <div class="qt-cell type">Priority</div>
+        <div class="qt-cell avoid">"Should I do A or B?"</div>
+        <div class="qt-cell use">"If I can only finish one of these today, which matters more?"</div>
+      </div>
+      <div class="qt-row">
+        <div class="qt-cell type">Context</div>
+        <div class="qt-cell avoid">"Why do we do it this way?"</div>
+        <div class="qt-cell use">"Help me understand the reasoning — I want to do this right."</div>
+      </div>
+      <div class="qt-row">
+        <div class="qt-cell type">Feedback</div>
+        <div class="qt-cell avoid">"Was that okay?"</div>
+        <div class="qt-cell use">"What's one thing I could do differently next time?"</div>
+      </div>
+      <div class="qt-row">
+        <div class="qt-cell type">Expectation</div>
+        <div class="qt-cell avoid">"When do you need this?"</div>
+        <div class="qt-cell use">"What's the deadline, and is there a point where it's too late to be useful?"</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <div class="block">
+    <p class="block-label">The Tool</p>
+    <h2 class="block-title">The three questions to ask before any task</h2>
+    <div class="framework-box">
+      <div class="fb-label">The Before-You-Start Checklist</div>
+      <h3>Ask these before you dive in — every time.</h3>
+      <div class="framework-steps">
+        <div class="fw-step">
+          <span class="fw-num">1</span>
+          <span class="fw-text"><strong>What does done look like?</strong> Don't assume you know what the finished product should be. Ask explicitly. "What does a good outcome look like for you?"</span>
+        </div>
+        <div class="fw-step">
+          <span class="fw-num">2</span>
+          <span class="fw-text"><strong>What's the deadline — and why?</strong> Knowing the real deadline (and the reason behind it) tells you how to pace your effort and what trade-offs are acceptable.</span>
+        </div>
+        <div class="fw-step">
+          <span class="fw-num">3</span>
+          <span class="fw-text"><strong>Is there anything I should know that I'm not asking about?</strong> This is the question most people never ask. It surfaces hidden context before it becomes a surprise.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <div class="block">
+    <p class="block-label">Your Turn</p>
+    <h2 class="block-title">Core exercises</h2>
+
+    <div class="exercise-block">
+      <div class="exercise-header">
+        <span class="ex-title">Exercise 2A — The Assumption Audit</span>
+        <span class="ex-type">Writing · 8 min</span>
+      </div>
+      <div class="exercise-body">
+        <p class="prompt">Think of a time you assumed something at work and it turned out to be wrong. Write what you assumed, what actually happened, and the one question you could have asked at the start that would have changed the outcome.</p>
+        <div class="write-line-label">What you assumed:</div>
+        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div></div>
+        <div class="write-line-label" style="margin-top:20px;">What actually happened:</div>
+        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div></div>
+        <div class="write-line-label" style="margin-top:20px;">The question you could have asked:</div>
+        <div class="write-lines"><div class="write-line"></div></div>
+      </div>
+    </div>
+
+    <div class="exercise-block" style="margin-top:16px;">
+      <div class="exercise-header">
+        <span class="ex-title">Exercise 2B — Build Your Three Questions</span>
+        <span class="ex-type">Writing · 8 min</span>
+      </div>
+      <div class="exercise-body">
+        <p class="prompt">Think of a task or project you're currently working on — or one about to land. Write the three Before-You-Start questions as you'd actually ask them in your context. Make them specific to your work, not generic.</p>
+        <div class="write-line-label">What does done look like? (your version):</div>
+        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div></div>
+        <div class="write-line-label" style="margin-top:20px;">What's the real deadline and why?:</div>
+        <div class="write-lines"><div class="write-line"></div></div>
+        <div class="write-line-label" style="margin-top:20px;">What should I know that I haven't asked about?:</div>
+        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule" />
+
+  <div class="block">
+    <p class="block-label">Go Deeper</p>
+    <h2 class="block-title">Reflection</h2>
+
+    <div class="reflection-block">
+      <div class="ref-label">Reflection 1</div>
+      <p class="ref-q">"When you don't ask a question you need to ask — what stops you? Is it fear, speed, or something else?"</p>
+      <div class="ref-space">Write your answer here...</div>
+    </div>
+    <div class="reflection-block" style="margin-top:14px;">
+      <div class="ref-label">Reflection 2</div>
+      <p class="ref-q">"Think of someone at work who asks great questions. What makes their questions feel different from a basic question?"</p>
+      <div class="ref-space">Write your answer here...</div>
+    </div>
+    <div class="reflection-block" style="margin-top:14px;">
+      <div class="ref-label">Reflection 3</div>
+      <p class="ref-q">"Where in your current role are you most likely to assume instead of ask — and what's at stake when you get it wrong?"</p>
+      <div class="ref-space">Write your answer here...</div>
+    </div>
+  </div>
+
+  <div class="takeaway-box">
+    <div class="tk-label">Tomorrow's Takeaway</div>
+    <h3>Before you start your next task — ask all three.</h3>
+    <p>Don't begin until you can answer: What does done look like? What's the real deadline and why? What should I know that I haven't asked about? Takes 60 seconds. Saves hours.</p>
+  </div>
+
+</div>
+
+<div class="module-nav">
+  <div class="nav-info"><span class="lbl">Previous</span><span class="title">Module 1 — Say What You Mean</span></div>
+  <div class="nav-progress">
+    <div class="nav-dot done"></div><div class="nav-dot active"></div><div class="nav-dot"></div>
+    <div class="nav-dot"></div><div class="nav-dot"></div><div class="nav-dot"></div>
+  </div>
+  <div class="nav-info" style="text-align:right;"><span class="lbl">Next</span><span class="title">Module 3 — Know the Goal</span></div>
+</div>
+
+<footer class="footer">
+  <p><strong>PivotYes</strong> · Communicate Like You Mean It · Module 02 of 06</p>
+  <p style="margin-top:4px;">pivotyesconsulting.com</p>
+</footer>
+</body>
+</html>
