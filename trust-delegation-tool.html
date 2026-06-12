@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trust &amp; Delegation - PivotYes</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --red: #E3000F;
+  --black: #1A1A1A;
+  --white: #FFFFFF;
+  --gray-light: #F5F5F5;
+  --gray-mid: #E8E8E8;
+  --gray-text: #666666;
+  --border: #DEDEDE;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: var(--white); color: var(--black); min-height: 100vh; }
+
+.top-bar { background: var(--black); padding: 0 32px; height: 52px; display: flex; align-items: center; justify-content: space-between; }
+.logo { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 0.06em; color: var(--white); }
+.logo span { color: var(--red); }
+.top-tag { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #666; font-weight: 500; }
+
+.hero { background: var(--black); padding: 52px 32px 0; text-align: center; }
+.hero-eyebrow { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--red); font-weight: 600; margin-bottom: 14px; }
+.hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(48px,7vw,80px); color: var(--white); letter-spacing: 0.04em; line-height: 1; margin-bottom: 16px; }
+.hero h1 span { color: var(--red); }
+.hero p { color: #999; font-size: 15px; max-width: 480px; margin: 0 auto 36px; line-height: 1.65; font-weight: 300; }
+
+.module-nav { display: flex; justify-content: center; gap: 0; border-top: 1px solid #333; }
+.mod-btn { background: transparent; border: none; border-right: 1px solid #333; color: #666; padding: 16px 26px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: all 0.15s; position: relative; }
+.mod-btn:first-child { border-left: 1px solid #333; }
+.mod-btn:hover { color: var(--white); background: #222; }
+.mod-btn.active { color: var(--white); }
+.mod-btn.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: var(--red); }
+
+.main { max-width: 860px; margin: 0 auto; padding: 48px 24px 80px; }
+.module-panel { display: none; }
+.module-panel.active { display: block; }
+
+.section-eyebrow { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--red); font-weight: 700; margin-bottom: 6px; }
+.section-title { font-family: 'Bebas Neue', sans-serif; font-size: 38px; letter-spacing: 0.04em; color: var(--black); margin-bottom: 8px; line-height: 1; }
+.section-desc { font-size: 14px; color: var(--gray-text); line-height: 1.6; margin-bottom: 36px; max-width: 560px; }
+
+.card { background: var(--white); border: 1px solid var(--border); padding: 28px; margin-bottom: 20px; }
+
+.btn { padding: 11px 24px; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.04em; cursor: pointer; border: none; transition: all 0.15s; }
+.btn-primary { background: var(--red); color: var(--white); }
+.btn-primary:hover { background: #c5000e; }
+.btn-ghost { background: transparent; color: var(--black); border: 1.5px solid var(--border); }
+.btn-ghost:hover { border-color: var(--black); }
+.btn-sm { padding: 8px 16px; font-size: 12px; }
+
+/* TASK SORT */
+.quad-guide { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); margin-bottom: 28px; }
+.quad-cell { background: var(--white); padding: 16px 18px; }
+.quad-cell-title { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 0.04em; margin-bottom: 4px; }
+.quad-cell-axis { font-size: 11px; color: var(--gray-text); margin-bottom: 6px; font-style: italic; }
+.quad-cell-desc { font-size: 12px; color: var(--gray-text); line-height: 1.5; }
+.q-love .quad-cell-title { color: #1a7a4a; }
+.q-like .quad-cell-title { color: #1a5c9e; }
+.q-dislike-good .quad-cell-title { color: #c97d00; }
+.q-dislike-bad .quad-cell-title { color: var(--red); }
+
+.step-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.step-num { width: 36px; height: 36px; background: var(--black); color: var(--white); font-family: 'Bebas Neue', sans-serif; font-size: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.step-label { font-size: 14px; font-weight: 600; }
+.step-sub { font-size: 12px; color: var(--gray-text); margin-top: 2px; }
+
+.task-entry { display: grid; grid-template-columns: 1fr 180px 140px auto; gap: 10px; margin-bottom: 12px; align-items: start; }
+.form-input, .form-select { font-family: 'Inter', sans-serif; font-size: 13px; border: 1.5px solid var(--border); padding: 10px 12px; color: var(--black); background: var(--white); outline: none; width: 100%; transition: border-color 0.15s; }
+.form-input:focus, .form-select:focus { border-color: var(--black); }
+.form-input::placeholder { color: #bbb; }
+
+.task-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 16px; }
+.task-table th { text-align: left; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray-text); font-weight: 600; padding: 8px 12px; border-bottom: 2px solid var(--black); background: var(--gray-light); }
+.task-table td { padding: 11px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.task-table tr:hover td { background: var(--gray-light); }
+
+.quad-pill { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px; white-space: nowrap; }
+.pill-love { background: #e8f7ef; color: #1a7a4a; }
+.pill-like { background: #e8f0fb; color: #1a5c9e; }
+.pill-dislike-good { background: #fdf3e3; color: #c97d00; }
+.pill-dislike-bad { background: #fde8e9; color: var(--red); }
+
+.action-pill { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 8px; letter-spacing: 0.06em; text-transform: uppercase; }
+.action-keep { background: var(--black); color: var(--white); }
+.action-delegate { background: var(--red); color: var(--white); }
+.action-automate { background: #1a5c9e; color: var(--white); }
+
+.del-btn { background: none; border: none; color: #ccc; cursor: pointer; font-size: 16px; padding: 0 4px; transition: color 0.15s; }
+.del-btn:hover { color: var(--red); }
+
+.summary-bar { display: flex; gap: 16px; margin-top: 20px; padding: 16px; background: var(--gray-light); border: 1px solid var(--border); }
+.sum-item { text-align: center; flex: 1; }
+.sum-count { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 0.04em; line-height: 1; }
+.sum-label { font-size: 10px; color: var(--gray-text); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+.sum-keep .sum-count { color: var(--black); }
+.sum-delegate .sum-count { color: var(--red); }
+.sum-automate .sum-count { color: #1a5c9e; }
+
+.empty-state { text-align: center; padding: 32px; color: #bbb; font-size: 13px; border: 1.5px dashed var(--border); }
+
+/* TRUST LADDER */
+.ladder { display: flex; flex-direction: column; gap: 6px; }
+.rung { display: flex; border: 1px solid var(--border); cursor: pointer; transition: border-color 0.15s; }
+.rung:hover, .rung.expanded { border-color: var(--black); }
+.rung-level { width: 52px; display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: var(--white); flex-shrink: 0; }
+.rung-body { flex: 1; padding: 16px 20px; background: var(--white); }
+.rung.expanded .rung-body { background: var(--gray-light); }
+.rung-title { font-weight: 700; font-size: 14px; margin-bottom: 2px; }
+.rung-sub { font-size: 12px; color: var(--gray-text); }
+.rung-detail { display: none; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+.rung.expanded .rung-detail { display: block; }
+.rung-detail p { font-size: 13px; line-height: 1.65; color: var(--gray-text); margin-bottom: 10px; }
+.rung-detail strong { color: var(--black); }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.chip { font-size: 11px; font-weight: 600; padding: 3px 10px; background: var(--gray-light); color: var(--black); border: 1px solid var(--border); }
+.ladder-note { border: 1px solid var(--border); border-left: 4px solid var(--red); padding: 18px 20px; margin-top: 20px; background: var(--gray-light); }
+.ladder-note p { font-size: 13px; line-height: 1.65; color: var(--gray-text); }
+.ladder-note strong { color: var(--black); }
+
+/* QUIZ */
+.quiz-progress-track { height: 3px; background: var(--gray-mid); margin-bottom: 8px; }
+.quiz-progress-fill { height: 100%; background: var(--red); transition: width 0.3s; }
+.quiz-step-label { font-size: 11px; color: var(--gray-text); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 20px; }
+.quiz-q { font-size: 15px; font-weight: 600; color: var(--black); margin-bottom: 16px; line-height: 1.5; }
+.quiz-opts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+.quiz-opt { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border: 1.5px solid var(--border); cursor: pointer; transition: all 0.12s; }
+.quiz-opt:hover, .quiz-opt.selected { border-color: var(--black); background: var(--gray-light); }
+.quiz-opt input { margin-top: 2px; accent-color: var(--black); flex-shrink: 0; }
+.quiz-opt label { font-size: 13px; cursor: pointer; line-height: 1.5; }
+.quiz-nav { display: flex; justify-content: space-between; align-items: center; }
+.result-wrap { border-left: 4px solid var(--black); padding: 24px; background: var(--gray-light); }
+.result-wrap.r-owner { border-color: var(--red); }
+.result-wrap.r-team { border-color: #c97d00; }
+.result-wrap.r-system { border-color: #1a5c9e; }
+.result-title { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 0.04em; margin-bottom: 8px; }
+.result-desc { font-size: 13px; line-height: 1.65; color: var(--gray-text); margin-bottom: 16px; }
+.result-actions { list-style: none; }
+.result-actions li { font-size: 13px; padding: 8px 0; border-bottom: 1px solid var(--border); display: flex; gap: 10px; }
+.result-actions li:last-child { border-bottom: none; }
+.result-actions li::before { content: '\2192'; font-weight: 700; flex-shrink: 0; }
+
+/* HANDOFF */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray-text); }
+.form-textarea { font-family: 'Inter', sans-serif; font-size: 13px; border: 1.5px solid var(--border); padding: 10px 12px; color: var(--black); background: var(--white); outline: none; width: 100%; resize: vertical; min-height: 80px; transition: border-color 0.15s; }
+.form-textarea:focus { border-color: var(--black); }
+.handoff-card { background: var(--black); padding: 32px; margin-top: 20px; display: none; }
+.handoff-card.visible { display: block; }
+.hc-eyebrow { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--red); font-weight: 700; margin-bottom: 20px; }
+.hc-task-name { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 0.04em; color: var(--white); margin-bottom: 24px; line-height: 1; }
+.hc-divider { border: none; border-top: 1px solid #333; margin: 20px 0; }
+.hc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 16px; }
+.hc-label { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #666; margin-bottom: 5px; }
+.hc-val { font-size: 14px; color: var(--white); line-height: 1.5; }
+.trust-bar { display: flex; gap: 5px; margin-top: 8px; }
+.trust-pip { height: 5px; flex: 1; background: #333; }
+.trust-pip.on { background: var(--red); }
+.hc-copy-btn { margin-top: 20px; background: transparent; border: 1px solid #444; color: #888; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; padding: 10px 20px; cursor: pointer; transition: all 0.15s; }
+.hc-copy-btn:hover { border-color: var(--white); color: var(--white); }
+
+@media (max-width: 620px) {
+  .task-entry, .form-grid, .hc-row, .quad-guide { grid-template-columns: 1fr; }
+  .module-nav { flex-wrap: wrap; }
+  .mod-btn { font-size: 10px; padding: 12px; }
+  .hero { padding: 36px 20px 0; }
+  .main { padding: 32px 16px 60px; }
+}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="logo">Pivot<span>Yes</span></div>
+  <div class="top-tag">HR &amp; Leadership &middot; Owner Tool</div>
+</div>
+
+<div class="hero">
+  <div class="hero-eyebrow">PivotYes Framework</div>
+  <h1>TRUST &amp;<br><span>DELEGATION</span></h1>
+  <p>You cannot scale what you refuse to release. Sort your tasks, find your block, and build clean handoffs.</p>
+  <div class="module-nav">
+    <button class="mod-btn active" onclick="showModule('tasks',this)">Task Sort</button>
+    <button class="mod-btn" onclick="showModule('ladder',this)">Trust Ladder</button>
+    <button class="mod-btn" onclick="showModule('quiz',this)">Readiness Check</button>
+    <button class="mod-btn" onclick="showModule('handoff',this)">Handoff Builder</button>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- TASK SORT -->
+  <div id="mod-tasks" class="module-panel active">
+    <div class="section-eyebrow">Step 1</div>
+    <div class="section-title">SORT YOUR TASKS</div>
+    <div class="section-desc">List everything on your plate. Rate each task by how you feel about it and how well you do it. Then decide: Keep, Delegate, or Automate.</div>
+
+    <div class="quad-guide">
+      <div class="quad-cell q-love">
+        <div class="quad-cell-title">Love It &amp; Great At It</div>
+        <div class="quad-cell-axis">Your zone of genius</div>
+        <div class="quad-cell-desc">Protect this time. Build your role around it. This is where you create the most value.</div>
+      </div>
+      <div class="quad-cell q-like">
+        <div class="quad-cell-title">Like It &amp; Good At It</div>
+        <div class="quad-cell-axis">Competent, not your highest use</div>
+        <div class="quad-cell-desc">Fine for now. As you grow, move these to someone who can make them their zone of genius.</div>
+      </div>
+      <div class="quad-cell q-dislike-good">
+        <div class="quad-cell-title">Don't Like It &amp; Good At It</div>
+        <div class="quad-cell-axis">The dangerous zone</div>
+        <div class="quad-cell-desc">You do it well so it stays with you. But it drains you and blocks better people from owning it. Delegate soon.</div>
+      </div>
+      <div class="quad-cell q-dislike-bad">
+        <div class="quad-cell-title">Don't Like It &amp; Not Good At It</div>
+        <div class="quad-cell-axis">Get this off your plate now</div>
+        <div class="quad-cell-desc">No reason to keep it. Delegate to someone good at it or automate it entirely.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="step-header">
+        <div class="step-num">1</div>
+        <div>
+          <div class="step-label">Add Your Tasks</div>
+          <div class="step-sub">Enter each task, assign a quadrant, then choose your action.</div>
+        </div>
+      </div>
+      <div class="task-entry">
+        <input type="text" class="form-input" id="task-name" placeholder="Task or responsibility..." />
+        <select class="form-select" id="task-quad">
+          <option value="">Quadrant</option>
+          <option value="love">Love it &amp; Great at it</option>
+          <option value="like">Like it &amp; Good at it</option>
+          <option value="dislike-good">Don't like it &amp; Good at it</option>
+          <option value="dislike-bad">Don't like it &amp; Not good at it</option>
+        </select>
+        <select class="form-select" id="task-action">
+          <option value="">Action</option>
+          <option value="keep">Keep</option>
+          <option value="delegate">Delegate</option>
+          <option value="automate">Automate</option>
+        </select>
+        <button class="btn btn-primary" onclick="addTask()">ADD</button>
+      </div>
+      <div id="task-empty" class="empty-state">No tasks yet. Start listing what is on your plate.</div>
+      <table class="task-table" id="task-table" style="display:none;">
+        <thead><tr><th>Task</th><th>Quadrant</th><th>Action</th><th style="width:32px;"></th></tr></thead>
+        <tbody id="task-tbody"></tbody>
+      </table>
+      <div class="summary-bar" id="summary-bar" style="display:none;">
+        <div class="sum-item sum-keep"><div class="sum-count" id="sum-keep">0</div><div class="sum-label">Keep</div></div>
+        <div class="sum-item sum-delegate"><div class="sum-count" id="sum-delegate">0</div><div class="sum-label">Delegate</div></div>
+        <div class="sum-item sum-automate"><div class="sum-count" id="sum-automate">0</div><div class="sum-label">Automate</div></div>
+        <div class="sum-item"><div class="sum-count" id="sum-total">0</div><div class="sum-label">Total</div></div>
+      </div>
+    </div>
+    <div class="card" style="background:var(--gray-light);">
+      <p style="font-size:13px;line-height:1.65;color:var(--gray-text);">
+        <strong style="color:var(--black);">Next:</strong> Take every task marked <strong style="color:var(--red);">Delegate</strong> to the Handoff Builder. Build a clean card before handing off anything. Delegation without clarity is just a hope.
+      </p>
+    </div>
+  </div>
+
+  <!-- TRUST LADDER -->
+  <div id="mod-ladder" class="module-panel">
+    <div class="section-eyebrow">Step 2</div>
+    <div class="section-title">THE TRUST LADDER</div>
+    <div class="section-desc">Delegation is not one move. It is five levels. Most owners jump from doing everything to full handoff and wonder why it breaks. Tap each level to see what it looks like in practice.</div>
+    <div class="ladder" id="ladder-container"></div>
+    <div class="ladder-note">
+      <p><strong>The most common mistake:</strong> Jumping from Level 1 to Level 5. You hold everything tightly, hand it off completely, call it empowerment. It breaks. You pull it back. Repeat. The fix is not more trust. It is <strong>more structure at each level</strong>.</p>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="mod-quiz" class="module-panel">
+    <div class="section-eyebrow">Diagnostic</div>
+    <div class="section-title">READINESS CHECK</div>
+    <div class="section-desc">Before you delegate anything, find out where the real block is - you, your team, or your systems.</div>
+    <div class="card">
+      <div class="quiz-progress-track"><div class="quiz-progress-fill" id="qpfill" style="width:0%"></div></div>
+      <div class="quiz-step-label" id="qsteplabel">Question 1 of 5</div>
+      <div id="quiz-container"></div>
+    </div>
+  </div>
+
+  <!-- HANDOFF -->
+  <div id="mod-handoff" class="module-panel">
+    <div class="section-eyebrow">Step 3</div>
+    <div class="section-title">HANDOFF BUILDER</div>
+    <div class="section-desc">Fill this out for any task you are moving off your plate. Get a clean card to share directly.</div>
+    <div class="card">
+      <div class="form-grid">
+        <div class="form-group full">
+          <div class="form-label">Task or Responsibility</div>
+          <input type="text" class="form-input" id="hf-task" placeholder="e.g. Weekly client status update" />
+        </div>
+        <div class="form-group">
+          <div class="form-label">Who Owns This</div>
+          <input type="text" class="form-input" id="hf-owner" placeholder="Name or role" />
+        </div>
+        <div class="form-group">
+          <div class="form-label">Trust Level (1-5)</div>
+          <select class="form-select" id="hf-trust">
+            <option value="">Select level</option>
+            <option value="1">1 - I show, they watch</option>
+            <option value="2">2 - They do, I guide</option>
+            <option value="3">3 - They decide, I approve</option>
+            <option value="4">4 - They run it, I review</option>
+            <option value="5">5 - Fully theirs</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <div class="form-label">What Does Done Right Look Like?</div>
+          <textarea class="form-textarea" id="hf-outcome" placeholder="Describe the outcome, not the activity. What does success look like?"></textarea>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Deadline or Cadence</div>
+          <input type="text" class="form-input" id="hf-deadline" placeholder="e.g. Every Friday by 3pm" />
+        </div>
+        <div class="form-group">
+          <div class="form-label">Check-In Rhythm</div>
+          <select class="form-select" id="hf-checkin">
+            <option value="">Select</option>
+            <option value="Daily">Daily</option>
+            <option value="Weekly">Weekly</option>
+            <option value="Bi-weekly">Bi-weekly</option>
+            <option value="On completion only">On completion only</option>
+            <option value="Exception-based only">Exception-based only</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <div class="form-label">Resources, Tools, or Context They Need</div>
+          <textarea class="form-textarea" id="hf-resources" placeholder="Access, contacts, tools, background..." style="min-height:60px;"></textarea>
+        </div>
+      </div>
+      <div style="margin-top:20px;">
+        <button class="btn btn-primary" onclick="buildHandoff()">GENERATE HANDOFF CARD</button>
+      </div>
+    </div>
+    <div class="handoff-card" id="handoff-card">
+      <div class="hc-eyebrow">Handoff Card &middot; PivotYes</div>
+      <div class="hc-task-name" id="hc-task"></div>
+      <hr class="hc-divider">
+      <div class="hc-row">
+        <div><div class="hc-label">Owner</div><div class="hc-val" id="hc-owner"></div></div>
+        <div><div class="hc-label">Trust Level</div><div class="hc-val" id="hc-trust-label"></div><div class="trust-bar" id="hc-trust-bar"></div></div>
+      </div>
+      <hr class="hc-divider">
+      <div style="margin-bottom:16px;"><div class="hc-label">What Success Looks Like</div><div class="hc-val" id="hc-outcome"></div></div>
+      <div class="hc-row">
+        <div><div class="hc-label">Deadline / Cadence</div><div class="hc-val" id="hc-deadline"></div></div>
+        <div><div class="hc-label">Check-In Rhythm</div><div class="hc-val" id="hc-checkin"></div></div>
+      </div>
+      <div id="hc-resources-wrap" style="margin-top:16px;display:none;">
+        <div class="hc-label">Resources &amp; Context</div>
+        <div class="hc-val" id="hc-resources"></div>
+      </div>
+      <button class="hc-copy-btn" onclick="copyHandoff()">COPY CARD</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showModule(id, btn) {
+  document.querySelectorAll('.module-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.mod-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('mod-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+/* TASK SORT */
+var tasks = [];
+var quadMeta = {
+  'love':         { label: 'Love it & Great at it',          cls: 'pill-love' },
+  'like':         { label: 'Like it & Good at it',            cls: 'pill-like' },
+  'dislike-good': { label: "Don't like it & Good at it",     cls: 'pill-dislike-good' },
+  'dislike-bad':  { label: "Don't like it & Not good at it", cls: 'pill-dislike-bad' }
+};
+var actionMeta = {
+  'keep':     { label: 'Keep',     cls: 'action-keep' },
+  'delegate': { label: 'Delegate', cls: 'action-delegate' },
+  'automate': { label: 'Automate', cls: 'action-automate' }
+};
+
+document.getElementById('task-name').addEventListener('keydown', function(e) { if (e.key === 'Enter') addTask(); });
+
+document.getElementById('task-quad').addEventListener('change', function() {
+  var quad = this.value;
+  var actionSel = document.getElementById('task-action');
+  if (quad === 'dislike-good' || quad === 'dislike-bad') {
+    actionSel.value = 'delegate';
+    actionSel.disabled = true;
+    actionSel.style.background = 'var(--gray-light)';
+    actionSel.style.color = 'var(--gray-text)';
+    actionSel.title = 'Auto-set to Delegate for this quadrant';
+  } else {
+    actionSel.disabled = false;
+    actionSel.style.background = '';
+    actionSel.style.color = '';
+    actionSel.title = '';
+    if (actionSel.value === 'delegate') actionSel.value = '';
+  }
+});
+
+function addTask() {
+  var name   = document.getElementById('task-name').value.trim();
+  var quad   = document.getElementById('task-quad').value;
+  var action = document.getElementById('task-action').value;
+  if (!name || !quad || !action) {
+    if (!name) document.getElementById('task-name').style.borderColor = 'var(--red)';
+    return;
+  }
+  document.getElementById('task-name').style.borderColor = '';
+  tasks.push({ name: name, quad: quad, action: action });
+  document.getElementById('task-name').value = '';
+  document.getElementById('task-quad').value = '';
+  var actionSel = document.getElementById('task-action');
+  actionSel.value = '';
+  actionSel.disabled = false;
+  actionSel.style.background = '';
+  actionSel.style.color = '';
+  actionSel.title = '';
+  renderTasks();
+}
+
+function removeTask(i) { tasks.splice(i, 1); renderTasks(); }
+
+function renderTasks() {
+  var empty  = document.getElementById('task-empty');
+  var table  = document.getElementById('task-table');
+  var tbody  = document.getElementById('task-tbody');
+  var sumBar = document.getElementById('summary-bar');
+  if (!tasks.length) {
+    empty.style.display = 'block'; table.style.display = 'none'; sumBar.style.display = 'none'; return;
+  }
+  empty.style.display = 'none'; table.style.display = 'table'; sumBar.style.display = 'flex';
+  tbody.innerHTML = tasks.map(function(t, i) {
+    return '<tr><td>' + t.name + '</td><td><span class="quad-pill ' + quadMeta[t.quad].cls + '">' + quadMeta[t.quad].label + '</span></td><td><span class="action-pill ' + actionMeta[t.action].cls + '">' + actionMeta[t.action].label + '</span></td><td><button class="del-btn" onclick="removeTask(' + i + ')">&times;</button></td></tr>';
+  }).join('');
+  var c = { keep: 0, delegate: 0, automate: 0 };
+  tasks.forEach(function(t) { c[t.action]++; });
+  document.getElementById('sum-keep').textContent = c.keep;
+  document.getElementById('sum-delegate').textContent = c.delegate;
+  document.getElementById('sum-automate').textContent = c.automate;
+  document.getElementById('sum-total').textContent = tasks.length;
+}
+
+/* TRUST LADDER */
+var ladderData = [
+  { level: 1, color: '#E3000F', title: 'I Show, You Watch', sub: '"Watch me do this. Then we do it together."',
+    detail: '<p>I do the task while you observe. This is intentional onboarding. I build your mental model of what good looks like before you ever touch it.</p><p><strong>What this requires:</strong> I narrate my thinking as I work. I explain the why, not just the what. I set the standard explicitly so there is no ambiguity.</p><div class="chips"><span class="chip">Side-by-side</span><span class="chip">I narrate</span><span class="chip">Standard-setting</span></div>' },
+  { level: 2, color: '#e07a5f', title: 'You Do, I Guide', sub: '"Do it yourself, but ask me before the big calls."',
+    detail: '<p>You do the work independently but I am still a resource on key decisions. You bring me a question, not a problem. I am coaching, not doing.</p><p><strong>What this requires:</strong> You understand the process from Level 1. You need reps with a safety net. I respond to questions without taking the task back.</p><div class="chips"><span class="chip">You lead, I advise</span><span class="chip">Pre-decision check-ins</span><span class="chip">Building confidence</span></div>' },
+  { level: 3, color: '#c97d00', title: 'You Decide, I Check In', sub: '"Make the call. Tell me what you decided."',
+    detail: '<p>You make independent decisions and loop me in after - not before. This is the shift from permission to accountability. It feels uncomfortable. That is the point.</p><p><strong>What this requires:</strong> Clear guidelines on what is in your authority. A defined reporting cadence. I let your decisions stand even if I would have done it differently.</p><div class="chips"><span class="chip">Post-decision check-in</span><span class="chip">Clear authority scope</span><span class="chip">I do not override lightly</span></div>' },
+  { level: 4, color: '#1a5c9e', title: 'You Run It, I Review', sub: '"Do it. Show me before it goes out."',
+    detail: '<p>You run the process independently and I review the output before it is finalized or sent. I am not in the work - but I am a checkpoint.</p><p><strong>What this requires:</strong> You show good judgment at Level 3. I trust your process and validate that your standards match mine before removing the review step.</p><div class="chips"><span class="chip">Review, not redo</span><span class="chip">Outcome check only</span><span class="chip">Defined review cadence</span></div>' },
+  { level: 5, color: '#1a7a4a', title: 'It\'s Yours', sub: '"It\'s yours. Come to me only if something breaks."',
+    detail: '<p>You own the outcome completely. You set direction, make calls, and come to me only if something falls outside your authority or goes significantly wrong.</p><p><strong>What this requires:</strong> A proven track record at Level 4. I trust your judgment, not just your execution. Your authority limits are clear upfront.</p><div class="chips"><span class="chip">Fully autonomous</span><span class="chip">Exception-based only</span><span class="chip">You set direction</span></div>' }
+];
+
+(function() {
+  document.getElementById('ladder-container').innerHTML = ladderData.map(function(r, i) {
+    return '<div class="rung" id="rung-' + i + '" onclick="this.classList.toggle(\'expanded\')">' +
+      '<div class="rung-level" style="background:' + r.color + ';">' + r.level + '</div>' +
+      '<div class="rung-body"><div class="rung-title">' + r.title + '</div><div class="rung-sub">' + r.sub + '</div>' +
+      '<div class="rung-detail">' + r.detail + '</div></div></div>';
+  }).join('');
+})();
+
+/* QUIZ */
+var quizQs = [
+  { q: "When you think about handing off a task, what is the first thing that goes through your mind?",
+    opts: [{ t: "They won't do it the way I would.", s: {owner:2} }, { t: "I don't think they have the skills yet.", s: {team:2} }, { t: "There is no process for them to follow.", s: {system:2} }, { t: "I am not sure who should own this.", s: {system:1,team:1} }] },
+  { q: "When a team member makes a mistake on something you delegated, what happens?",
+    opts: [{ t: "I take it back and do it myself.", s: {owner:3} }, { t: "I coach them through it and try again.", s: {} }, { t: "I realize I never gave them a clear process.", s: {system:2} }, { t: "I wonder if they are the right person for it.", s: {team:2} }] },
+  { q: "Why haven't you delegated the things currently on your list?",
+    opts: [{ t: "It is faster if I just do it myself.", s: {owner:2} }, { t: "My team does not have the capacity or skill.", s: {team:2} }, { t: "I have not built the SOP or training yet.", s: {system:3} }, { t: "I feel guilty putting more on their plates.", s: {owner:1} }] },
+  { q: "How would you describe your team's ability to make decisions without you?",
+    opts: [{ t: "They always come to me, even for small things.", s: {system:2,owner:1} }, { t: "They make decisions but they are often wrong.", s: {team:2} }, { t: "They would be fine with clearer guidelines.", s: {system:2} }, { t: "They are capable but I second-guess their calls.", s: {owner:3} }] },
+  { q: "If you took a week off with no phone, what would break?",
+    opts: [{ t: "Everything - I am the only one who knows how things work.", s: {system:3} }, { t: "A few things - certain people would get stuck.", s: {team:2} }, { t: "Probably nothing, but I would be anxious the whole time.", s: {owner:3} }, { t: "Not much - my team handles most things already.", s: {} }] }
+];
+
+var qS = { cur: 0, answers: [], scores: { owner:0, team:0, system:0 } };
+var qSel = null;
+
+function renderQuiz() {
+  var c = document.getElementById('quiz-container');
+  var fill = document.getElementById('qpfill');
+  var lbl = document.getElementById('qsteplabel');
+  if (qS.cur >= quizQs.length) { renderResult(c, fill, lbl); return; }
+  var q = quizQs[qS.cur];
+  fill.style.width = (qS.cur / quizQs.length * 100) + '%';
+  lbl.textContent = 'Question ' + (qS.cur + 1) + ' of ' + quizQs.length;
+  var opts = q.opts.map(function(o, i) {
+    var sel = qS.answers[qS.cur] === i ? ' selected' : '';
+    return '<div class="quiz-opt' + sel + '" id="qo' + i + '" onclick="selQ(' + i + ')"><input type="radio" name="qq" id="qr' + i + '"><label for="qr' + i + '">' + o.t + '</label></div>';
+  }).join('');
+  var backBtn = qS.cur > 0 ? '<button class="btn btn-ghost btn-sm" onclick="qBack()">Back</button>' : '<span></span>';
+  var nextLbl = qS.cur < quizQs.length - 1 ? 'Next' : 'See Results';
+  c.innerHTML = '<div class="quiz-q">' + q.q + '</div><div class="quiz-opts">' + opts + '</div><div class="quiz-nav">' + backBtn + '<button class="btn btn-primary btn-sm" onclick="qNext()">' + nextLbl + '</button></div>';
+}
+
+function selQ(i) {
+  document.querySelectorAll('.quiz-opt').forEach(function(o) { o.classList.remove('selected'); });
+  document.getElementById('qo' + i).classList.add('selected');
+  qSel = i;
+}
+
+function qNext() {
+  var opt = qSel !== null ? qSel : qS.answers[qS.cur];
+  if (opt === undefined) return;
+  qS.answers[qS.cur] = opt;
+  var s = quizQs[qS.cur].opts[opt].s;
+  Object.keys(s).forEach(function(k) { qS.scores[k] = (qS.scores[k] || 0) + s[k]; });
+  qS.cur++; qSel = null; renderQuiz();
+}
+
+function qBack() {
+  if (!qS.cur) return;
+  var p = qS.answers[qS.cur - 1];
+  if (p !== undefined) {
+    var s = quizQs[qS.cur - 1].opts[p].s;
+    Object.keys(s).forEach(function(k) { qS.scores[k] = Math.max(0, (qS.scores[k] || 0) - s[k]); });
+  }
+  qS.cur--; qSel = null; renderQuiz();
+}
+
+function renderResult(c, fill, lbl) {
+  fill.style.width = '100%'; lbl.textContent = 'Complete';
+  var entries = Object.keys(qS.scores).map(function(k) { return [k, qS.scores[k]]; });
+  entries.sort(function(a, b) { return b[1] - a[1]; });
+  var top = entries[0][0];
+  var results = {
+    owner: { cls:'r-owner', title:'The Block Is You', desc:"Your team may be ready. Your systems may exist. But something in you keeps pulling it back. This is the most common pattern in founders. You built this - of course it is hard to let go. But staying in the middle is the ceiling.", actions:["Name one task you pulled back in the last 30 days. Be honest about why.","Practice the Trust Ladder - move one task from Level 1 to Level 3 this week.","Ask: what would need to be true for me to trust someone else with this?","Use the Task Sort to see what is on your plate that should not be.","Your job is to build a business that runs. That only happens if you stop running it yourself."] },
+    team:  { cls:'r-team',  title:'The Block Is Your Team', desc:"You are willing to delegate. The systems may be there. But your team is not ready yet in skill, confidence, or capacity. The fix is not to hold tighter. It is to invest in building the people.", actions:["Identify what each person is specifically missing: skill, knowledge, capacity, or confidence.","Use the Trust Ladder to meet each person where they are. Do not skip levels.","Build a 30/60/90 development plan for the person you most need to step up.","Ask whether you have the right people in the right roles or if the role design is the problem.","Use the Handoff Builder to set clear expectations on any active delegation."] },
+    system:{ cls:'r-system',title:'The Block Is Your Systems', desc:"You have capable people and the intention to delegate but no structure for anyone to follow. Without documented processes, clear outcomes, and defined ownership, delegation breaks down every time.", actions:["Pick your top 3 recurring tasks and document a basic SOP for each - even a bullet list.","Use the Handoff Builder before handing off anything.","Define what done right looks like for every responsibility you want to move off your plate.","Build accountability into every handoff: owner, outcome, deadline, check-in.","Systems are not bureaucracy. They are the only way delegation actually sticks."] }
+  };
+  var r = results[top];
+  var actions = r.actions.map(function(a) { return '<li>' + a + '</li>'; }).join('');
+  c.innerHTML = '<div class="result-wrap ' + r.cls + '"><div class="result-title">' + r.title + '</div><div class="result-desc">' + r.desc + '</div><ul class="result-actions">' + actions + '</ul></div><div style="margin-top:20px;text-align:right;"><button class="btn btn-ghost btn-sm" onclick="resetQuiz()">Retake</button></div>';
+}
+
+function resetQuiz() {
+  qS = { cur:0, answers:[], scores:{owner:0,team:0,system:0} }; qSel = null;
+  document.getElementById('qpfill').style.width = '0%';
+  document.getElementById('qsteplabel').textContent = 'Question 1 of 5';
+  renderQuiz();
+}
+
+renderQuiz();
+
+/* HANDOFF */
+var trustLabels = { '1':'Level 1 - I show, they watch','2':'Level 2 - They do, I guide','3':'Level 3 - They decide, I approve','4':'Level 4 - They run it, I review','5':'Level 5 - Fully theirs' };
+
+function buildHandoff() {
+  var task = document.getElementById('hf-task').value.trim();
+  var owner = document.getElementById('hf-owner').value.trim();
+  var trust = document.getElementById('hf-trust').value;
+  var outcome = document.getElementById('hf-outcome').value.trim();
+  var deadline = document.getElementById('hf-deadline').value.trim();
+  var checkin = document.getElementById('hf-checkin').value;
+  var resources = document.getElementById('hf-resources').value.trim();
+  if (!task || !owner || !trust || !outcome) { alert('Please complete: task, owner, trust level, and outcome.'); return; }
+  document.getElementById('hc-task').textContent = task;
+  document.getElementById('hc-owner').textContent = owner;
+  document.getElementById('hc-trust-label').textContent = trustLabels[trust];
+  document.getElementById('hc-trust-bar').innerHTML = [1,2,3,4,5].map(function(n) { return '<div class="trust-pip' + (n <= +trust ? ' on' : '') + '"></div>'; }).join('');
+  document.getElementById('hc-outcome').textContent = outcome;
+  document.getElementById('hc-deadline').textContent = deadline || 'Not specified';
+  document.getElementById('hc-checkin').textContent = checkin || 'Not specified';
+  var rw = document.getElementById('hc-resources-wrap');
+  if (resources) { document.getElementById('hc-resources').textContent = resources; rw.style.display = 'block'; } else { rw.style.display = 'none'; }
+  var card = document.getElementById('handoff-card');
+  card.classList.add('visible');
+  card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function copyHandoff() {
+  var lines = [
+    'HANDOFF CARD',
+    'Task: ' + document.getElementById('hc-task').textContent,
+    'Owner: ' + document.getElementById('hc-owner').textContent,
+    'Trust Level: ' + document.getElementById('hc-trust-label').textContent,
+    'What Success Looks Like: ' + document.getElementById('hc-outcome').textContent,
+    'Deadline / Cadence: ' + document.getElementById('hc-deadline').textContent,
+    'Check-In Rhythm: ' + document.getElementById('hc-checkin').textContent
+  ];
+  var res = document.getElementById('hc-resources').textContent;
+  if (res) lines.push('Resources & Context: ' + res);
+  navigator.clipboard.writeText(lines.join('\n')).then(function() {
+    var btn = document.querySelector('.hc-copy-btn');
+    btn.textContent = 'COPIED';
+    setTimeout(function() { btn.textContent = 'COPY CARD'; }, 2000);
+  });
+}
+</script>
+</body>
+</html>
