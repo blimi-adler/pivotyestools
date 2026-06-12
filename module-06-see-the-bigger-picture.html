@@ -125,6 +125,86 @@
     .footer { background:var(--off-white); border-top:1px solid var(--rule); text-align:center; padding:32px 24px; font-size:.78rem; color:var(--light); letter-spacing:.06em; }
     .footer strong { color:var(--black); }
     @media(max-width:500px){.hero{padding:56px 24px 52px;}.page{padding:0 20px;}.nav-strip{padding:12px 20px;}}
+  
+    /* ── FILLABLE FIELDS ── */
+    .field-group { margin-bottom: 0; }
+    .field-label {
+      font-size: 10px; font-weight: 700; letter-spacing: .18em;
+      text-transform: uppercase; color: var(--mid); margin-bottom: 8px;
+      display: block;
+    }
+    .field-input {
+      width: 100%; min-height: 52px;
+      background: var(--white);
+      border: 1px solid var(--rule);
+      border-bottom: 2px solid var(--black);
+      border-radius: 2px 2px 0 0;
+      padding: 10px 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: .88rem; color: var(--ink); line-height: 1.6;
+      resize: vertical; outline: none;
+      transition: border-color .15s, background .15s;
+    }
+    .field-input:focus {
+      border-color: var(--red);
+      border-bottom-color: var(--red);
+      background: #FFFBFB;
+    }
+    .field-input::placeholder { color: var(--light); font-style: italic; }
+    .field-input.tall { min-height: 90px; }
+    .field-input.short { min-height: 40px; }
+
+    .ref-textarea {
+      width: 100%; min-height: 90px;
+      background: var(--off-white);
+      border: 1px dashed var(--rule);
+      border-left: none;
+      padding: 12px 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: .86rem; color: var(--ink); line-height: 1.65;
+      resize: vertical; outline: none;
+      transition: border-color .15s, background .15s;
+      border-radius: 0 2px 2px 0;
+    }
+    .ref-textarea:focus {
+      border-color: var(--red);
+      background: #FFFBFB;
+    }
+    .ref-textarea::placeholder { color: var(--light); font-style: italic; }
+
+    /* ── EXPORT BAR ── */
+    .export-bar {
+      position: sticky; bottom: 0; z-index: 100;
+      background: var(--black);
+      border-top: 2px solid var(--red);
+      padding: 14px 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap;
+    }
+    .export-bar .eb-info { display: flex; flex-direction: column; gap: 2px; }
+    .export-bar .eb-label {
+      font-size: 10px; font-weight: 700; letter-spacing: .18em;
+      text-transform: uppercase; color: rgba(255,255,255,.4);
+    }
+    .export-bar .eb-status {
+      font-size: .82rem; color: rgba(255,255,255,.65);
+    }
+    .export-bar .eb-actions { display: flex; gap: 10px; align-items: center; }
+    .export-btn {
+      display: inline-block; cursor: pointer;
+      font-size: 10px; font-weight: 700; letter-spacing: .14em;
+      text-transform: uppercase; padding: 9px 20px; border-radius: 2px;
+      border: none; transition: background .15s; white-space: nowrap;
+    }
+    .export-btn.primary { background: var(--red); color: var(--white); }
+    .export-btn.primary:hover { background: var(--red-deep); }
+    .export-btn.secondary {
+      background: transparent; color: rgba(255,255,255,.6);
+      border: 1px solid rgba(255,255,255,.2);
+    }
+    .export-btn.secondary:hover { background: rgba(255,255,255,.08); color: var(--white); }
+    @media(max-width:500px) { .export-bar { padding: 14px 20px; } }
+
   </style>
 </head>
 <body>
@@ -294,12 +374,18 @@
       </div>
       <div class="exercise-body">
         <p class="prompt">Write the mission of your organization in your own words — not the official statement, but what you actually understand it to mean. Then write two or three values you believe this organization operates by. If you're not sure, that gap is important. It means you need to ask.</p>
-        <div class="write-line-label">The mission of this organization, in my own words:</div>
-        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div></div>
-        <div class="write-line-label" style="margin-top:20px;">Two or three values this organization operates by:</div>
-        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div><div class="write-line"></div></div>
-        <div class="write-line-label" style="margin-top:20px;">Is there a gap between the stated values and how things actually operate day to day? What is it?</div>
-        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div></div>
+        <div class="field-group">
+          <span class="field-label">The mission of this organization, in my own words:</span>
+          <textarea class="field-input short" placeholder="Write your response here..."></textarea>
+        </div></div>
+        <div class="field-group">
+          <span class="field-label">Two or three values this organization operates by:</span>
+          <textarea class="field-input short" placeholder="Write your response here..."></textarea>
+        </div></div>
+        <div class="field-group">
+          <span class="field-label">Is there a gap between the stated values and how things actually operate day to day? What is it?</span>
+          <textarea class="field-input short" placeholder="Write your response here..."></textarea>
+        </div></div>
       </div>
     </div>
 
@@ -310,12 +396,18 @@
       </div>
       <div class="exercise-body">
         <p class="prompt">Think of a recent situation at work that felt uncomfortable or unclear — a difficult conversation, a decision you weren't sure about, a moment where you didn't know the right thing to do. Now look at the values you wrote above. Which value, if you had led with it, would have made the path clearer? Write what you would have said or done differently.</p>
-        <div class="write-line-label">The situation:</div>
-        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div></div>
-        <div class="write-line-label" style="margin-top:20px;">The value that applied:</div>
-        <div class="write-lines"><div class="write-line"></div></div>
-        <div class="write-line-label" style="margin-top:20px;">What I would have said or done differently, leading with that value:</div>
-        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div><div class="write-line"></div></div>
+        <div class="field-group">
+          <span class="field-label">The situation:</span>
+          <textarea class="field-input short" placeholder="Write your response here..."></textarea>
+        </div></div>
+        <div class="field-group">
+          <span class="field-label">The value that applied:</span>
+          <textarea class="field-input short" placeholder="Write your response here..."></textarea>
+        </div></div>
+        <div class="field-group">
+          <span class="field-label">What I would have said or done differently, leading with that value:</span>
+          <textarea class="field-input short" placeholder="Write your response here..."></textarea>
+        </div></div>
       </div>
     </div>
   </div>
@@ -328,17 +420,17 @@
     <div class="reflection-block">
       <div class="ref-label">Reflection 1</div>
       <p class="ref-q">"Do you actually believe in this organization's mission? Not whether you agree with it on paper — but whether it shapes how you show up. If yes, what does that look like? If no, what's missing?"</p>
-      <div class="ref-space">Write your answer here...</div>
+      <textarea class="ref-textarea" placeholder="Write your answer here..."></textarea>
     </div>
     <div class="reflection-block" style="margin-top:14px;">
       <div class="ref-label">Reflection 2</div>
       <p class="ref-q">"Think of a time when someone on your team made a decision or said something that clearly came from their values — not the rulebook. What was the impact? How did it make you feel about them?"</p>
-      <div class="ref-space">Write your answer here...</div>
+      <textarea class="ref-textarea" placeholder="Write your answer here..."></textarea>
     </div>
     <div class="reflection-block" style="margin-top:14px;">
       <div class="ref-label">Reflection 3</div>
       <p class="ref-q">"If someone watched how you communicate at work for one week — what values would they conclude you operate by? Are those the values you want to be known for?"</p>
-      <div class="ref-space">Write your answer here...</div>
+      <textarea class="ref-textarea" placeholder="Write your answer here..."></textarea>
     </div>
   </div>
 
@@ -361,7 +453,97 @@
 
 <footer class="footer">
   <p><strong>PivotYes</strong> · Communicate Like You Mean It · Module 06 of 06</p>
-  <p style="margin-top:4px;">pivotyesconsulting.com</p>
+  <p style="margin-top:4px;">pivotyes.com</p>
 </footer>
+
+<script>
+(function() {
+  // Track field changes and update status
+  const fields = document.querySelectorAll('.field-input, .ref-textarea');
+  const status = document.getElementById('eb-status');
+
+  function updateStatus() {
+    const filled = Array.from(fields).filter(f => f.value.trim().length > 0).length;
+    if (status) status.textContent = filled + ' of ' + fields.length + ' fields completed';
+  }
+  fields.forEach(f => f.addEventListener('input', updateStatus));
+  updateStatus();
+
+  // Collect all responses into a formatted text document
+  function collectResponses() {
+    const lines = [];
+    lines.push('PIVOTYES — COMMUNICATE LIKE YOU MEAN IT');
+    lines.push('Module 6 — Work Like It Means Something');
+    lines.push('Downloaded: ' + new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'}));
+    lines.push('');
+    lines.push('═'.repeat(60));
+    lines.push('');
+
+    // Walk through all exercise blocks and reflection blocks
+    const blocks = document.querySelectorAll('.exercise-block, .reflection-block');
+    blocks.forEach(block => {
+      // Get block title
+      const titleEl = block.querySelector('.ex-title, .ref-label');
+      if (titleEl) {
+        lines.push('── ' + titleEl.textContent.trim().toUpperCase() + ' ──');
+        lines.push('');
+      }
+      // Get each field with its label
+      const fieldGroups = block.querySelectorAll('.field-group');
+      fieldGroups.forEach(group => {
+        const label = group.querySelector('.field-label');
+        const input = group.querySelector('.field-input, .ref-textarea');
+        if (label && input) {
+          lines.push(label.textContent.trim());
+          lines.push(input.value.trim() || '(not completed)');
+          lines.push('');
+        }
+      });
+      // Standalone ref-textareas (in reflection-block)
+      const refTA = block.querySelector('.ref-textarea');
+      if (refTA && !refTA.closest('.field-group')) {
+        lines.push('Response:');
+        lines.push(refTA.value.trim() || '(not completed)');
+        lines.push('');
+      }
+      lines.push('─'.repeat(40));
+      lines.push('');
+    });
+
+    lines.push('');
+    lines.push('pivotyes.com');
+    return lines.join('\n');
+  }
+
+  // Download as .txt
+  window.downloadTxt = function() {
+    const text = collectResponses();
+    const blob = new Blob([text], {type: 'text/plain'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'module-06-see-the-bigger-picture-responses.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+
+  // Print / Save as PDF
+  window.printModule = function() {
+    window.print();
+  };
+})();
+</script>
+
+<style>
+@media print {
+  .export-bar, .module-nav, .nav-strip { display: none !important; }
+  .field-input, .ref-textarea {
+    border: 1px solid #ccc !important;
+    background: white !important;
+    min-height: unset !important;
+  }
+  body { background: white; }
+}
+</style>
+
 </body>
 </html>

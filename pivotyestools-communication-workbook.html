@@ -53,43 +53,105 @@
     /* ── DIVIDER ── */
     .divider { border:none; border-top:1px solid var(--rule); margin:64px 0 0; }
 
-    /* ── OVERVIEW TABLE ── */
-    .overview-table { width:100%; border-collapse:collapse; margin-top:16px; font-size:.87rem; }
-    .overview-table th { text-align:left; font-size:10px; font-weight:700; letter-spacing:.15em; text-transform:uppercase; color:var(--light); padding:10px 14px; border-bottom:2px solid var(--rule); }
-    .overview-table td { padding:13px 14px; border-bottom:1px solid var(--rule); vertical-align:middle; line-height:1.5; }
-    .overview-table tr:last-child td { border-bottom:none; }
-    .mod-badge { display:inline-flex; align-items:center; justify-content:center; background:var(--black); color:var(--red); font-family:'Playfair Display',serif; font-weight:700; font-size:.95rem; width:32px; height:32px; border-radius:4px; }
-    .mod-name { font-weight:600; color:var(--black); }
-    .mod-skill { color:var(--mid); font-size:.82rem; }
-    .mod-link { display:inline-block; margin-top:4px; font-size:.78rem; font-weight:600; color:var(--red); text-decoration:none; letter-spacing:.04em; }
-    .mod-link:hover { text-decoration:underline; }
+    /* ── EXPANDABLE MODULE MAP ── */
+    .module-map { display:flex; flex-direction:column; border:1px solid var(--rule); border-radius:4px; overflow:hidden; margin-top:8px; }
 
-    /* ── MODULE CARDS ── */
-    .modules-wrap { padding:16px 0 0; display:flex; flex-direction:column; gap:28px; }
-    .module-card { background:var(--white); border:1px solid var(--rule); border-radius:4px; overflow:hidden; transition:box-shadow .2s; }
-    .module-card:hover { box-shadow:0 4px 24px rgba(0,0,0,.07); }
-    .module-header { display:grid; grid-template-columns:84px 1fr; align-items:stretch; }
-    .module-number { background:var(--black); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:22px 10px; gap:2px; }
-    .module-number .label { font-size:9px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:rgba(255,255,255,.35); }
-    .module-number .num { font-family:'Playfair Display',serif; font-size:2rem; font-weight:900; color:var(--red); line-height:1; }
-    .module-title-block { padding:20px 22px 16px; border-bottom:1px solid var(--rule); }
-    .module-tag { font-size:10px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--red); margin-bottom:5px; }
-    .module-title-block h3 { font-family:'Playfair Display',serif; font-size:1.25rem; font-weight:700; color:var(--black); line-height:1.25; margin-bottom:5px; }
-    .module-title-block .subtitle { font-size:.84rem; color:var(--mid); font-style:italic; }
-    .module-body { padding:22px 22px 20px 26px; display:grid; grid-template-columns:1fr 1fr; gap:22px; }
-    @media(max-width:600px){ .module-body{grid-template-columns:1fr;} .module-header{grid-template-columns:68px 1fr;} }
-    .module-col-label { font-size:10px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--light); margin-bottom:10px; }
-    .module-list { list-style:none; display:flex; flex-direction:column; gap:6px; }
-    .module-list li { font-size:.85rem; color:var(--ink); padding-left:14px; position:relative; line-height:1.5; }
-    .module-list li::before { content:'—'; position:absolute; left:0; color:var(--red); font-weight:600; }
-    .module-exercise { background:var(--off-white); border-left:3px solid var(--black); padding:13px 15px; margin-top:4px; }
-    .module-exercise .ex-label { font-size:10px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--black); margin-bottom:5px; }
-    .module-exercise p { font-size:.83rem; color:var(--mid); line-height:1.55; }
-    .module-footer { background:var(--off-white); border-top:1px solid var(--rule); padding:13px 22px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; }
-    .module-footer .takeaway-label { font-size:10px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--black); white-space:nowrap; }
-    .module-footer p { font-size:.82rem; color:var(--mid); font-style:italic; flex:1; }
-    .module-footer .open-btn { display:inline-block; background:var(--red); color:var(--white); font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; padding:8px 18px; text-decoration:none; border-radius:2px; white-space:nowrap; transition:background .15s; }
-    .module-footer .open-btn:hover { background:var(--red-deep); }
+    .map-row { border-bottom:1px solid var(--rule); }
+    .map-row:last-child { border-bottom:none; }
+
+    /* The always-visible summary row */
+    .map-summary {
+      display:grid;
+      grid-template-columns:52px 1fr auto;
+      align-items:center;
+      gap:0;
+      cursor:pointer;
+      user-select:none;
+      transition:background .15s;
+    }
+    .map-summary:hover { background:var(--off-white); }
+    .map-row.open .map-summary { background:var(--off-white); }
+
+    .map-num {
+      background:var(--black);
+      display:flex; align-items:center; justify-content:center;
+      align-self:stretch;
+      font-family:'Playfair Display',serif;
+      font-size:1.2rem; font-weight:900;
+      color:var(--red);
+      min-height:60px;
+    }
+    .map-info { padding:14px 18px; }
+    .map-info .map-tag { font-size:9px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--light); margin-bottom:3px; }
+    .map-info .map-title { font-size:.95rem; font-weight:700; color:var(--black); line-height:1.3; }
+    .map-info .map-sub { font-size:.82rem; color:var(--mid); font-style:italic; margin-top:2px; }
+
+    .map-toggle {
+      padding:0 20px;
+      display:flex; align-items:center; gap:6px;
+      font-size:.78rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+      color:var(--mid);
+      white-space:nowrap;
+    }
+    .map-toggle .chevron {
+      display:inline-block;
+      width:14px; height:14px;
+      border-right:2px solid var(--mid);
+      border-bottom:2px solid var(--mid);
+      transform:rotate(45deg);
+      transition:transform .2s;
+      margin-top:-4px;
+    }
+    .map-row.open .map-toggle .chevron { transform:rotate(-135deg); margin-top:4px; }
+
+    /* The expandable detail panel */
+    .map-detail {
+      display:none;
+      border-top:1px solid var(--rule);
+      background:var(--white);
+    }
+    .map-row.open .map-detail { display:block; }
+
+    .map-detail-inner {
+      padding:22px 24px 20px 24px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:24px;
+    }
+    @media(max-width:580px){ .map-detail-inner { grid-template-columns:1fr; } }
+
+    .detail-label { font-size:10px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--light); margin-bottom:10px; }
+
+    .learn-list { list-style:none; display:flex; flex-direction:column; gap:6px; }
+    .learn-list li { font-size:.85rem; color:var(--ink); padding-left:14px; position:relative; line-height:1.5; }
+    .learn-list li::before { content:'—'; position:absolute; left:0; color:var(--red); font-weight:600; }
+
+    .detail-right { display:flex; flex-direction:column; gap:12px; }
+    .detail-exercise { background:var(--off-white); border-left:3px solid var(--black); padding:12px 14px; }
+    .detail-exercise .de-label { font-size:9px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--black); margin-bottom:4px; }
+    .detail-exercise p { font-size:.83rem; color:var(--mid); line-height:1.55; }
+    .detail-exercise.reflection { border-left-color:var(--red); }
+    .detail-exercise.reflection .de-label { color:var(--red); }
+
+    .map-action {
+      border-top:1px solid var(--rule);
+      padding:14px 24px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      gap:10px;
+      background:var(--off-white);
+    }
+    .map-action .takeaway { font-size:.82rem; color:var(--mid); font-style:italic; flex:1; }
+    .map-action .takeaway strong { color:var(--black); font-style:normal; font-size:10px; letter-spacing:.12em; text-transform:uppercase; margin-right:6px; }
+    .open-btn {
+      display:inline-block; background:var(--red); color:var(--white);
+      font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+      padding:9px 20px; text-decoration:none; border-radius:2px;
+      white-space:nowrap; transition:background .15s;
+    }
+    .open-btn:hover { background:var(--red-deep); }
 
     /* ── BEFORE / AFTER ── */
     .ba-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:20px; }
@@ -108,18 +170,16 @@
     .footer { background:var(--black); color:rgba(255,255,255,.4); text-align:center; padding:36px 24px; font-size:.8rem; letter-spacing:.06em; margin-top:80px; }
     .footer strong { color:var(--red); font-weight:600; }
 
-    @media(max-width:500px){ .hero{padding:60px 24px 56px;} .page{padding:0 20px;} .nav-strip{padding:12px 20px;} .intro-band{padding:28px 20px;} }
+    @media(max-width:500px){ .hero{padding:60px 24px 56px;} .page{padding:0 20px;} .nav-strip{padding:12px 20px;} .intro-band{padding:28px 20px;} .map-toggle span { display:none; } }
   </style>
 </head>
 <body>
 
-<!-- NAV -->
 <div class="nav-strip">
   <span class="nav-brand">PivotYes</span>
   <span class="nav-tag">Professional Development Series</span>
 </div>
 
-<!-- HERO -->
 <header class="hero">
   <p class="hero-eyebrow">PivotYes · Communicate Like You Mean It</p>
   <h1>The Workbook That<br>Builds <em>Real</em> Communication</h1>
@@ -140,7 +200,6 @@
   </div>
 </header>
 
-<!-- INTRO BAND -->
 <div class="intro-band">
   <p>This program is for people who already have what it takes — the intelligence, the work ethic, the drive. What it builds is the one layer most training skips: <strong>how to take all of that and actually communicate it.</strong> How to ask the right questions. How to say what you need. How to understand what's being asked — and how to work like it means something.</p>
 </div>
@@ -177,311 +236,261 @@
 
   <hr class="divider" />
 
-  <!-- OVERVIEW TABLE -->
+  <!-- EXPANDABLE MODULE MAP -->
   <div class="section">
     <p class="section-label">Program Map</p>
-    <h2 class="section-title">Six modules at a glance</h2>
-    <table class="overview-table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Module</th>
-          <th>Core Skill</th>
-          <th>Open</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><span class="mod-badge">1</span></td>
-          <td><div class="mod-name">Say What You Mean</div><div class="mod-skill">Clarity &amp; directness</div></td>
-          <td><div class="mod-skill">Stop hedging. Say the thing.</div></td>
-          <td><a class="mod-link" href="module-01-say-what-you-mean.html">Open →</a></td>
-        </tr>
-        <tr>
-          <td><span class="mod-badge">2</span></td>
-          <td><div class="mod-name">Ask Before You Assume</div><div class="mod-skill">Asking great questions</div></td>
-          <td><div class="mod-skill">Curiosity is not weakness.</div></td>
-          <td><a class="mod-link" href="module-02-ask-before-you-assume.html">Open →</a></td>
-        </tr>
-        <tr>
-          <td><span class="mod-badge">3</span></td>
-          <td><div class="mod-name">Know the Goal</div><div class="mod-skill">Understanding what's needed</div></td>
-          <td><div class="mod-skill">Understand the assignment before you execute it.</div></td>
-          <td><a class="mod-link" href="module-03-know-the-goal.html">Open →</a></td>
-        </tr>
-        <tr>
-          <td><span class="mod-badge">4</span></td>
-          <td><div class="mod-name">Own Your Gaps</div><div class="mod-skill">Expressing needs without apology</div></td>
-          <td><div class="mod-skill">Ask for what you need. No apology.</div></td>
-          <td><a class="mod-link" href="module-04-own-your-gaps.html">Open →</a></td>
-        </tr>
-        <tr>
-          <td><span class="mod-badge">5</span></td>
-          <td><div class="mod-name">What Good Looks Like</div><div class="mod-skill">A taste for excellence</div></td>
-          <td><div class="mod-skill">Know the difference between done and done well.</div></td>
-          <td><a class="mod-link" href="module-05-what-good-looks-like.html">Open →</a></td>
-        </tr>
-        <tr>
-          <td><span class="mod-badge">6</span></td>
-          <td><div class="mod-name">Work Like It Means Something</div><div class="mod-skill">Mission &amp; values</div></td>
-          <td><div class="mod-skill">Let the mission shape how you show up.</div></td>
-          <td><a class="mod-link" href="module-06-see-the-bigger-picture.html">Open →</a></td>
-        </tr>
-      </tbody>
-    </table>
+    <h2 class="section-title">Six modules — click any to expand</h2>
+
+    <div class="module-map">
+
+      <!-- MODULE 1 -->
+      <div class="map-row" id="row-1">
+        <div class="map-summary" onclick="toggle(1)">
+          <div class="map-num">1</div>
+          <div class="map-info">
+            <div class="map-tag">Clarity &amp; Directness</div>
+            <div class="map-title">Say What You Mean</div>
+            <div class="map-sub">Stop hedging. Stop overexplaining. Say the thing.</div>
+          </div>
+          <div class="map-toggle"><span>Details</span><i class="chevron"></i></div>
+        </div>
+        <div class="map-detail">
+          <div class="map-detail-inner">
+            <div>
+              <div class="detail-label">What You'll Learn</div>
+              <ul class="learn-list">
+                <li>Why smart people communicate in circles — and how to stop</li>
+                <li>The difference between being polite and being unclear</li>
+                <li>Words that kill your credibility — and what to say instead</li>
+                <li>The Clear Statement Formula: Point · Reason · Need</li>
+                <li>How to answer a question directly — every time</li>
+              </ul>
+            </div>
+            <div class="detail-right">
+              <div class="detail-exercise">
+                <div class="de-label">Core Exercise</div>
+                <p>Think of something you said recently that wasn't clear. Rewrite it using Point · Reason · Need. Two sentences. Then say it out loud.</p>
+              </div>
+              <div class="detail-exercise reflection">
+                <div class="de-label">Reflection</div>
+                <p>When you hold back from saying what you really think — what is the fear underneath that?</p>
+              </div>
+            </div>
+          </div>
+          <div class="map-action">
+            <p class="takeaway"><strong>Takeaway</strong> Notice the moment before you hedge. Delete the softener. Say it directly. Stop.</p>
+            <a class="open-btn" href="module-01-say-what-you-mean.html">Open Module →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE 2 -->
+      <div class="map-row" id="row-2">
+        <div class="map-summary" onclick="toggle(2)">
+          <div class="map-num">2</div>
+          <div class="map-info">
+            <div class="map-tag">Asking Great Questions</div>
+            <div class="map-title">Ask Before You Assume</div>
+            <div class="map-sub">The question you don't ask costs more than the one you do.</div>
+          </div>
+          <div class="map-toggle"><span>Details</span><i class="chevron"></i></div>
+        </div>
+        <div class="map-detail">
+          <div class="map-detail-inner">
+            <div>
+              <div class="detail-label">What You'll Learn</div>
+              <ul class="learn-list">
+                <li>Why assuming feels safer — and why it isn't</li>
+                <li>What makes a question great: open, specific, purposeful</li>
+                <li>How to ask without looking like you don't know what you're doing</li>
+                <li>The three questions to ask before any task</li>
+                <li>How curiosity builds credibility, not weakness</li>
+              </ul>
+            </div>
+            <div class="detail-right">
+              <div class="detail-exercise">
+                <div class="de-label">Core Exercise</div>
+                <p>Think of a time you assumed something and it turned out wrong. What one question at the start would have changed the outcome?</p>
+              </div>
+              <div class="detail-exercise reflection">
+                <div class="de-label">Reflection</div>
+                <p>When you don't ask a question you need to ask — what stops you? Fear, speed, or something else?</p>
+              </div>
+            </div>
+          </div>
+          <div class="map-action">
+            <p class="takeaway"><strong>Takeaway</strong> Before your next task — ask: What does done look like? What's the real deadline? What should I know that I haven't asked?</p>
+            <a class="open-btn" href="module-02-ask-before-you-assume.html">Open Module →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE 3 -->
+      <div class="map-row" id="row-3">
+        <div class="map-summary" onclick="toggle(3)">
+          <div class="map-num">3</div>
+          <div class="map-info">
+            <div class="map-tag">Understanding What's Needed</div>
+            <div class="map-title">Know the Goal</div>
+            <div class="map-sub">Busy isn't the same as useful. Know what you're actually solving for.</div>
+          </div>
+          <div class="map-toggle"><span>Details</span><i class="chevron"></i></div>
+        </div>
+        <div class="map-detail">
+          <div class="map-detail-inner">
+            <div>
+              <div class="detail-label">What You'll Learn</div>
+              <ul class="learn-list">
+                <li>The difference between task-level and goal-level thinking</li>
+                <li>How to identify the real ask behind any instruction</li>
+                <li>Four questions that reveal the actual goal</li>
+                <li>The habit of confirming before executing</li>
+                <li>How to push back when the goal isn't clear</li>
+              </ul>
+            </div>
+            <div class="detail-right">
+              <div class="detail-exercise">
+                <div class="de-label">Core Exercise</div>
+                <p>Pick a recent task. Write the instruction you were given. Then write the actual goal it served. Would you have done anything differently?</p>
+              </div>
+              <div class="detail-exercise reflection">
+                <div class="de-label">Reflection</div>
+                <p>Have you ever completed something perfectly — and still felt like you missed the point? What was actually missing?</p>
+              </div>
+            </div>
+          </div>
+          <div class="map-action">
+            <p class="takeaway"><strong>Takeaway</strong> "The goal here is to ___." Write it. Say it to the person who gave you the work. See if it matches.</p>
+            <a class="open-btn" href="module-03-know-the-goal.html">Open Module →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE 4 -->
+      <div class="map-row" id="row-4">
+        <div class="map-summary" onclick="toggle(4)">
+          <div class="map-num">4</div>
+          <div class="map-info">
+            <div class="map-tag">Expressing Needs Without Apology</div>
+            <div class="map-title">Own Your Gaps</div>
+            <div class="map-sub">Asking for what you need is a strength. Hiding it is a risk.</div>
+          </div>
+          <div class="map-toggle"><span>Details</span><i class="chevron"></i></div>
+        </div>
+        <div class="map-detail">
+          <div class="map-detail-inner">
+            <div>
+              <div class="detail-label">What You'll Learn</div>
+              <ul class="learn-list">
+                <li>Why people hide their needs — and what it costs the team</li>
+                <li>The language shift from apologetic to professional</li>
+                <li>The Need Statement formula: "I need ___ so that I can ___"</li>
+                <li>How to advocate for yourself clearly and without apology</li>
+                <li>What professional vulnerability actually sounds like</li>
+              </ul>
+            </div>
+            <div class="detail-right">
+              <div class="detail-exercise">
+                <div class="de-label">Core Exercise</div>
+                <p>Write something you needed at work that you didn't ask for. Write it as a Need Statement — professionally, directly, no apology. Read it out loud.</p>
+              </div>
+              <div class="detail-exercise reflection">
+                <div class="de-label">Reflection</div>
+                <p>When someone on your team comes to you with a need — does it raise or lower your confidence in them?</p>
+              </div>
+            </div>
+          </div>
+          <div class="map-action">
+            <p class="takeaway"><strong>Takeaway</strong> Find one thing you need this week. "I need ___ so that I can ___." Say it. No apology before it.</p>
+            <a class="open-btn" href="module-04-own-your-gaps.html">Open Module →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE 5 -->
+      <div class="map-row" id="row-5">
+        <div class="map-summary" onclick="toggle(5)">
+          <div class="map-num">5</div>
+          <div class="map-info">
+            <div class="map-tag">A Taste for Excellence</div>
+            <div class="map-title">What Good Looks Like</div>
+            <div class="map-sub">Excellence isn't perfectionism. It's knowing the standard — and holding yourself to it.</div>
+          </div>
+          <div class="map-toggle"><span>Details</span><i class="chevron"></i></div>
+        </div>
+        <div class="map-detail">
+          <div class="map-detail-inner">
+            <div>
+              <div class="detail-label">What You'll Learn</div>
+              <ul class="learn-list">
+                <li>The gap between done and done well — and how to close it</li>
+                <li>How to define your personal standard of excellence</li>
+                <li>A 5-point self-review checklist to use before submitting anything</li>
+                <li>What it looks like when standards show up in behavior, not words</li>
+                <li>How to hold yourself accountable before anyone checks</li>
+              </ul>
+            </div>
+            <div class="detail-right">
+              <div class="detail-exercise">
+                <div class="de-label">Core Exercise</div>
+                <p>Think of recent work you submitted. Was it completed or excellent? Write what excellent would have looked like — and what stood between you and it.</p>
+              </div>
+              <div class="detail-exercise reflection">
+                <div class="de-label">Reflection</div>
+                <p>When you settle for "good enough" — what's usually driving that? What would it take to change that pattern?</p>
+              </div>
+            </div>
+          </div>
+          <div class="map-action">
+            <p class="takeaway"><strong>Takeaway</strong> Before your next submission: Is this my best work or just finished work? If "mostly" — take ten more minutes.</p>
+            <a class="open-btn" href="module-05-what-good-looks-like.html">Open Module →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE 6 -->
+      <div class="map-row" id="row-6">
+        <div class="map-summary" onclick="toggle(6)">
+          <div class="map-num">6</div>
+          <div class="map-info">
+            <div class="map-tag">Mission &amp; Values</div>
+            <div class="map-title">Work Like It Means Something</div>
+            <div class="map-sub">Values aren't wall decorations. They're how you make every decision no rulebook can cover.</div>
+          </div>
+          <div class="map-toggle"><span>Details</span><i class="chevron"></i></div>
+        </div>
+        <div class="map-detail">
+          <div class="map-detail-inner">
+            <div>
+              <div class="detail-label">What You'll Learn</div>
+              <ul class="learn-list">
+                <li>The difference between mission and values — and what each one does</li>
+                <li>What value-driven communication looks like on the ground</li>
+                <li>How to explain decisions using the mission, not just the task</li>
+                <li>How to use values as your reasoning when things get unclear</li>
+                <li>What it means to work like you believe in where this is going</li>
+              </ul>
+            </div>
+            <div class="detail-right">
+              <div class="detail-exercise">
+                <div class="de-label">Core Exercise</div>
+                <p>Think of a situation that felt unclear or uncomfortable. Which organizational value, if you had led with it, would have made the path clearer?</p>
+              </div>
+              <div class="detail-exercise reflection">
+                <div class="de-label">Reflection</div>
+                <p>If someone watched how you communicate for one week — what values would they conclude you operate by? Are those the ones you want to be known for?</p>
+              </div>
+            </div>
+          </div>
+          <div class="map-action">
+            <p class="takeaway"><strong>Takeaway</strong> In your next difficult conversation or decision — name the value that applies. Let it lead.</p>
+            <a class="open-btn" href="module-06-see-the-bigger-picture.html">Open Module →</a>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /module-map -->
   </div>
-
-  <hr class="divider" />
-
-  <!-- MODULE CARDS -->
-  <div class="section">
-    <p class="section-label">The Curriculum</p>
-    <h2 class="section-title">The six modules</h2>
-  </div>
-
-  <div class="modules-wrap">
-
-    <!-- M1 -->
-    <div class="module-card">
-      <div class="module-header">
-        <div class="module-number"><span class="label">Module</span><span class="num">1</span></div>
-        <div class="module-title-block">
-          <div class="module-tag">Clarity &amp; Directness</div>
-          <h3>Say What You Mean</h3>
-          <div class="subtitle">Stop hedging. Stop overexplaining. Say the thing.</div>
-        </div>
-      </div>
-      <div class="module-body">
-        <div>
-          <div class="module-col-label">What You'll Learn</div>
-          <ul class="module-list">
-            <li>Why smart people communicate in circles — and how to stop</li>
-            <li>The difference between being polite and being unclear</li>
-            <li>Words that kill your credibility — and what to say instead</li>
-            <li>The Clear Statement Formula: Point · Reason · Need</li>
-            <li>How to answer a question directly — every time</li>
-          </ul>
-        </div>
-        <div>
-          <div class="module-col-label">Core Exercise</div>
-          <div class="module-exercise">
-            <div class="ex-label">Rewrite It</div>
-            <p>Think of something you said recently that wasn't clear. Rewrite it using Point · Reason · Need. Two sentences. Then say it out loud.</p>
-          </div>
-          <div class="module-exercise" style="margin-top:10px; border-left-color:var(--red);">
-            <div class="ex-label">Reflection</div>
-            <p>When you hold back from saying what you really think — what is the fear underneath that?</p>
-          </div>
-        </div>
-      </div>
-      <div class="module-footer">
-        <span class="takeaway-label">Takeaway —</span>
-        <p>Notice the moment before you hedge. Delete the softener. Say it directly. Stop.</p>
-        <a class="open-btn" href="module-01-say-what-you-mean.html">Open Module →</a>
-      </div>
-    </div>
-
-    <!-- M2 -->
-    <div class="module-card">
-      <div class="module-header">
-        <div class="module-number"><span class="label">Module</span><span class="num">2</span></div>
-        <div class="module-title-block">
-          <div class="module-tag">Asking Great Questions</div>
-          <h3>Ask Before You Assume</h3>
-          <div class="subtitle">The question you don't ask costs more than the one you do.</div>
-        </div>
-      </div>
-      <div class="module-body">
-        <div>
-          <div class="module-col-label">What You'll Learn</div>
-          <ul class="module-list">
-            <li>Why assuming feels safer — and why it isn't</li>
-            <li>What makes a question great: open, specific, purposeful</li>
-            <li>How to ask without looking like you don't know what you're doing</li>
-            <li>The three questions to ask before any task</li>
-            <li>How curiosity builds credibility, not weakness</li>
-          </ul>
-        </div>
-        <div>
-          <div class="module-col-label">Core Exercise</div>
-          <div class="module-exercise">
-            <div class="ex-label">The Assumption Audit</div>
-            <p>Think of a time you assumed something and it turned out wrong. What one question at the start would have changed the outcome?</p>
-          </div>
-          <div class="module-exercise" style="margin-top:10px; border-left-color:var(--red);">
-            <div class="ex-label">Reflection</div>
-            <p>When you don't ask a question you need to ask — what stops you? Fear, speed, or something else?</p>
-          </div>
-        </div>
-      </div>
-      <div class="module-footer">
-        <span class="takeaway-label">Takeaway —</span>
-        <p>Before your next task: What does done look like? What's the real deadline? What should I know that I haven't asked?</p>
-        <a class="open-btn" href="module-02-ask-before-you-assume.html">Open Module →</a>
-      </div>
-    </div>
-
-    <!-- M3 -->
-    <div class="module-card">
-      <div class="module-header">
-        <div class="module-number"><span class="label">Module</span><span class="num">3</span></div>
-        <div class="module-title-block">
-          <div class="module-tag">Understanding What's Needed</div>
-          <h3>Know the Goal</h3>
-          <div class="subtitle">Busy isn't the same as useful. Know what you're actually solving for.</div>
-        </div>
-      </div>
-      <div class="module-body">
-        <div>
-          <div class="module-col-label">What You'll Learn</div>
-          <ul class="module-list">
-            <li>The difference between task-level and goal-level thinking</li>
-            <li>How to identify the real ask behind any instruction</li>
-            <li>Four questions that reveal the actual goal</li>
-            <li>The habit of confirming before executing</li>
-            <li>How to push back when the goal isn't clear</li>
-          </ul>
-        </div>
-        <div>
-          <div class="module-col-label">Core Exercise</div>
-          <div class="module-exercise">
-            <div class="ex-label">Task vs. Goal</div>
-            <p>Pick a recent task. Write the instruction you were given. Then write the actual goal it served. Would you have done anything differently with goal-level thinking?</p>
-          </div>
-          <div class="module-exercise" style="margin-top:10px; border-left-color:var(--red);">
-            <div class="ex-label">Reflection</div>
-            <p>Have you ever completed something perfectly — and still felt like you missed the point? What was actually missing?</p>
-          </div>
-        </div>
-      </div>
-      <div class="module-footer">
-        <span class="takeaway-label">Takeaway —</span>
-        <p>"The goal here is to ___." Write it. Say it to the person who gave you the work. See if it matches.</p>
-        <a class="open-btn" href="module-03-know-the-goal.html">Open Module →</a>
-      </div>
-    </div>
-
-    <!-- M4 -->
-    <div class="module-card">
-      <div class="module-header">
-        <div class="module-number"><span class="label">Module</span><span class="num">4</span></div>
-        <div class="module-title-block">
-          <div class="module-tag">Expressing Needs Without Apology</div>
-          <h3>Own Your Gaps</h3>
-          <div class="subtitle">Asking for what you need is a strength. Hiding it is a risk.</div>
-        </div>
-      </div>
-      <div class="module-body">
-        <div>
-          <div class="module-col-label">What You'll Learn</div>
-          <ul class="module-list">
-            <li>Why people hide their needs — and what it costs the team</li>
-            <li>The language shift from apologetic to professional</li>
-            <li>The Need Statement formula: "I need ___ so that I can ___"</li>
-            <li>How to advocate for yourself clearly and without apology</li>
-            <li>What professional vulnerability actually sounds like</li>
-          </ul>
-        </div>
-        <div>
-          <div class="module-col-label">Core Exercise</div>
-          <div class="module-exercise">
-            <div class="ex-label">The Unasked Ask</div>
-            <p>Write something you needed at work that you didn't ask for. Now write it as a Need Statement — professionally, directly, no apology. Read it out loud.</p>
-          </div>
-          <div class="module-exercise" style="margin-top:10px; border-left-color:var(--red);">
-            <div class="ex-label">Reflection</div>
-            <p>When someone on your team comes to you with a need — does it raise or lower your confidence in them?</p>
-          </div>
-        </div>
-      </div>
-      <div class="module-footer">
-        <span class="takeaway-label">Takeaway —</span>
-        <p>Find one thing you need this week. "I need ___ so that I can ___." Say it. No apology before it.</p>
-        <a class="open-btn" href="module-04-own-your-gaps.html">Open Module →</a>
-      </div>
-    </div>
-
-    <!-- M5 -->
-    <div class="module-card">
-      <div class="module-header">
-        <div class="module-number"><span class="label">Module</span><span class="num">5</span></div>
-        <div class="module-title-block">
-          <div class="module-tag">A Taste for Excellence</div>
-          <h3>What Good Looks Like</h3>
-          <div class="subtitle">Excellence isn't perfectionism. It's knowing the standard — and holding yourself to it.</div>
-        </div>
-      </div>
-      <div class="module-body">
-        <div>
-          <div class="module-col-label">What You'll Learn</div>
-          <ul class="module-list">
-            <li>The gap between done and done well — and how to close it</li>
-            <li>How to define your personal standard of excellence</li>
-            <li>A 5-point self-review checklist to use before submitting anything</li>
-            <li>What it looks like when standards show up in behavior, not just words</li>
-            <li>How to hold yourself accountable before anyone checks</li>
-          </ul>
-        </div>
-        <div>
-          <div class="module-col-label">Core Exercise</div>
-          <div class="module-exercise">
-            <div class="ex-label">The Gap Analysis</div>
-            <p>Think of recent work you submitted. Was it completed or excellent? Write what excellent would have looked like — and what stood between you and it.</p>
-          </div>
-          <div class="module-exercise" style="margin-top:10px; border-left-color:var(--red);">
-            <div class="ex-label">Reflection</div>
-            <p>When you settle for "good enough" — what's usually driving that? What would it take to change the pattern?</p>
-          </div>
-        </div>
-      </div>
-      <div class="module-footer">
-        <span class="takeaway-label">Takeaway —</span>
-        <p>Before your next submission: Is this my best work or just finished work? If the answer is "mostly" — take ten more minutes.</p>
-        <a class="open-btn" href="module-05-what-good-looks-like.html">Open Module →</a>
-      </div>
-    </div>
-
-    <!-- M6 -->
-    <div class="module-card">
-      <div class="module-header">
-        <div class="module-number"><span class="label">Module</span><span class="num">6</span></div>
-        <div class="module-title-block">
-          <div class="module-tag">Mission &amp; Values</div>
-          <h3>Work Like It Means Something</h3>
-          <div class="subtitle">Values aren't wall decorations. They're how you make every decision no rulebook can cover.</div>
-        </div>
-      </div>
-      <div class="module-body">
-        <div>
-          <div class="module-col-label">What You'll Learn</div>
-          <ul class="module-list">
-            <li>The difference between mission and values — and what each one does</li>
-            <li>What value-driven communication actually looks like on the ground</li>
-            <li>How to explain decisions using the mission, not just the task</li>
-            <li>How to use values as your reasoning when things get unclear</li>
-            <li>What it means to work like you believe in where this is going</li>
-          </ul>
-        </div>
-        <div>
-          <div class="module-col-label">Core Exercise</div>
-          <div class="module-exercise">
-            <div class="ex-label">Values Under Pressure</div>
-            <p>Think of a situation that felt unclear or uncomfortable. Which organizational value, if you had led with it, would have made the path clearer? Write what you would have done differently.</p>
-          </div>
-          <div class="module-exercise" style="margin-top:10px; border-left-color:var(--red);">
-            <div class="ex-label">Reflection</div>
-            <p>If someone watched how you communicate for one week — what values would they conclude you operate by? Are those the values you want to be known for?</p>
-          </div>
-        </div>
-      </div>
-      <div class="module-footer">
-        <span class="takeaway-label">Takeaway —</span>
-        <p>In your next decision or difficult conversation — name the value that applies. Let it lead.</p>
-        <a class="open-btn" href="module-06-see-the-bigger-picture.html">Open Module →</a>
-      </div>
-    </div>
-
-  </div><!-- /modules-wrap -->
 
   <hr class="divider" />
 
@@ -505,8 +514,19 @@
 
 <footer class="footer">
   <p>Built by <strong>PivotYes</strong> · Communicate Like You Mean It · Professional Development Series</p>
-  <p style="margin-top:6px;">pivotyesconsulting.com</p>
+  <p style="margin-top:6px;">pivotyes.com</p>
 </footer>
+
+<script>
+  function toggle(n) {
+    const row = document.getElementById('row-' + n);
+    const isOpen = row.classList.contains('open');
+    // Close all rows
+    document.querySelectorAll('.map-row').forEach(r => r.classList.remove('open'));
+    // Open clicked row if it wasn't already open
+    if (!isOpen) row.classList.add('open');
+  }
+</script>
 
 </body>
 </html>

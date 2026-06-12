@@ -90,6 +90,86 @@
     .footer { background:var(--off-white); border-top:1px solid var(--rule); text-align:center; padding:32px 24px; font-size:.78rem; color:var(--light); letter-spacing:.06em; }
     .footer strong { color:var(--black); }
     @media(max-width:500px){.hero{padding:56px 24px 52px;}.page{padding:0 20px;}.nav-strip{padding:12px 20px;}}
+  
+    /* ── FILLABLE FIELDS ── */
+    .field-group { margin-bottom: 0; }
+    .field-label {
+      font-size: 10px; font-weight: 700; letter-spacing: .18em;
+      text-transform: uppercase; color: var(--mid); margin-bottom: 8px;
+      display: block;
+    }
+    .field-input {
+      width: 100%; min-height: 52px;
+      background: var(--white);
+      border: 1px solid var(--rule);
+      border-bottom: 2px solid var(--black);
+      border-radius: 2px 2px 0 0;
+      padding: 10px 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: .88rem; color: var(--ink); line-height: 1.6;
+      resize: vertical; outline: none;
+      transition: border-color .15s, background .15s;
+    }
+    .field-input:focus {
+      border-color: var(--red);
+      border-bottom-color: var(--red);
+      background: #FFFBFB;
+    }
+    .field-input::placeholder { color: var(--light); font-style: italic; }
+    .field-input.tall { min-height: 90px; }
+    .field-input.short { min-height: 40px; }
+
+    .ref-textarea {
+      width: 100%; min-height: 90px;
+      background: var(--off-white);
+      border: 1px dashed var(--rule);
+      border-left: none;
+      padding: 12px 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: .86rem; color: var(--ink); line-height: 1.65;
+      resize: vertical; outline: none;
+      transition: border-color .15s, background .15s;
+      border-radius: 0 2px 2px 0;
+    }
+    .ref-textarea:focus {
+      border-color: var(--red);
+      background: #FFFBFB;
+    }
+    .ref-textarea::placeholder { color: var(--light); font-style: italic; }
+
+    /* ── EXPORT BAR ── */
+    .export-bar {
+      position: sticky; bottom: 0; z-index: 100;
+      background: var(--black);
+      border-top: 2px solid var(--red);
+      padding: 14px 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap;
+    }
+    .export-bar .eb-info { display: flex; flex-direction: column; gap: 2px; }
+    .export-bar .eb-label {
+      font-size: 10px; font-weight: 700; letter-spacing: .18em;
+      text-transform: uppercase; color: rgba(255,255,255,.4);
+    }
+    .export-bar .eb-status {
+      font-size: .82rem; color: rgba(255,255,255,.65);
+    }
+    .export-bar .eb-actions { display: flex; gap: 10px; align-items: center; }
+    .export-btn {
+      display: inline-block; cursor: pointer;
+      font-size: 10px; font-weight: 700; letter-spacing: .14em;
+      text-transform: uppercase; padding: 9px 20px; border-radius: 2px;
+      border: none; transition: background .15s; white-space: nowrap;
+    }
+    .export-btn.primary { background: var(--red); color: var(--white); }
+    .export-btn.primary:hover { background: var(--red-deep); }
+    .export-btn.secondary {
+      background: transparent; color: rgba(255,255,255,.6);
+      border: 1px solid rgba(255,255,255,.2);
+    }
+    .export-btn.secondary:hover { background: rgba(255,255,255,.08); color: var(--white); }
+    @media(max-width:500px) { .export-bar { padding: 14px 20px; } }
+
   </style>
 </head>
 <body>
@@ -199,12 +279,18 @@
       </div>
       <div class="exercise-body">
         <p class="prompt">Pick a task you completed recently. Write the instruction you were given. Then write the actual goal it was in service of. Were they the same? If you had focused on the goal instead of the task, would anything have been different?</p>
-        <div class="write-line-label">The instruction you were given:</div>
-        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div></div>
-        <div class="write-line-label" style="margin-top:20px;">The actual goal it was serving:</div>
-        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div></div>
-        <div class="write-line-label" style="margin-top:20px;">What would you have done differently with goal-level thinking?</div>
-        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div></div>
+        <div class="field-group">
+          <span class="field-label">The instruction you were given:</span>
+          <textarea class="field-input short" placeholder="Write your response here..."></textarea>
+        </div></div>
+        <div class="field-group">
+          <span class="field-label">The actual goal it was serving:</span>
+          <textarea class="field-input short" placeholder="Write your response here..."></textarea>
+        </div></div>
+        <div class="field-group">
+          <span class="field-label">What would you have done differently with goal-level thinking?</span>
+          <textarea class="field-input short" placeholder="Write your response here..."></textarea>
+        </div></div>
       </div>
     </div>
 
@@ -215,10 +301,14 @@
       </div>
       <div class="exercise-body">
         <p class="prompt">Think of something you're working on right now. Write one sentence that states the goal — not the task. Start with: "The goal here is to..." Then check it with whoever assigned the work. See if your read matches theirs.</p>
-        <div class="write-line-label">The goal here is to:</div>
-        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div></div>
-        <div class="write-line-label" style="margin-top:20px;">What did you learn when you checked it?</div>
-        <div class="write-lines"><div class="write-line"></div><div class="write-line"></div></div>
+        <div class="field-group">
+          <span class="field-label">The goal here is to:</span>
+          <textarea class="field-input short" placeholder="Write your response here..."></textarea>
+        </div></div>
+        <div class="field-group">
+          <span class="field-label">What did you learn when you checked it?</span>
+          <textarea class="field-input short" placeholder="Write your response here..."></textarea>
+        </div></div>
       </div>
     </div>
   </div>
@@ -231,17 +321,17 @@
     <div class="reflection-block">
       <div class="ref-label">Reflection 1</div>
       <p class="ref-q">"Have you ever completed something perfectly and still felt like you missed the point? What was actually missing?"</p>
-      <div class="ref-space">Write your answer here...</div>
+      <textarea class="ref-textarea" placeholder="Write your answer here..."></textarea>
     </div>
     <div class="reflection-block" style="margin-top:14px;">
       <div class="ref-label">Reflection 2</div>
       <p class="ref-q">"In your current role, how often do you know the 'why' behind what you're asked to do? What would change if you always did?"</p>
-      <div class="ref-space">Write your answer here...</div>
+      <textarea class="ref-textarea" placeholder="Write your answer here..."></textarea>
     </div>
     <div class="reflection-block" style="margin-top:14px;">
       <div class="ref-label">Reflection 3</div>
       <p class="ref-q">"What's one area in your work where you could shift from task-level to goal-level thinking — starting this week?"</p>
-      <div class="ref-space">Write your answer here...</div>
+      <textarea class="ref-textarea" placeholder="Write your answer here..."></textarea>
     </div>
   </div>
 
@@ -264,7 +354,97 @@
 
 <footer class="footer">
   <p><strong>PivotYes</strong> · Communicate Like You Mean It · Module 03 of 06</p>
-  <p style="margin-top:4px;">pivotyesconsulting.com</p>
+  <p style="margin-top:4px;">pivotyes.com</p>
 </footer>
+
+<script>
+(function() {
+  // Track field changes and update status
+  const fields = document.querySelectorAll('.field-input, .ref-textarea');
+  const status = document.getElementById('eb-status');
+
+  function updateStatus() {
+    const filled = Array.from(fields).filter(f => f.value.trim().length > 0).length;
+    if (status) status.textContent = filled + ' of ' + fields.length + ' fields completed';
+  }
+  fields.forEach(f => f.addEventListener('input', updateStatus));
+  updateStatus();
+
+  // Collect all responses into a formatted text document
+  function collectResponses() {
+    const lines = [];
+    lines.push('PIVOTYES — COMMUNICATE LIKE YOU MEAN IT');
+    lines.push('Module 3 — Know the Goal');
+    lines.push('Downloaded: ' + new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'}));
+    lines.push('');
+    lines.push('═'.repeat(60));
+    lines.push('');
+
+    // Walk through all exercise blocks and reflection blocks
+    const blocks = document.querySelectorAll('.exercise-block, .reflection-block');
+    blocks.forEach(block => {
+      // Get block title
+      const titleEl = block.querySelector('.ex-title, .ref-label');
+      if (titleEl) {
+        lines.push('── ' + titleEl.textContent.trim().toUpperCase() + ' ──');
+        lines.push('');
+      }
+      // Get each field with its label
+      const fieldGroups = block.querySelectorAll('.field-group');
+      fieldGroups.forEach(group => {
+        const label = group.querySelector('.field-label');
+        const input = group.querySelector('.field-input, .ref-textarea');
+        if (label && input) {
+          lines.push(label.textContent.trim());
+          lines.push(input.value.trim() || '(not completed)');
+          lines.push('');
+        }
+      });
+      // Standalone ref-textareas (in reflection-block)
+      const refTA = block.querySelector('.ref-textarea');
+      if (refTA && !refTA.closest('.field-group')) {
+        lines.push('Response:');
+        lines.push(refTA.value.trim() || '(not completed)');
+        lines.push('');
+      }
+      lines.push('─'.repeat(40));
+      lines.push('');
+    });
+
+    lines.push('');
+    lines.push('pivotyes.com');
+    return lines.join('\n');
+  }
+
+  // Download as .txt
+  window.downloadTxt = function() {
+    const text = collectResponses();
+    const blob = new Blob([text], {type: 'text/plain'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'module-03-know-the-goal-responses.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+
+  // Print / Save as PDF
+  window.printModule = function() {
+    window.print();
+  };
+})();
+</script>
+
+<style>
+@media print {
+  .export-bar, .module-nav, .nav-strip { display: none !important; }
+  .field-input, .ref-textarea {
+    border: 1px solid #ccc !important;
+    background: white !important;
+    min-height: unset !important;
+  }
+  body { background: white; }
+}
+</style>
+
 </body>
 </html>
