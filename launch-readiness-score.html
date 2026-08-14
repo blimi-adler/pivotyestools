@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Launch Readiness Score</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --red: #E8402E;
+    --white: #ffffff;
+    --gray: #6b6b6b;
+    --light: #f4f4f2;
+    --border: #1e1e1e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 40px 16px;
+  }
+  .wrap { width: 100%; max-width: 640px; }
+
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--red);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    line-height: 0.95;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .sub {
+    color: #b8b8b8;
+    font-size: 15px;
+    margin-bottom: 32px;
+    max-width: 480px;
+  }
+
+  /* Progress */
+  .progress-track {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: 36px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--red);
+    width: 0%;
+    transition: width 0.35s ease;
+  }
+
+  /* Function block */
+  .func-block { display: none; }
+  .func-block.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .func-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: var(--gray);
+    margin-bottom: 4px;
+  }
+  .func-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 0.5px;
+    margin-bottom: 24px;
+    color: var(--white);
+  }
+
+  .question {
+    margin-bottom: 28px;
+  }
+  .q-text {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 14px;
+    line-height: 1.4;
+  }
+  .options {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .option {
+    border: 1.5px solid var(--border);
+    background: #111;
+    color: var(--white);
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .option:hover { border-color: #444; }
+  .option.selected {
+    border-color: var(--red);
+    background: rgba(232, 64, 46, 0.12);
+  }
+
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 36px;
+  }
+  .btn {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 14px 28px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+  }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .btn-primary { background: var(--red); color: var(--white); }
+  .btn-primary:hover:not(:disabled) { opacity: 0.9; }
+  .btn-ghost { background: transparent; color: var(--gray); }
+  .btn-ghost:hover { color: var(--white); }
+
+  /* Results */
+  .results { display: none; }
+  .results.active { display: block; animation: fadeIn 0.4s ease; }
+
+  .score-hero {
+    text-align: center;
+    padding: 32px 0 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+  }
+  .score-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 96px;
+    line-height: 1;
+    color: var(--red);
+  }
+  .score-max { font-size: 20px; color: var(--gray); }
+  .score-band {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 1px;
+    margin-top: 8px;
+  }
+
+  .breakdown { margin-bottom: 28px; }
+  .breakdown-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .breakdown-name {
+    font-size: 14px;
+    font-weight: 700;
+    width: 110px;
+    flex-shrink: 0;
+  }
+  .breakdown-bar-track {
+    flex: 1;
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .breakdown-bar-fill { height: 100%; border-radius: 4px; }
+  .fill-strong { background: #3ecf6a; }
+  .fill-developing { background: #e8a63e; }
+  .fill-weak { background: var(--red); }
+  .breakdown-score { font-size: 13px; color: var(--gray); width: 30px; text-align: right; }
+
+  .gap-card {
+    background: #111;
+    border: 1.5px solid var(--red);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .gap-eyebrow {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--red);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .gap-func {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 30px;
+    margin-bottom: 10px;
+  }
+  .gap-cost {
+    font-size: 14px;
+    color: #d8d8d8;
+    line-height: 1.5;
+  }
+
+  .cta-block {
+    text-align: center;
+    padding: 8px 0 4px;
+  }
+  .cta-text {
+    font-size: 14px;
+    color: #b8b8b8;
+    margin-bottom: 16px;
+  }
+  .cta-btn {
+    display: inline-block;
+    background: var(--red);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    padding: 16px 40px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+  }
+  .cta-btn:hover { opacity: 0.9; }
+  .restart {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: var(--gray);
+    font-size: 13px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  @media (max-width: 480px) {
+    h1 { font-size: 42px; }
+    .score-number { font-size: 72px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div id="intro">
+    <div class="eyebrow">Launch Mode</div>
+    <h1>LAUNCH<br>READINESS<br>SCORE</h1>
+    <p class="sub">18 questions. 3 minutes. Find out exactly what's standing between you and launch — and what to fix first.</p>
+    <button class="btn btn-primary" style="width:100%;" onclick="startQuiz()">Start the assessment</button>
+  </div>
+
+  <div id="quiz" style="display:none;">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div id="funcBlocks"></div>
+    <div class="nav-row">
+      <button class="btn btn-ghost" id="backBtn" onclick="prevFunc()">Back</button>
+      <button class="btn btn-primary" id="nextBtn" onclick="nextFunc()" disabled>Next</button>
+    </div>
+  </div>
+
+  <div class="results" id="results">
+    <div class="score-hero">
+      <div class="score-number" id="scoreNumber">0</div>
+      <div class="score-max">out of 36</div>
+      <div class="score-band" id="scoreBand"></div>
+    </div>
+
+    <div class="breakdown" id="breakdown"></div>
+
+    <div class="gap-card">
+      <div class="gap-eyebrow">Your biggest gap</div>
+      <div class="gap-func" id="gapFunc"></div>
+      <div class="gap-cost" id="gapCost"></div>
+    </div>
+
+    <div class="cta-block">
+      <p class="cta-text">Launch Mode walks you through fixing this — function by function — before you spend a dollar on the wrong thing.</p>
+      <button class="cta-btn" onclick="window.location.href='https://blimiadler.com/launchmode'">See how Launch Mode fixes it</button>
+    </div>
+    <button class="restart" onclick="location.reload()">Retake the assessment</button>
+  </div>
+
+</div>
+
+<script>
+const FUNCTIONS = [
+  {
+    key: "product",
+    name: "Product/Offer",
+    questions: [
+      "Can you explain what you sell in one sentence?",
+      "Do you know exactly who it's for?",
+      "Have you validated anyone would actually pay for it — not just \"liked the idea\"?"
+    ],
+    gapCost: "Without a clear, validated offer, everything downstream — pricing, marketing, sales — is guesswork. You'll spend money and time before you know if anyone wants what you're building."
+  },
+  {
+    key: "sales",
+    name: "Sales",
+    questions: [
+      "Do you know how you'll get your first customer?",
+      "Do you have a price set — and know why it's that price?",
+      "Have you had at least one real sales conversation?"
+    ],
+    gapCost: "No sales plan means launch day arrives with no one to sell to. Revenue doesn't happen by accident — it happens because someone asked, priced, and closed."
+  },
+  {
+    key: "marketing",
+    name: "Marketing",
+    questions: [
+      "Do you know where your buyers already spend time — online or offline?",
+      "Do you have any way to reach them today, without paid ads?",
+      "Do you have a name/brand people can find and remember?"
+    ],
+    gapCost: "Without a clear channel, you're invisible. You'll either overspend chasing every platform at once, or build something great that nobody finds."
+  },
+  {
+    key: "operations",
+    name: "Operations",
+    questions: [
+      "Do you know how you'll actually deliver the product/service?",
+      "Have you mapped what happens between \"someone buys\" and \"they get it\"?",
+      "Do you have the tools/systems to fulfill more than one order at once?"
+    ],
+    gapCost: "This is where launches quietly fail. First customers show up, delivery is chaos, refunds start, and word of mouth turns negative before you've even found your footing."
+  },
+  {
+    key: "finance",
+    name: "Finance",
+    questions: [
+      "Do you know your startup costs?",
+      "Do you know your break-even number?",
+      "Do you have funding or runway to survive until revenue?"
+    ],
+    gapCost: "Most new businesses don't fail from a bad idea — they fail from running out of money before they find traction. Not knowing your numbers means you won't see it coming."
+  },
+  {
+    key: "leadership",
+    name: "Leadership/You",
+    questions: [
+      "Do you know why you're doing this — beyond \"I want to be my own boss\"?",
+      "Do you have someone to be accountable to?",
+      "Are you ready to make decisions without someone telling you the \"right\" answer?"
+    ],
+    gapCost: "Without clarity of purpose and accountability, momentum dies the first time launch gets hard — and it will get hard."
+  }
+];
+
+const OPTION_LABELS = [
+  { label: "Not at all / haven't thought about it", value: 0 },
+  { label: "Sort of / started but not solid", value: 1 },
+  { label: "Yes, clearly", value: 2 }
+];
+
+let currentFunc = 0;
+let answers = FUNCTIONS.map(f => new Array(f.questions.length).fill(null));
+
+function startQuiz() {
+  document.getElementById('intro').style.display = 'none';
+  document.getElementById('quiz').style.display = 'block';
+  renderFuncBlocks();
+  showFunc(0);
+}
+
+function renderFuncBlocks() {
+  const container = document.getElementById('funcBlocks');
+  container.innerHTML = FUNCTIONS.map((f, fi) => `
+    <div class="func-block" id="func-${fi}">
+      <div class="func-label">FUNCTION ${fi + 1} OF ${FUNCTIONS.length}</div>
+      <div class="func-title">${f.name}</div>
+      ${f.questions.map((q, qi) => `
+        <div class="question">
+          <div class="q-text">${q}</div>
+          <div class="options" id="opts-${fi}-${qi}">
+            ${OPTION_LABELS.map((o, oi) => `
+              <button class="option" onclick="selectOption(${fi},${qi},${oi})">${o.label}</button>
+            `).join('')}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+function selectOption(fi, qi, oi) {
+  answers[fi][qi] = OPTION_LABELS[oi].value;
+  const opts = document.getElementById(`opts-${fi}-${qi}`).children;
+  for (let i = 0; i < opts.length; i++) {
+    opts[i].classList.toggle('selected', i === oi);
+  }
+  updateNextButton();
+}
+
+function updateNextButton() {
+  const allAnswered = answers[currentFunc].every(a => a !== null);
+  document.getElementById('nextBtn').disabled = !allAnswered;
+  document.getElementById('nextBtn').textContent = currentFunc === FUNCTIONS.length - 1 ? 'See my score' : 'Next';
+}
+
+function showFunc(i) {
+  document.querySelectorAll('.func-block').forEach(el => el.classList.remove('active'));
+  document.getElementById(`func-${i}`).classList.add('active');
+  document.getElementById('backBtn').style.visibility = i === 0 ? 'hidden' : 'visible';
+  document.getElementById('progressFill').style.width = `${((i) / FUNCTIONS.length) * 100}%`;
+  updateNextButton();
+}
+
+function nextFunc() {
+  if (currentFunc < FUNCTIONS.length - 1) {
+    currentFunc++;
+    showFunc(currentFunc);
+  } else {
+    document.getElementById('progressFill').style.width = '100%';
+    showResults();
+  }
+}
+
+function prevFunc() {
+  if (currentFunc > 0) {
+    currentFunc--;
+    showFunc(currentFunc);
+  }
+}
+
+function showResults() {
+  document.getElementById('quiz').style.display = 'none';
+  document.getElementById('results').classList.add('active');
+
+  const funcScores = FUNCTIONS.map((f, fi) => ({
+    name: f.name,
+    score: answers[fi].reduce((a, b) => a + b, 0),
+    max: f.questions.length * 2,
+    gapCost: f.gapCost
+  }));
+
+  const total = funcScores.reduce((sum, f) => sum + f.score, 0);
+  document.getElementById('scoreNumber').textContent = total;
+
+  let band, bandColor;
+  if (total >= 28) { band = "LAUNCH READY"; bandColor = "#3ecf6a"; }
+  else if (total >= 15) { band = "ALMOST READY"; bandColor = "#e8a63e"; }
+  else { band = "NOT READY YET"; bandColor = "#E8402E"; }
+  const bandEl = document.getElementById('scoreBand');
+  bandEl.textContent = band;
+  bandEl.style.color = bandColor;
+
+  const breakdown = document.getElementById('breakdown');
+  breakdown.innerHTML = funcScores.map(f => {
+    let fillClass = f.score >= 5 ? 'fill-strong' : f.score >= 3 ? 'fill-developing' : 'fill-weak';
+    const pct = (f.score / f.max) * 100;
+    return `
+      <div class="breakdown-row">
+        <div class="breakdown-name">${f.name}</div>
+        <div class="breakdown-bar-track"><div class="breakdown-bar-fill ${fillClass}" style="width:${pct}%"></div></div>
+        <div class="breakdown-score">${f.score}/${f.max}</div>
+      </div>
+    `;
+  }).join('');
+
+  const weakest = funcScores.reduce((min, f) => f.score < min.score ? f : min, funcScores[0]);
+  document.getElementById('gapFunc').textContent = weakest.name;
+  document.getElementById('gapCost').textContent = weakest.gapCost;
+}
+</script>
+</body>
+</html>
