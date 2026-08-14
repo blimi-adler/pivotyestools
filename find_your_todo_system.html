@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find Your To-Do System</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap');
+
+  :root{
+    --black:#0b0b0b;
+    --paper:#f5f1ea;
+    --red:#c81e3a;
+    --amber:#d9a441;
+    --gray:#8a8a86;
+    --line:#2a2a28;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+
+  body{
+    background:var(--black);
+    color:var(--paper);
+    font-family:'DM Sans',sans-serif;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:32px 16px;
+  }
+
+  .app{
+    width:100%;
+    max-width:640px;
+  }
+
+  .eyebrow{
+    font-family:'DM Sans',sans-serif;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--red);
+    font-weight:700;
+    margin-bottom:8px;
+  }
+
+  h1{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:clamp(36px,7vw,56px);
+    letter-spacing:0.01em;
+    line-height:0.95;
+    margin-bottom:14px;
+  }
+
+  .sub{
+    color:#c9c6bd;
+    font-size:15px;
+    line-height:1.5;
+    max-width:480px;
+  }
+
+  .progress-track{
+    height:3px;
+    background:var(--line);
+    border-radius:2px;
+    margin:36px 0 28px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    background:var(--red);
+    width:0%;
+    transition:width .35s ease;
+  }
+
+  .step{ display:none; }
+  .step.active{ display:block; animation:fade .3s ease; }
+  @keyframes fade{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  .qnum{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:14px;
+    letter-spacing:0.08em;
+    color:var(--gray);
+    margin-bottom:10px;
+  }
+
+  .question{
+    font-size:22px;
+    font-weight:700;
+    line-height:1.3;
+    margin-bottom:22px;
+  }
+
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+
+  .option{
+    text-align:left;
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--paper);
+    padding:16px 18px;
+    border-radius:6px;
+    font-family:'DM Sans',sans-serif;
+    font-size:15px;
+    cursor:pointer;
+    transition:border-color .15s ease, background .15s ease, transform .1s ease;
+  }
+  .option:hover{
+    border-color:var(--red);
+    background:rgba(200,30,58,0.08);
+  }
+  .option:active{ transform:scale(0.995); }
+
+  .start-btn, .restart-btn{
+    margin-top:28px;
+    background:var(--red);
+    color:var(--paper);
+    border:none;
+    padding:15px 28px;
+    font-family:'Bebas Neue',sans-serif;
+    font-size:18px;
+    letter-spacing:0.05em;
+    border-radius:6px;
+    cursor:pointer;
+    transition:background .15s ease;
+  }
+  .start-btn:hover, .restart-btn:hover{ background:#a91830; }
+
+  /* Result / sticky note signature */
+  .result-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .note{
+    background:var(--amber);
+    color:var(--black);
+    padding:28px 26px;
+    border-radius:2px;
+    max-width:420px;
+    transform:rotate(-1.4deg);
+    box-shadow:0 18px 30px rgba(0,0,0,0.45), 0 2px 0 rgba(0,0,0,0.15) inset;
+    position:relative;
+    margin-bottom:26px;
+  }
+  .note::before{
+    content:"";
+    position:absolute;
+    top:-10px; left:38px;
+    width:34px; height:14px;
+    background:rgba(245,241,234,0.55);
+    border:1px solid rgba(0,0,0,0.08);
+    transform:rotate(-3deg);
+  }
+  .note-label{
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    font-weight:700;
+    opacity:0.65;
+    margin-bottom:6px;
+  }
+  .note-title{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:34px;
+    line-height:1;
+    margin-bottom:10px;
+  }
+  .note-line{
+    font-size:15px;
+    font-weight:500;
+    line-height:1.4;
+  }
+
+  .result-block{ margin-bottom:20px; }
+  .result-block h3{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:16px;
+    letter-spacing:0.06em;
+    color:var(--red);
+    margin-bottom:8px;
+  }
+  .result-block p, .result-block ul{
+    font-size:15px;
+    line-height:1.55;
+    color:#dcd9d1;
+  }
+  .result-block ul{ padding-left:18px; }
+  .result-block li{ margin-bottom:4px; }
+
+  footer{
+    margin-top:34px;
+    padding-top:20px;
+    border-top:1px solid var(--line);
+    font-size:13px;
+    color:var(--gray);
+    line-height:1.5;
+  }
+  footer a{ color:var(--red); text-decoration:none; font-weight:700; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- INTRO -->
+  <div class="step active" id="step-intro">
+    <div class="eyebrow">PivotYes · Get It Out of Your Head</div>
+    <h1>Find Your<br>To-Do System</h1>
+    <p class="sub">Sticky notes. A big notebook. Asana. Google Keep. None of them are wrong — most of them are just wrong for you. Answer four questions and get matched to the system your brain will actually use.</p>
+    <button class="start-btn" onclick="goTo(1)">START — 30 SECONDS</button>
+  </div>
+
+  <!-- PROGRESS (shown during questions) -->
+  <div id="progress-wrap" style="display:none;">
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+
+  <!-- QUESTIONS injected here -->
+  <div id="questions"></div>
+
+  <!-- RESULT -->
+  <div class="step" id="step-result">
+    <div class="result-wrap">
+      <div class="note">
+        <div class="note-label">Your match</div>
+        <div class="note-title" id="res-title">—</div>
+        <div class="note-line" id="res-tagline">—</div>
+      </div>
+
+      <div class="result-block">
+        <h3>USE THIS</h3>
+        <ul id="res-tools"></ul>
+      </div>
+
+      <div class="result-block">
+        <h3>WHY IT WORKS</h3>
+        <p id="res-why"></p>
+      </div>
+
+      <div class="result-block">
+        <h3>WATCH FOR</h3>
+        <p id="res-watch"></p>
+      </div>
+
+      <button class="restart-btn" onclick="restart()">RETAKE THE QUIZ</button>
+
+      <footer>
+        The right system isn't the most powerful one — it's the one you'll actually open. That's a People problem, not a Process problem.<br><br>
+        Want help building the systems behind the to-do list? <a href="[LINK TO PIVOTYES]">Work with PivotYes →</a>
+      </footer>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  {
+    q: "When a task pops into your head, what do you do?",
+    options: [
+      ["Grab whatever's nearest — sticky note, napkin, whiteboard", "P"],
+      ["Open my notebook and write it down", "N"],
+      ["Type it into an app before I lose it", "B"],
+      ["Add it to my project board with a deadline", "S"],
+      ["Nothing — if it matters, it'll come back to me", "M"],
+      ["Tell someone else to handle it", "D"]
+    ]
+  },
+  {
+    q: "How do you want to see your to-dos?",
+    options: [
+      ["Spread out where I can see everything at once", "P"],
+      ["One page, in order, in ink", "N"],
+      ["However they land — I'll sort later", "B"],
+      ["Organized by project, owner, and due date", "S"],
+      ["One short list. That's it.", "M"],
+      ["I don't — I want a summary, not the list", "D"]
+    ]
+  },
+  {
+    q: "Your list just hit 40 items. What happens?",
+    options: [
+      ["I rearrange the board until it makes sense again", "P"],
+      ["I flip to a new page and start fresh", "N"],
+      ["I panic-scroll and pick whatever's loudest", "B"],
+      ["I reassign or reprioritize by deadline", "S"],
+      ["That never happens — I don't let it get that long", "M"],
+      ["Someone flags what actually needs my attention", "D"]
+    ]
+  },
+  {
+    q: "What's the real problem with most to-do apps, for you?",
+    options: [
+      ["They hide things behind menus — I need to see it all", "P"],
+      ["They're not as satisfying as crossing something off on paper", "N"],
+      ["Too many steps to log one thought", "B"],
+      ["Nothing — I just haven't found the right one yet", "S"],
+      ["Too many features I'll never touch", "M"],
+      ["I shouldn't be the one using it in the first place", "D"]
+    ]
+  }
+];
+
+const results = {
+  P: {
+    title: "THE PILER",
+    tagline: "You think in space, not lists.",
+    tools: ["Whiteboard or wall of sticky notes", "Trello or another visual Kanban board", "Physical corkboard for anything active"],
+    why: "You need to see everything at once. The moment a task disappears into a scrollable list, it's dead to you. Spatial layout is what keeps things alive in your head.",
+    watch: "Boards decay if nobody archives finished cards. Set a weekly 5-minute reset or it turns into visual noise."
+  },
+  N: {
+    title: "THE NOTEBOOK LOYALIST",
+    tagline: "You write to think.",
+    tools: ["One notebook — nothing fancy", "A daily planner with today's page only", "Pen, not stylus"],
+    why: "Putting pen to paper is how you process, not just how you record. An app can replicate the list but not the thinking that happens while you write it.",
+    watch: "Nothing's searchable and nothing syncs. Fine for daily execution — not for anything you need to hand off to someone else."
+  },
+  B: {
+    title: "THE BRAIN DUMPER",
+    tagline: "You capture first, sort never.",
+    tools: ["Google Keep or Apple Notes", "Voice memos for hands-free capture", "One inbox note — dump everything, sort later"],
+    why: "Friction kills your follow-through. If capturing a thought takes more than one tap, you lose it. You need zero-click entry, not structure.",
+    watch: "Capture isn't the same as completion. Build a 10-minute daily pass to move things from the dump into action."
+  },
+  S: {
+    title: "THE SYSTEMIZER",
+    tagline: "You think in categories and deadlines.",
+    tools: ["Asana", "ClickUp", "Monday.com"],
+    why: "You're not managing a personal list — you're managing dependencies, owners, and dates across other people. You need software built for that, not a notepad.",
+    watch: "Don't over-build the system before you need it. Start with one project and one view before adding automations."
+  },
+  M: {
+    title: "THE MINIMALIST",
+    tagline: "You want fewer things, not more tools.",
+    tools: ["Apple Reminders or Google Reminders", "One running list, nothing nested"],
+    why: "Complexity is the enemy of follow-through, for you specifically. One list you'll actually check beats five you won't.",
+    watch: "Resist the urge to add tags, folders, or priority flags 'just in case.' Every feature you add is a reason to stop opening it."
+  },
+  D: {
+    title: "THE DELEGATOR",
+    tagline: "You don't manage your list. You manage who manages it.",
+    tools: ["An EA-run Asana or Notion board", "A weekly one-page briefing doc, not a live list"],
+    why: "Your job is making decisions, not tracking tasks. The moment you're maintaining your own to-do list, someone below you should be doing it instead.",
+    watch: "This only works with a clear weekly handoff. Without it, 'someone else manages it' quietly becomes 'no one does.'"
+  }
+};
+
+let current = 0;
+const scores = {P:0,N:0,B:0,S:0,M:0,D:0};
+
+function renderQuestions(){
+  const wrap = document.getElementById('questions');
+  wrap.innerHTML = questions.map((item, i) => `
+    <div class="step" id="step-q${i}">
+      <div class="qnum">QUESTION ${i+1} OF ${questions.length}</div>
+      <div class="question">${item.q}</div>
+      <div class="options">
+        ${item.options.map(opt => `<button class="option" onclick="answer('${opt[1]}')">${opt[0]}</button>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function goTo(stepIndex){
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById('progress-wrap').style.display = stepIndex >= 1 && stepIndex <= questions.length ? 'block' : 'none';
+  if(stepIndex === 0){
+    document.getElementById('step-intro').classList.add('active');
+  } else if(stepIndex >= 1 && stepIndex <= questions.length){
+    document.getElementById('step-q' + (stepIndex-1)).classList.add('active');
+    document.getElementById('progress-fill').style.width = (((stepIndex-1)/questions.length)*100) + '%';
+  } else {
+    showResult();
+  }
+}
+
+function answer(code){
+  scores[code]++;
+  current++;
+  if(current < questions.length){
+    goTo(current + 1);
+  } else {
+    document.getElementById('progress-fill').style.width = '100%';
+    setTimeout(showResult, 200);
+  }
+}
+
+function showResult(){
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById('progress-wrap').style.display = 'none';
+
+  let winner = 'P', max = -1;
+  for(const k in scores){
+    if(scores[k] > max){ max = scores[k]; winner = k; }
+  }
+  const r = results[winner];
+  document.getElementById('res-title').textContent = r.title;
+  document.getElementById('res-tagline').textContent = r.tagline;
+  document.getElementById('res-tools').innerHTML = r.tools.map(t => `<li>${t}</li>`).join('');
+  document.getElementById('res-why').textContent = r.why;
+  document.getElementById('res-watch').textContent = r.watch;
+
+  document.getElementById('step-result').classList.add('active');
+}
+
+function restart(){
+  current = 0;
+  for(const k in scores) scores[k] = 0;
+  goTo(0);
+}
+
+renderQuestions();
+</script>
+</body>
+</html>
