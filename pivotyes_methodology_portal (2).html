@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PivotYes — Business Methodology</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #CC0000; --red-dark: #990000; --red-light: #FF3333;
+    --black: #0A0A0A; --white: #FFFFFF;
+    --gray-50: #F8F8F8; --gray-100: #F0F0F0; --gray-200: #E0E0E0;
+    --gray-400: #999999; --gray-600: #555555; --gray-800: #222222;
+    --green: #1A7A4A; --green-bg: #E8F5EE;
+    --yellow: #C47A00; --yellow-bg: #FFF3DC; --red-bg: #FDEAEA;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--gray-50); color: var(--black); min-height: 100vh; }
+
+  .nav { background: var(--black); padding: 0 40px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .nav-brand { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--white); letter-spacing: 3px; }
+  .nav-brand span { color: var(--red); }
+  .nav-meta { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--gray-400); letter-spacing: 1px; text-transform: uppercase; }
+
+  .hero { background: var(--black); padding: 48px 40px 40px; border-bottom: 3px solid var(--red); }
+  .hero-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 40px; }
+  .hero-eyebrow { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--red); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 12px; }
+  .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: 64px; color: var(--white); line-height: 1; letter-spacing: 2px; }
+  .hero-title span { color: var(--red); }
+  .hero-subtitle { font-size: 15px; color: var(--gray-400); margin-top: 10px; font-weight: 300; }
+  .hero-stats { display: flex; gap: 32px; align-items: flex-end; }
+  .stat { text-align: right; }
+  .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 40px; color: var(--white); line-height: 1; }
+  .stat-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray-400); letter-spacing: 2px; text-transform: uppercase; }
+  .stat-divider { width: 1px; height: 48px; background: var(--gray-600); }
+
+  .timeline-section { background: var(--white); border-bottom: 1px solid var(--gray-200); padding: 0 40px; }
+  .timeline-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); }
+  .phase-tab { padding: 20px 24px; cursor: pointer; border-right: 1px solid var(--gray-200); transition: all 0.2s; position: relative; border-bottom: 3px solid transparent; }
+  .phase-tab:last-child { border-right: none; }
+  .phase-tab:hover { background: var(--gray-50); }
+  .phase-tab.active { border-bottom-color: var(--red); background: var(--white); }
+  .phase-tab.active .phase-num { color: var(--red); }
+  .phase-num { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--gray-200); line-height: 1; transition: color 0.2s; }
+  .phase-name { font-size: 13px; font-weight: 600; color: var(--black); margin-top: 2px; }
+  .phase-desc { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+  .phase-badge { display: inline-block; background: var(--red); color: var(--white); font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1px; padding: 2px 7px; border-radius: 2px; margin-top: 6px; text-transform: uppercase; }
+
+  .main { max-width: 1200px; margin: 0 auto; padding: 40px; }
+  .phase-panel { display: none; }
+  .phase-panel.active { display: block; }
+  .section-label { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--gray-400); margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--gray-200); }
+
+  .outcome-banner { background: var(--white); border: 1px solid var(--gray-200); border-left: 4px solid var(--green); border-radius: 4px; padding: 24px 28px; margin-bottom: 32px; }
+  .outcome-title { font-size: 13px; font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-family: 'DM Mono', monospace; }
+  .outcome-text { font-size: 14px; color: var(--gray-800); line-height: 1.55; }
+
+  .pillars-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 40px; }
+  .pillar-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: 6px; overflow: hidden; cursor: pointer; transition: all 0.2s; }
+  .pillar-card:hover { border-color: var(--red); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+  .pillar-card.expanded { border-color: var(--red); box-shadow: 0 8px 24px rgba(204,0,0,0.12); }
+  .pillar-card-top { padding: 16px 18px 14px; border-bottom: 1px solid var(--gray-100); }
+  .pillar-icon { width: 32px; height: 32px; border-radius: 4px; background: var(--black); display: flex; align-items: center; justify-content: center; margin-bottom: 10px; font-size: 15px; }
+  .pillar-icon.red { background: var(--red); }
+  .pillar-name { font-size: 13px; font-weight: 600; color: var(--black); line-height: 1.2; }
+  .pillar-sub { font-size: 11px; color: var(--gray-400); margin-top: 2px; font-family: 'DM Mono', monospace; }
+  .pillar-card-bottom { padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; }
+  .pillar-focus { font-size: 12px; color: var(--gray-600); }
+  .expand-arrow { font-size: 12px; color: var(--gray-400); transition: transform 0.2s; }
+  .pillar-card.expanded .expand-arrow { transform: rotate(180deg); color: var(--red); }
+
+  .detail-panel { display: none; grid-column: 1 / -1; background: var(--white); border: 1px solid var(--red); border-radius: 6px; padding: 28px 32px; animation: slideDown 0.2s ease; }
+  .detail-panel.open { display: block; }
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+  .detail-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--gray-100); }
+  .detail-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 1px; color: var(--black); }
+  .detail-close { width: 32px; height: 32px; background: var(--gray-100); border: none; border-radius: 4px; cursor: pointer; font-size: 16px; color: var(--gray-600); display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .detail-close:hover { background: var(--red); color: var(--white); }
+  .detail-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 20px; }
+  .detail-col { background: var(--gray-50); border-radius: 4px; padding: 18px 20px; }
+  .detail-col-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--red); margin-bottom: 12px; font-weight: 500; }
+  .detail-item { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--gray-800); margin-bottom: 8px; line-height: 1.4; }
+  .detail-item::before { content: '▸'; color: var(--red); font-size: 10px; margin-top: 2px; flex-shrink: 0; }
+
+  .footer { background: var(--black); padding: 24px 40px; margin-top: 60px; display: flex; align-items: center; justify-content: space-between; }
+  .footer-brand { font-family: 'Bebas Neue', sans-serif; font-size: 16px; color: var(--gray-600); letter-spacing: 3px; }
+  .footer-brand span { color: var(--red); }
+  .footer-note { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray-600); letter-spacing: 1px; }
+
+  @media (max-width: 900px) {
+    .pillars-grid { grid-template-columns: repeat(2, 1fr); }
+    .detail-cols { grid-template-columns: 1fr; }
+    .hero-stats { display: none; }
+    .hero-title { font-size: 44px; }
+    .timeline-inner { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 600px) {
+    .pillars-grid { grid-template-columns: 1fr; }
+    .main { padding: 24px 20px; }
+    .nav, .hero, .timeline-section { padding-left: 20px; padding-right: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">PIVOT<span>YES</span></div>
+  <div class="nav-meta">Methodology · Internal Reference</div>
+</nav>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-eyebrow">Business Structuring Framework</div>
+      <div class="hero-title">The Six<br><span>Business Functions</span></div>
+      <div class="hero-subtitle">What we do · per function · per phase · for every client</div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">6</div><div class="stat-label">Functions</div></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><div class="stat-num">4</div><div class="stat-label">Phases</div></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><div class="stat-num">3</div><div class="stat-label">P's</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="timeline-section">
+  <div class="timeline-inner">
+    <div class="phase-tab active" onclick="showPhase(1)" id="ptab-1">
+      <div class="phase-num">01</div>
+      <div class="phase-name">Research</div>
+      <div class="phase-desc">Discovery & Audit</div>
+      <div class="phase-badge">Active Phase</div>
+    </div>
+    <div class="phase-tab" onclick="showPhase(2)" id="ptab-2">
+      <div class="phase-num">02</div>
+      <div class="phase-name">Setup</div>
+      <div class="phase-desc">Build & Document</div>
+    </div>
+    <div class="phase-tab" onclick="showPhase(3)" id="ptab-3">
+      <div class="phase-num">03</div>
+      <div class="phase-name">Launch</div>
+      <div class="phase-desc">Train & Go Live</div>
+    </div>
+    <div class="phase-tab" onclick="showPhase(4)" id="ptab-4">
+      <div class="phase-num">04</div>
+      <div class="phase-name">Scaling Support</div>
+      <div class="phase-desc">Sustain & Grow</div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- PHASE 1: RESEARCH -->
+<div class="phase-panel active" id="phase-1">
+  <div class="outcome-banner">
+    <div class="outcome-title">Phase 1 Outcome</div>
+    <div class="outcome-text">Full picture of how the business actually runs — where the breakdowns are, who owns what (or doesn't), and where to focus first. Everything documented before a single system is built.</div>
+  </div>
+  <div class="section-label">Six Functions · Research Phase</div>
+  <div class="pillars-grid" id="grid-1">
+
+    <div class="pillar-card" id="card-1-1" onclick="toggleCard(1,1)">
+      <div class="pillar-card-top"><div class="pillar-icon red">📈</div><div class="pillar-name">Sales</div><div class="pillar-sub">Pipeline · Proposals · Conversion</div></div>
+      <div class="pillar-card-bottom"><div class="pillar-focus">How deals move — or stall</div><div class="expand-arrow">▾</div></div>
+    </div>
+    <div class="detail-panel" id="detail-1-1">
+      <div class="detail-header"><div class="detail-title">Sales — Research</div><button class="detail-close" onclick="closeCard(event,1,1)">✕</button></div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Process</div><div class="detail-item">Map current sales workflow end-to-end</div><div class="detail-item">Identify where leads come from and how they convert</div><div class="detail-item">Document proposal and follow-up process</div><div class="detail-item">Find gaps — where deals are lost and why</div></div>
+        <div class="detail-col"><div class="detail-col-label">Software</div><div class="detail-item">Audit CRM or current tracking system</div><div class="detail-item">Identify if tools match the actual sales motion</div><div class="detail-item">Note any manual workarounds happening</div></div>
+        <div class="detail-col"><div class="detail-col-label">People</div><div class="detail-item">Who owns sales — owner or team member?</div><div class="detail-item">Is there a clear handoff between sales and delivery?</div><div class="detail-item">Who tracks pipeline and holds accountability?</div></div>
+      </div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Financials</div><div class="detail-item">Review revenue by source or product line</div><div class="detail-item">Identify top clients and average deal size</div><div class="detail-item">Flag any pricing inconsistencies</div></div>
+        <div class="detail-col"><div class="detail-col-label">Goals</div><div class="detail-item">What is the revenue goal for next 90 days / 1 year?</div><div class="detail-item">Is there a defined sales target per rep or owner?</div><div class="detail-item">What does a "good month" look like?</div></div>
+        <div class="detail-col"><div class="detail-col-label">Project Mgmt</div><div class="detail-item">Create sales tracking section in Asana</div><div class="detail-item">Document current pipeline stages</div><div class="detail-item">Set up recurring sales review cadence</div></div>
+      </div>
+    </div>
+
+    <div class="pillar-card" id="card-1-2" onclick="toggleCard(1,2)">
+      <div class="pillar-card-top"><div class="pillar-icon">📣</div><div class="pillar-name">Marketing</div><div class="pillar-sub">Brand · Content · Lead Gen</div></div>
+      <div class="pillar-card-bottom"><div class="pillar-focus">Who is being reached and how</div><div class="expand-arrow">▾</div></div>
+    </div>
+    <div class="detail-panel" id="detail-1-2">
+      <div class="detail-header"><div class="detail-title">Marketing — Research</div><button class="detail-close" onclick="closeCard(event,1,2)">✕</button></div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Process</div><div class="detail-item">Audit current marketing activities and channels</div><div class="detail-item">Map how leads currently find the business</div><div class="detail-item">Document content creation and publishing flow</div><div class="detail-item">Identify what's working vs. done out of habit</div></div>
+        <div class="detail-col"><div class="detail-col-label">Software</div><div class="detail-item">List all marketing tools (email, social, CRM)</div><div class="detail-item">Assess if tools are connected or siloed</div><div class="detail-item">Review analytics access and what's being tracked</div></div>
+        <div class="detail-col"><div class="detail-col-label">People</div><div class="detail-item">Who owns marketing — owner, employee, or agency?</div><div class="detail-item">Is there a clear content calendar owner?</div><div class="detail-item">Where is the bottleneck — ideas, execution, or time?</div></div>
+      </div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Financials</div><div class="detail-item">Review current marketing spend</div><div class="detail-item">Identify cost per lead if trackable</div><div class="detail-item">Flag any spend with no measurable output</div></div>
+        <div class="detail-col"><div class="detail-col-label">Goals</div><div class="detail-item">What is the goal — awareness, leads, or retention?</div><div class="detail-item">Is there a defined target audience?</div><div class="detail-item">What does a successful marketing month look like?</div></div>
+        <div class="detail-col"><div class="detail-col-label">Project Mgmt</div><div class="detail-item">Build marketing section in Asana</div><div class="detail-item">Document all active campaigns and assets</div><div class="detail-item">Set up content calendar framework</div></div>
+      </div>
+    </div>
+
+    <div class="pillar-card" id="card-1-3" onclick="toggleCard(1,3)">
+      <div class="pillar-card-top"><div class="pillar-icon red">⚙️</div><div class="pillar-name">Operations</div><div class="pillar-sub">SOPs · Fulfillment · Quality</div></div>
+      <div class="pillar-card-bottom"><div class="pillar-focus">How work moves and where it breaks</div><div class="expand-arrow">▾</div></div>
+    </div>
+    <div class="detail-panel" id="detail-1-3">
+      <div class="detail-header"><div class="detail-title">Operations — Research</div><button class="detail-close" onclick="closeCard(event,1,3)">✕</button></div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Process</div><div class="detail-item">Map every core operational workflow end-to-end</div><div class="detail-item">Identify handoffs, dependencies, and bottlenecks</div><div class="detail-item">Document where manual workarounds exist</div><div class="detail-item">Surface the top 3 recurring operational failures</div></div>
+        <div class="detail-col"><div class="detail-col-label">Software</div><div class="detail-item">Audit all ops tools — PM, communication, tracking</div><div class="detail-item">Identify what's undocumented or in people's heads</div><div class="detail-item">Find where data lives in multiple disconnected places</div></div>
+        <div class="detail-col"><div class="detail-col-label">People</div><div class="detail-item">Who knows how each process actually works?</div><div class="detail-item">Is there single-point-of-failure dependency on one person?</div><div class="detail-item">Where does the owner still need to be involved daily?</div></div>
+      </div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Financials</div><div class="detail-item">Review cost of fulfillment per unit or job</div><div class="detail-item">Identify where cost overruns typically happen</div><div class="detail-item">Assess if pricing reflects true delivery cost</div></div>
+        <div class="detail-col"><div class="detail-col-label">Goals</div><div class="detail-item">What does efficient look like — time, cost, capacity?</div><div class="detail-item">What is the biggest operational constraint right now?</div><div class="detail-item">What would allow the business to handle 2x volume?</div></div>
+        <div class="detail-col"><div class="detail-col-label">Project Mgmt</div><div class="detail-item">Document all active operational workflows in Asana</div><div class="detail-item">Map team capacity vs. current workload</div><div class="detail-item">Identify top 5 SOPs needed most urgently</div></div>
+      </div>
+    </div>
+
+    <div class="pillar-card" id="card-1-4" onclick="toggleCard(1,4)">
+      <div class="pillar-card-top"><div class="pillar-icon">💰</div><div class="pillar-name">Finance</div><div class="pillar-sub">Cash Flow · P&amp;L · Reporting</div></div>
+      <div class="pillar-card-bottom"><div class="pillar-focus">Honest picture of cash and profitability</div><div class="expand-arrow">▾</div></div>
+    </div>
+    <div class="detail-panel" id="detail-1-4">
+      <div class="detail-header"><div class="detail-title">Finance — Research</div><button class="detail-close" onclick="closeCard(event,1,4)">✕</button></div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Process</div><div class="detail-item">Review invoicing and collections workflow</div><div class="detail-item">Understand current billing cycle and payment terms</div><div class="detail-item">Map how financial data flows to the owner</div><div class="detail-item">Identify financial decisions made without data</div></div>
+        <div class="detail-col"><div class="detail-col-label">Software</div><div class="detail-item">Audit QuickBooks or current accounting software</div><div class="detail-item">Assess chart of accounts accuracy</div><div class="detail-item">Identify reporting gaps — what owner can't easily see</div></div>
+        <div class="detail-col"><div class="detail-col-label">People</div><div class="detail-item">Who manages books — owner, bookkeeper, accountant?</div><div class="detail-item">Is there a clear financial decision-maker?</div><div class="detail-item">Where is the owner out of the loop financially?</div></div>
+      </div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Financials</div><div class="detail-item">Pull P&amp;L for last 3 months</div><div class="detail-item">Review cash flow pattern — when are the tight spots?</div><div class="detail-item">Identify top expense categories and any anomalies</div></div>
+        <div class="detail-col"><div class="detail-col-label">Goals</div><div class="detail-item">What is the profit margin goal?</div><div class="detail-item">Does the owner know their break-even number?</div><div class="detail-item">What financial visibility would change decisions most?</div></div>
+        <div class="detail-col"><div class="detail-col-label">Project Mgmt</div><div class="detail-item">Document financial review tasks in Asana</div><div class="detail-item">Set up recurring bookkeeping task cadence</div><div class="detail-item">Log all financial tools and access in Notion</div></div>
+      </div>
+    </div>
+
+    <div class="pillar-card" id="card-1-5" onclick="toggleCard(1,5)">
+      <div class="pillar-card-top"><div class="pillar-icon red">👥</div><div class="pillar-name">HR &amp; People</div><div class="pillar-sub">Hiring · Roles · Accountability</div></div>
+      <div class="pillar-card-bottom"><div class="pillar-focus">Who does what — and what's undocumented</div><div class="expand-arrow">▾</div></div>
+    </div>
+    <div class="detail-panel" id="detail-1-5">
+      <div class="detail-header"><div class="detail-title">HR &amp; People — Research</div><button class="detail-close" onclick="closeCard(event,1,5)">✕</button></div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Process</div><div class="detail-item">Review hiring and onboarding process</div><div class="detail-item">Audit how roles and responsibilities are communicated</div><div class="detail-item">Map performance review cadence (or lack of one)</div><div class="detail-item">Identify where HR fires keep recurring</div></div>
+        <div class="detail-col"><div class="detail-col-label">Software</div><div class="detail-item">Audit current HR tools — payroll, tracking, HRIS</div><div class="detail-item">Identify where employee information lives</div><div class="detail-item">Note any compliance gaps in documentation</div></div>
+        <div class="detail-col"><div class="detail-col-label">People</div><div class="detail-item">Review org structure and reporting lines</div><div class="detail-item">Identify role confusion or overlap</div><div class="detail-item">Find where the owner is covering someone else's job</div></div>
+      </div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Financials</div><div class="detail-item">Review payroll as % of revenue</div><div class="detail-item">Identify compensation structure inconsistencies</div><div class="detail-item">Flag roles being paid without clear output</div></div>
+        <div class="detail-col"><div class="detail-col-label">Goals</div><div class="detail-item">What does the right team look like in 12 months?</div><div class="detail-item">What roles need to be filled or redefined?</div><div class="detail-item">What is the one people problem costing the most?</div></div>
+        <div class="detail-col"><div class="detail-col-label">Project Mgmt</div><div class="detail-item">Create HR section in Notion with team roster</div><div class="detail-item">Document all open roles and hiring needs</div><div class="detail-item">Audit existing job descriptions or absence of them</div></div>
+      </div>
+    </div>
+
+    <div class="pillar-card" id="card-1-6" onclick="toggleCard(1,6)">
+      <div class="pillar-card-top"><div class="pillar-icon">🧭</div><div class="pillar-name">Leadership &amp; Vision</div><div class="pillar-sub">Strategy · Decisions · Scorecard</div></div>
+      <div class="pillar-card-bottom"><div class="pillar-focus">Where the owner is the bottleneck</div><div class="expand-arrow">▾</div></div>
+    </div>
+    <div class="detail-panel" id="detail-1-6">
+      <div class="detail-header"><div class="detail-title">Leadership &amp; Vision — Research</div><button class="detail-close" onclick="closeCard(event,1,6)">✕</button></div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Process</div><div class="detail-item">Map how strategic decisions currently get made</div><div class="detail-item">Identify where owner is in too many daily decisions</div><div class="detail-item">Review meeting structure and how time is used</div><div class="detail-item">Surface what the owner does that a team member should own</div></div>
+        <div class="detail-col"><div class="detail-col-label">Software</div><div class="detail-item">Review how owner uses tools vs. how team does</div><div class="detail-item">Identify where information isn't visible to leadership</div><div class="detail-item">Note any reporting gaps at the owner level</div></div>
+        <div class="detail-col"><div class="detail-col-label">People</div><div class="detail-item">Does the owner have a leadership team or key manager?</div><div class="detail-item">Who makes decisions when the owner is out?</div><div class="detail-item">Is anyone being developed for more responsibility?</div></div>
+      </div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Financials</div><div class="detail-item">Does owner have financial visibility on demand?</div><div class="detail-item">Review how financial decisions are made</div><div class="detail-item">Identify any financial blind spots at leadership level</div></div>
+        <div class="detail-col"><div class="detail-col-label">Goals</div><div class="detail-item">What is the owner's 3-year vision for the business?</div><div class="detail-item">Are there written goals — or all in their head?</div><div class="detail-item">What is the one thing the owner most needs to stop doing?</div></div>
+        <div class="detail-col"><div class="detail-col-label">Project Mgmt</div><div class="detail-item">Capture owner's current vs. business priorities</div><div class="detail-item">Document where leadership time is being spent</div><div class="detail-item">Build leadership section in Asana and Notion</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PHASE 2: SETUP -->
+<div class="phase-panel" id="phase-2">
+  <div class="outcome-banner">
+    <div class="outcome-title">Phase 2 Outcome</div>
+    <div class="outcome-text">Every core system is built, documented, and assigned. Processes live in Notion. Org structure is clear. Software is configured. The business can run without the owner holding every piece.</div>
+  </div>
+  <div class="section-label">Six Functions · Setup Phase</div>
+  <div class="pillars-grid" id="grid-2">
+
+    <div class="pillar-card" id="card-2-1" onclick="toggleCard(2,1)">
+      <div class="pillar-card-top"><div class="pillar-icon red">📈</div><div class="pillar-name">Sales</div><div class="pillar-sub">Pipeline · Proposals · Conversion</div></div>
+      <div class="pillar-card-bottom"><div class="pillar-focus">A sales system that runs without the owner</div><div class="expand-arrow">▾</div></div>
+    </div>
+    <div class="detail-panel" id="detail-2-1">
+      <div class="detail-header"><div class="detail-title">Sales — Setup</div><button class="detail-close" onclick="closeCard(event,2,1)">✕</button></div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Process</div><div class="detail-item">Build defined pipeline stages with clear exit criteria</div><div class="detail-item">Create proposal template and follow-up sequence</div><div class="detail-item">Design intake and qualification checklist</div><div class="detail-item">Build Lucid swimlane: lead → close → handoff</div></div>
+        <div class="detail-col"><div class="detail-col-label">Software</div><div class="detail-item">Configure CRM with correct pipeline stages</div><div class="detail-item">Set up automations for follow-up reminders</div><div class="detail-item">Connect CRM to proposal tool if applicable</div></div>
+        <div class="detail-col"><div class="detail-col-label">People</div><div class="detail-item">Define who owns each stage of the pipeline</div><div class="detail-item">Build accountability — weekly pipeline review meeting</div><div class="detail-item">Write role clarity doc for sales owner</div></div>
+      </div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Financials</div><div class="detail-item">Set up revenue tracking by source in QuickBooks</div><div class="detail-item">Create simple sales dashboard (closed/pipeline/target)</div><div class="detail-item">Build commission or incentive structure if needed</div></div>
+        <div class="detail-col"><div class="detail-col-label">Goals</div><div class="detail-item">Set 90-day revenue target with monthly checkpoints</div><div class="detail-item">Define lead-to-close conversion rate goal</div><div class="detail-item">Create scorecard metric for sales function</div></div>
+        <div class="detail-col"><div class="detail-col-label">Project Mgmt</div><div class="detail-item">Asana sales project with recurring tasks</div><div class="detail-item">Pipeline review template and meeting cadence</div><div class="detail-item">Assign task ownership across sales team</div></div>
+      </div>
+    </div>
+
+    <div class="pillar-card" id="card-2-2" onclick="toggleCard(2,2)">
+      <div class="pillar-card-top"><div class="pillar-icon">📣</div><div class="pillar-name">Marketing</div><div class="pillar-sub">Brand · Content · Lead Gen</div></div>
+      <div class="pillar-card-bottom"><div class="pillar-focus">A repeatable content engine with clear ownership</div><div class="expand-arrow">▾</div></div>
+    </div>
+    <div class="detail-panel" id="detail-2-2">
+      <div class="detail-header"><div class="detail-title">Marketing — Setup</div><button class="detail-close" onclick="closeCard(event,2,2)">✕</button></div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Process</div><div class="detail-item">Define target audience and core message</div><div class="detail-item">Build content calendar with weekly/monthly rhythm</div><div class="detail-item">Create SOPs for creation, approval, and publishing</div><div class="detail-item">Build Lucid swimlane: idea → create → approve → publish</div></div>
+        <div class="detail-col"><div class="detail-col-label">Software</div><div class="detail-item">Consolidate tools to what's actually needed</div><div class="detail-item">Set up email marketing platform and templates</div><div class="detail-item">Connect analytics to track real outcomes</div></div>
+        <div class="detail-col"><div class="detail-col-label">People</div><div class="detail-item">Assign content ownership (creator, editor, approver)</div><div class="detail-item">Build accountability — weekly content check-in</div><div class="detail-item">Define escalation path when content is off-brand</div></div>
+      </div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Financials</div><div class="detail-item">Set marketing budget with categories</div><div class="detail-item">Build simple ROI tracker per channel</div><div class="detail-item">Create ad spend approval process</div></div>
+        <div class="detail-col"><div class="detail-col-label">Goals</div><div class="detail-item">Define top 1–2 KPIs (impressions, leads, conversions)</div><div class="detail-item">Set 90-day marketing target</div><div class="detail-item">Add marketing metric to company scorecard</div></div>
+        <div class="detail-col"><div class="detail-col-label">Project Mgmt</div><div class="detail-item">Content calendar live in Asana with owners</div><div class="detail-item">Campaign tracking per initiative</div><div class="detail-item">Monthly marketing review on calendar</div></div>
+      </div>
+    </div>
+
+    <div class="pillar-card" id="card-2-3" onclick="toggleCard(2,3)">
+      <div class="pillar-card-top"><div class="pillar-icon red">⚙️</div><div class="pillar-name">Operations</div><div class="pillar-sub">SOPs · Fulfillment · Quality</div></div>
+      <div class="pillar-card-bottom"><div class="pillar-focus">Core operations documented and assigned</div><div class="expand-arrow">▾</div></div>
+    </div>
+    <div class="detail-panel" id="detail-2-3">
+      <div class="detail-header"><div class="detail-title">Operations — Setup</div><button class="detail-close" onclick="closeCard(event,2,3)">✕</button></div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Process</div><div class="detail-item">Build SOPs for every core workflow</div><div class="detail-item">Create Lucid swimlanes for key delivery processes</div><div class="detail-item">Design quality control checkpoints into each flow</div><div class="detail-item">Build escalation path when something breaks</div></div>
+        <div class="detail-col"><div class="detail-col-label">Software</div><div class="detail-item">Select and configure primary ops management tool</div><div class="detail-item">Build project/job templates with standard tasks</div><div class="detail-item">Set up status tracking and visibility for owner</div></div>
+        <div class="detail-col"><div class="detail-col-label">People</div><div class="detail-item">Assign process ownership for every core workflow</div><div class="detail-item">Create accountability structure — who checks what</div><div class="detail-item">Write role clarity docs for operational team members</div></div>
+      </div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Financials</div><div class="detail-item">Build job costing or cost-per-project tracking</div><div class="detail-item">Flag any processes that are profit-negative</div><div class="detail-item">Create ops budget category in financial tracking</div></div>
+        <div class="detail-col"><div class="detail-col-label">Goals</div><div class="detail-item">Set capacity and throughput targets</div><div class="detail-item">Define quality standard for each deliverable type</div><div class="detail-item">Add ops efficiency metric to scorecard</div></div>
+        <div class="detail-col"><div class="detail-col-label">Project Mgmt</div><div class="detail-item">All SOPs live in Notion with owners assigned</div><div class="detail-item">Asana project templates for every job type</div><div class="detail-item">Weekly ops review on calendar</div></div>
+      </div>
+    </div>
+
+    <div class="pillar-card" id="card-2-4" onclick="toggleCard(2,4)">
+      <div class="pillar-card-top"><div class="pillar-icon">💰</div><div class="pillar-name">Finance</div><div class="pillar-sub">Cash Flow · P&amp;L · Reporting</div></div>
+      <div class="pillar-card-bottom"><div class="pillar-focus">Clean books and a dashboard the owner uses</div><div class="expand-arrow">▾</div></div>
+    </div>
+    <div class="detail-panel" id="detail-2-4">
+      <div class="detail-header"><div class="detail-title">Finance — Setup</div><button class="detail-close" onclick="closeCard(event,2,4)">✕</button></div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Process</div><div class="detail-item">Build monthly financial close process</div><div class="detail-item">Create invoicing SOP with terms and follow-up</div><div class="detail-item">Design accounts receivable and payable workflow</div><div class="detail-item">Build Lucid swimlane: invoice → payment → reconcile</div></div>
+        <div class="detail-col"><div class="detail-col-label">Software</div><div class="detail-item">Clean up chart of accounts in QuickBooks</div><div class="detail-item">Set up P&amp;L, cash flow, and balance sheet reports</div><div class="detail-item">Configure invoicing templates and payment reminders</div></div>
+        <div class="detail-col"><div class="detail-col-label">People</div><div class="detail-item">Define owner vs. bookkeeper responsibilities</div><div class="detail-item">Build financial review meeting cadence with owner</div><div class="detail-item">Assign bill approval authority clearly</div></div>
+      </div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Financials</div><div class="detail-item">Build monthly budget template</div><div class="detail-item">Create cash flow tracker — 4–13 week forecast</div><div class="detail-item">Set up revenue vs. expenses dashboard</div></div>
+        <div class="detail-col"><div class="detail-col-label">Goals</div><div class="detail-item">Set profit margin target by service line</div><div class="detail-item">Define 3 financial KPIs for scorecard</div><div class="detail-item">Build annual revenue and expense plan</div></div>
+        <div class="detail-col"><div class="detail-col-label">Project Mgmt</div><div class="detail-item">Financial review tasks recurring in Asana</div><div class="detail-item">Bookkeeper deliverable checklist in Notion</div><div class="detail-item">Month-end close checklist template</div></div>
+      </div>
+    </div>
+
+    <div class="pillar-card" id="card-2-5" onclick="toggleCard(2,5)">
+      <div class="pillar-card-top"><div class="pillar-icon red">👥</div><div class="pillar-name">HR &amp; People</div><div class="pillar-sub">Hiring · Roles · Accountability</div></div>
+      <div class="pillar-card-bottom"><div class="pillar-focus">Roles clear, onboarding consistent, performance tracked</div><div class="expand-arrow">▾</div></div>
+    </div>
+    <div class="detail-panel" id="detail-2-5">
+      <div class="detail-header"><div class="detail-title">HR &amp; People — Setup</div><button class="detail-close" onclick="closeCard(event,2,5)">✕</button></div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Process</div><div class="detail-item">Build hiring process: post → screen → interview → offer</div><div class="detail-item">Create onboarding checklist for every new hire</div><div class="detail-item">Design 30/60/90 day plan template</div><div class="detail-item">Build performance review process and cadence</div></div>
+        <div class="detail-col"><div class="detail-col-label">Software</div><div class="detail-item">Set up employee pages in Notion (role, goals, history)</div><div class="detail-item">Configure payroll if needed</div><div class="detail-item">Build employee handbook in Notion or as PDF</div></div>
+        <div class="detail-col"><div class="detail-col-label">People</div><div class="detail-item">Build accountability chart with clear reporting lines</div><div class="detail-item">Write role clarity document for every existing role</div><div class="detail-item">Define manager vs. team member expectations</div></div>
+      </div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Financials</div><div class="detail-item">Build compensation structure per role tier</div><div class="detail-item">Create raise and bonus criteria</div><div class="detail-item">Align headcount plan to revenue targets</div></div>
+        <div class="detail-col"><div class="detail-col-label">Goals</div><div class="detail-item">Define what "right hire" looks like per role</div><div class="detail-item">Set culture non-negotiables in writing</div><div class="detail-item">Add retention rate or team health to scorecard</div></div>
+        <div class="detail-col"><div class="detail-col-label">Project Mgmt</div><div class="detail-item">Hiring pipeline tracked in Asana</div><div class="detail-item">Onboarding task list template per role</div><div class="detail-item">Performance review calendar established</div></div>
+      </div>
+    </div>
+
+    <div class="pillar-card" id="card-2-6" onclick="toggleCard(2,6)">
+      <div class="pillar-card-top"><div class="pillar-icon">🧭</div><div class="pillar-name">Leadership &amp; Vision</div><div class="pillar-sub">Strategy · Decisions · Scorecard</div></div>
+      <div class="pillar-card-bottom"><div class="pillar-focus">A system for leading — not just reacting</div><div class="expand-arrow">▾</div></div>
+    </div>
+    <div class="detail-panel" id="detail-2-6">
+      <div class="detail-header"><div class="detail-title">Leadership &amp; Vision — Setup</div><button class="detail-close" onclick="closeCard(event,2,6)">✕</button></div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Process</div><div class="detail-item">Build weekly leadership rhythm (scorecard, team meeting, planning time)</div><div class="detail-item">Design decision framework — owner decides vs. delegates</div><div class="detail-item">Create 90-day planning process</div><div class="detail-item">Build annual planning calendar</div></div>
+        <div class="detail-col"><div class="detail-col-label">Software</div><div class="detail-item">Configure owner-level dashboard in PM tool</div><div class="detail-item">Set up leadership meeting templates in Notion</div><div class="detail-item">Create scorecard in a format the owner will actually use</div></div>
+        <div class="detail-col"><div class="detail-col-label">People</div><div class="detail-item">Define what "leadership team" looks like</div><div class="detail-item">Build owner's delegation plan — role by role</div><div class="detail-item">Design 1:1 structure for owner with direct reports</div></div>
+      </div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Financials</div><div class="detail-item">Owner gets weekly one-page financial snapshot</div><div class="detail-item">Tie financial goals to 90-day priorities</div><div class="detail-item">Build cash and profitability visibility at leadership level</div></div>
+        <div class="detail-col"><div class="detail-col-label">Goals</div><div class="detail-item">Write 1-year and 3-year vision in clear language</div><div class="detail-item">Define 3–5 company priorities for the next 90 days</div><div class="detail-item">Build scorecard with 5–8 key metrics across functions</div></div>
+        <div class="detail-col"><div class="detail-col-label">Project Mgmt</div><div class="detail-item">90-day priority list live in Asana</div><div class="detail-item">Owner's weekly review ritual documented</div><div class="detail-item">Annual planning session scheduled</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PHASE 3: LAUNCH -->
+<div class="phase-panel" id="phase-3">
+  <div class="outcome-banner">
+    <div class="outcome-title">Phase 3 Outcome</div>
+    <div class="outcome-text">Team is running the systems — not just aware they exist. Every function has been trained, tested with a real scenario, and the owner has confirmed they can step back.</div>
+  </div>
+  <div class="section-label">Six Functions · Launch Phase</div>
+  <div class="pillars-grid" id="grid-3">
+
+    <div class="pillar-card" id="card-3-1" onclick="toggleCard(3,1)">
+      <div class="pillar-card-top"><div class="pillar-icon red">📈</div><div class="pillar-name">Sales</div><div class="pillar-sub">Pipeline · Proposals · Conversion</div></div>
+      <div class="pillar-card-bottom"><div class="pillar-focus">Team running the sales system live</div><div class="expand-arrow">▾</div></div>
+    </div>
+    <div class="detail-panel" id="detail-3-1">
+      <div class="detail-header"><div class="detail-title">Sales — Launch</div><button class="detail-close" onclick="closeCard(event,3,1)">✕</button></div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Process</div><div class="detail-item">Present final sales workflow to owner and team</div><div class="detail-item">Walk through proposal and follow-up SOP together</div><div class="detail-item">Run one live deal through the new system</div></div>
+        <div class="detail-col"><div class="detail-col-label">Software</div><div class="detail-item">Go live on CRM — full team training</div><div class="detail-item">Confirm all automations are running correctly</div><div class="detail-item">Troubleshoot any adoption issues in week 1</div></div>
+        <div class="detail-col"><div class="detail-col-label">People</div><div class="detail-item">Confirm role ownership is understood by all</div><div class="detail-item">Hold first pipeline review meeting on new format</div><div class="detail-item">Coach owner on letting go of deal-by-deal control</div></div>
+      </div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Financials</div><div class="detail-item">Review first dashboard output with owner</div><div class="detail-item">Confirm revenue tracking is clean in QuickBooks</div></div>
+        <div class="detail-col"><div class="detail-col-label">Goals</div><div class="detail-item">Confirm scorecard is live and being reviewed</div><div class="detail-item">Check 90-day target visibility is in place</div></div>
+        <div class="detail-col"><div class="detail-col-label">Project Mgmt</div><div class="detail-item">Confirm Asana tasks are assigned and moving</div><div class="detail-item">Validate meeting cadence is on calendar</div></div>
+      </div>
+    </div>
+
+    <div class="pillar-card" id="card-3-2" onclick="toggleCard(3,2)">
+      <div class="pillar-card-top"><div class="pillar-icon">📣</div><div class="pillar-name">Marketing</div><div class="pillar-sub">Brand · Content · Lead Gen</div></div>
+      <div class="pillar-card-bottom"><div class="pillar-focus">Content producing consistently without owner</div><div class="expand-arrow">▾</div></div>
+    </div>
+    <div class="detail-panel" id="detail-3-2">
+      <div class="detail-header"><div class="detail-title">Marketing — Launch</div><button class="detail-close" onclick="closeCard(event,3,2)">✕</button></div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Process</div><div class="detail-item">Present final content workflow to team</div><div class="detail-item">Publish first content under new system</div><div class="detail-item">Run post-publish review to confirm quality</div></div>
+        <div class="detail-col"><div class="detail-col-label">Software</div><div class="detail-item">Confirm all tools are live and connected</div><div class="detail-item">Train team on scheduling and publishing tools</div></div>
+        <div class="detail-col"><div class="detail-col-label">People</div><div class="detail-item">Content owner executing without daily prompting</div><div class="detail-item">Owner is reviewing, not creating from scratch</div></div>
+      </div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Financials</div><div class="detail-item">First spend report reviewed with owner</div><div class="detail-item">Confirm budget guardrails are in place</div></div>
+        <div class="detail-col"><div class="detail-col-label">Goals</div><div class="detail-item">First KPI check-in — what's getting traction?</div><div class="detail-item">Adjust content mix based on early data</div></div>
+        <div class="detail-col"><div class="detail-col-label">Project Mgmt</div><div class="detail-item">Content calendar running 2–4 weeks ahead</div><div class="detail-item">First monthly review meeting completed</div></div>
+      </div>
+    </div>
+
+    <div class="pillar-card" id="card-3-3" onclick="toggleCard(3,3)">
+      <div class="pillar-card-top"><div class="pillar-icon red">⚙️</div><div class="pillar-name">Operations</div><div class="pillar-sub">SOPs · Fulfillment · Quality</div></div>
+      <div class="pillar-card-bottom"><div class="pillar-focus">Team executes from documented processes</div><div class="expand-arrow">▾</div></div>
+    </div>
+    <div class="detail-panel" id="detail-3-3">
+      <div class="detail-header"><div class="detail-title">Operations — Launch</div><button class="detail-close" onclick="closeCard(event,3,3)">✕</button></div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Process</div><div class="detail-item">Walk team through each SOP in a working session</div><div class="detail-item">Run first real job through the new process live</div><div class="detail-item">Debrief and fix gaps after first run</div></div>
+        <div class="detail-col"><div class="detail-col-label">Software</div><div class="detail-item">Full team onboarded to ops tool</div><div class="detail-item">Confirm all job templates are being used</div><div class="detail-item">Owner has real-time visibility without asking</div></div>
+        <div class="detail-col"><div class="detail-col-label">People</div><div class="detail-item">Each person knows their role and the SOP they own</div><div class="detail-item">Escalation path is tested and working</div><div class="detail-item">Owner is reviewing, not doing</div></div>
+      </div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Financials</div><div class="detail-item">First job costing report reviewed</div><div class="detail-item">Cost overruns flagged and addressed</div></div>
+        <div class="detail-col"><div class="detail-col-label">Goals</div><div class="detail-item">Capacity target is being tracked</div><div class="detail-item">Quality standard is visible and measured</div></div>
+        <div class="detail-col"><div class="detail-col-label">Project Mgmt</div><div class="detail-item">All active jobs running in Asana</div><div class="detail-item">Ops review meeting is producing real decisions</div></div>
+      </div>
+    </div>
+
+    <div class="pillar-card" id="card-3-4" onclick="toggleCard(3,4)">
+      <div class="pillar-card-top"><div class="pillar-icon">💰</div><div class="pillar-name">Finance</div><div class="pillar-sub">Cash Flow · P&amp;L · Reporting</div></div>
+      <div class="pillar-card-bottom"><div class="pillar-focus">Owner has weekly visibility — stops deciding blind</div><div class="expand-arrow">▾</div></div>
+    </div>
+    <div class="detail-panel" id="detail-3-4">
+      <div class="detail-header"><div class="detail-title">Finance — Launch</div><button class="detail-close" onclick="closeCard(event,3,4)">✕</button></div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Process</div><div class="detail-item">Walk owner through new financial close process</div><div class="detail-item">Run first month-end close together</div><div class="detail-item">Review first cash flow forecast with owner</div></div>
+        <div class="detail-col"><div class="detail-col-label">Software</div><div class="detail-item">Confirm QBO reports are running correctly</div><div class="detail-item">Owner trained on reading dashboard</div><div class="detail-item">Invoicing process live and being followed</div></div>
+        <div class="detail-col"><div class="detail-col-label">People</div><div class="detail-item">First financial review meeting completed</div><div class="detail-item">Bookkeeper is clear on new workflow</div><div class="detail-item">Owner reviewing weekly — not monthly</div></div>
+      </div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Financials</div><div class="detail-item">First month of clean books reviewed</div><div class="detail-item">Cash flow forecast in place and visible</div></div>
+        <div class="detail-col"><div class="detail-col-label">Goals</div><div class="detail-item">Financial scorecard metric reviewed in first check-in</div><div class="detail-item">Profit margin baseline established</div></div>
+        <div class="detail-col"><div class="detail-col-label">Project Mgmt</div><div class="detail-item">Month-end close checklist completed for first time</div><div class="detail-item">Recurring financial review on calendar</div></div>
+      </div>
+    </div>
+
+    <div class="pillar-card" id="card-3-5" onclick="toggleCard(3,5)">
+      <div class="pillar-card-top"><div class="pillar-icon red">👥</div><div class="pillar-name">HR &amp; People</div><div class="pillar-sub">Hiring · Roles · Accountability</div></div>
+      <div class="pillar-card-bottom"><div class="pillar-focus">Team knows expectations — in writing, not verbally</div><div class="expand-arrow">▾</div></div>
+    </div>
+    <div class="detail-panel" id="detail-3-5">
+      <div class="detail-header"><div class="detail-title">HR &amp; People — Launch</div><button class="detail-close" onclick="closeCard(event,3,5)">✕</button></div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Process</div><div class="detail-item">Present accountability chart and role docs to team</div><div class="detail-item">Run first onboarding using new checklist</div><div class="detail-item">Conduct first formal performance check-in</div></div>
+        <div class="detail-col"><div class="detail-col-label">Software</div><div class="detail-item">Notion employee pages live for all staff</div><div class="detail-item">Handbook distributed and acknowledged by team</div></div>
+        <div class="detail-col"><div class="detail-col-label">People</div><div class="detail-item">Each team member has signed role clarity doc</div><div class="detail-item">Owner is managing — not rescuing — daily</div><div class="detail-item">Manager running their 1:1s on cadence</div></div>
+      </div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Financials</div><div class="detail-item">Payroll confirmed accurate against new role structure</div><div class="detail-item">Any compensation anomalies addressed</div></div>
+        <div class="detail-col"><div class="detail-col-label">Goals</div><div class="detail-item">HR scorecard metric in place</div><div class="detail-item">First team health check-in completed</div></div>
+        <div class="detail-col"><div class="detail-col-label">Project Mgmt</div><div class="detail-item">Hiring pipeline is live in Asana</div><div class="detail-item">Performance review dates on calendar for all staff</div></div>
+      </div>
+    </div>
+
+    <div class="pillar-card" id="card-3-6" onclick="toggleCard(3,6)">
+      <div class="pillar-card-top"><div class="pillar-icon">🧭</div><div class="pillar-name">Leadership &amp; Vision</div><div class="pillar-sub">Strategy · Decisions · Scorecard</div></div>
+      <div class="pillar-card-bottom"><div class="pillar-focus">Owner is leading — not firefighting</div><div class="expand-arrow">▾</div></div>
+    </div>
+    <div class="detail-panel" id="detail-3-6">
+      <div class="detail-header"><div class="detail-title">Leadership &amp; Vision — Launch</div><button class="detail-close" onclick="closeCard(event,3,6)">✕</button></div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Process</div><div class="detail-item">First 90-day plan reviewed with owner in session</div><div class="detail-item">Weekly leadership rhythm is on calendar and running</div><div class="detail-item">Delegation plan has first tasks transferred</div></div>
+        <div class="detail-col"><div class="detail-col-label">Software</div><div class="detail-item">Owner is using scorecard weekly</div><div class="detail-item">Leadership meeting template used for first real meeting</div></div>
+        <div class="detail-col"><div class="detail-col-label">People</div><div class="detail-item">First 1:1s held with direct reports on new structure</div><div class="detail-item">Owner has named who owns each function</div></div>
+      </div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Financials</div><div class="detail-item">First weekly financial snapshot reviewed</div><div class="detail-item">Owner confirmed: "I know my numbers"</div></div>
+        <div class="detail-col"><div class="detail-col-label">Goals</div><div class="detail-item">90-day priorities are known by the whole team</div><div class="detail-item">Scorecard live and reviewed in first leadership meeting</div></div>
+        <div class="detail-col"><div class="detail-col-label">Project Mgmt</div><div class="detail-item">Owner's priorities are in Asana — not just their head</div><div class="detail-item">90-day review date set in advance</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PHASE 4: SCALING -->
+<div class="phase-panel" id="phase-4">
+  <div class="outcome-banner">
+    <div class="outcome-title">Phase 4 Outcome</div>
+    <div class="outcome-text">The business runs and grows without the owner being the system. Each function compounds and the owner is working on the business — not in it.</div>
+  </div>
+  <div class="section-label">Six Functions · Scaling Support</div>
+  <div class="pillars-grid" id="grid-4">
+
+    <div class="pillar-card" id="card-4-1" onclick="toggleCard(4,1)">
+      <div class="pillar-card-top"><div class="pillar-icon red">📈</div><div class="pillar-name">Sales</div><div class="pillar-sub">Pipeline · Proposals · Conversion</div></div>
+      <div class="pillar-card-bottom"><div class="pillar-focus">Sales scales with business — not owner effort</div><div class="expand-arrow">▾</div></div>
+    </div>
+    <div class="detail-panel" id="detail-4-1">
+      <div class="detail-header"><div class="detail-title">Sales — Scaling Support</div><button class="detail-close" onclick="closeCard(event,4,1)">✕</button></div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Process</div><div class="detail-item">Quarterly audit of sales process for gaps</div><div class="detail-item">Update SOPs as offerings evolve</div><div class="detail-item">Add process for upsells and renewals</div></div>
+        <div class="detail-col"><div class="detail-col-label">Software</div><div class="detail-item">Evaluate CRM as team grows</div><div class="detail-item">Add reporting or analytics layer if needed</div></div>
+        <div class="detail-col"><div class="detail-col-label">People</div><div class="detail-item">Build onboarding for new sales hires</div><div class="detail-item">Create performance review structure for sales team</div></div>
+      </div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Financials</div><div class="detail-item">Monthly revenue review and forecast updates</div><div class="detail-item">Commission structure adjustments as team grows</div></div>
+        <div class="detail-col"><div class="detail-col-label">Goals</div><div class="detail-item">Annual goal-setting for sales function</div><div class="detail-item">Refine conversion rate targets based on data</div></div>
+        <div class="detail-col"><div class="detail-col-label">Project Mgmt</div><div class="detail-item">Maintain rhythm of pipeline reviews</div><div class="detail-item">Escalation process for stalled deals</div></div>
+      </div>
+    </div>
+
+    <div class="pillar-card" id="card-4-2" onclick="toggleCard(4,2)">
+      <div class="pillar-card-top"><div class="pillar-icon">📣</div><div class="pillar-name">Marketing</div><div class="pillar-sub">Brand · Content · Lead Gen</div></div>
+      <div class="pillar-card-bottom"><div class="pillar-focus">Marketing compounds — each month builds</div><div class="expand-arrow">▾</div></div>
+    </div>
+    <div class="detail-panel" id="detail-4-2">
+      <div class="detail-header"><div class="detail-title">Marketing — Scaling Support</div><button class="detail-close" onclick="closeCard(event,4,2)">✕</button></div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Process</div><div class="detail-item">Add new channels as capacity grows</div><div class="detail-item">Quarterly content strategy refresh</div><div class="detail-item">Build campaign process for product launches</div></div>
+        <div class="detail-col"><div class="detail-col-label">Software</div><div class="detail-item">Evaluate automation tools as volume grows</div><div class="detail-item">Add CRM integration to attribute leads accurately</div></div>
+        <div class="detail-col"><div class="detail-col-label">People</div><div class="detail-item">Hire or delegate content creation as needed</div><div class="detail-item">Build onboarding for new marketing team members</div></div>
+      </div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Financials</div><div class="detail-item">Monthly budget vs. actual review</div><div class="detail-item">Annual marketing investment planning</div></div>
+        <div class="detail-col"><div class="detail-col-label">Goals</div><div class="detail-item">Refine KPIs based on what drives real revenue</div><div class="detail-item">Set annual brand awareness benchmark</div></div>
+        <div class="detail-col"><div class="detail-col-label">Project Mgmt</div><div class="detail-item">Campaign templates in Asana for repeatable launches</div><div class="detail-item">Brand asset library maintained in Notion</div></div>
+      </div>
+    </div>
+
+    <div class="pillar-card" id="card-4-3" onclick="toggleCard(4,3)">
+      <div class="pillar-card-top"><div class="pillar-icon red">⚙️</div><div class="pillar-name">Operations</div><div class="pillar-sub">SOPs · Fulfillment · Quality</div></div>
+      <div class="pillar-card-bottom"><div class="pillar-focus">Operations scales — owner not a new bottleneck</div><div class="expand-arrow">▾</div></div>
+    </div>
+    <div class="detail-panel" id="detail-4-3">
+      <div class="detail-header"><div class="detail-title">Operations — Scaling Support</div><button class="detail-close" onclick="closeCard(event,4,3)">✕</button></div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Process</div><div class="detail-item">Quarterly SOP audit and update cycle</div><div class="detail-item">Add new process documentation as services expand</div><div class="detail-item">Build onboarding process for new operational hires</div></div>
+        <div class="detail-col"><div class="detail-col-label">Software</div><div class="detail-item">Evaluate ops tools as team and volume scale</div><div class="detail-item">Add automation for repetitive operational tasks</div></div>
+        <div class="detail-col"><div class="detail-col-label">People</div><div class="detail-item">Build operations manager role as team grows</div><div class="detail-item">Create team training program for new hires</div></div>
+      </div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Financials</div><div class="detail-item">Monthly job profitability review</div><div class="detail-item">Annual ops cost analysis and efficiency targets</div></div>
+        <div class="detail-col"><div class="detail-col-label">Goals</div><div class="detail-item">Quarterly capacity planning</div><div class="detail-item">Throughput targets aligned to revenue goals</div></div>
+        <div class="detail-col"><div class="detail-col-label">Project Mgmt</div><div class="detail-item">Asana templates updated as offerings evolve</div><div class="detail-item">Ops scorecard reviewed in quarterly business review</div></div>
+      </div>
+    </div>
+
+    <div class="pillar-card" id="card-4-4" onclick="toggleCard(4,4)">
+      <div class="pillar-card-top"><div class="pillar-icon">💰</div><div class="pillar-name">Finance</div><div class="pillar-sub">Cash Flow · P&amp;L · Reporting</div></div>
+      <div class="pillar-card-bottom"><div class="pillar-focus">Finance runs proactively — not reactively</div><div class="expand-arrow">▾</div></div>
+    </div>
+    <div class="detail-panel" id="detail-4-4">
+      <div class="detail-header"><div class="detail-title">Finance — Scaling Support</div><button class="detail-close" onclick="closeCard(event,4,4)">✕</button></div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Process</div><div class="detail-item">Annual budget planning process</div><div class="detail-item">Quarterly financial review with owner and accountant</div><div class="detail-item">Add financial forecasting as business grows</div></div>
+        <div class="detail-col"><div class="detail-col-label">Software</div><div class="detail-item">Evaluate more advanced reporting tools</div><div class="detail-item">Add expense approval software if team grows</div></div>
+        <div class="detail-col"><div class="detail-col-label">People</div><div class="detail-item">Hire Controller or CFO support at scale</div><div class="detail-item">Build financial literacy in leadership team</div></div>
+      </div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Financials</div><div class="detail-item">Monthly actuals vs. budget review</div><div class="detail-item">Annual profitability analysis by service line</div></div>
+        <div class="detail-col"><div class="detail-col-label">Goals</div><div class="detail-item">3-year financial projection updated annually</div><div class="detail-item">Growth metrics tied to profitability</div></div>
+        <div class="detail-col"><div class="detail-col-label">Project Mgmt</div><div class="detail-item">Annual financial planning session in Asana</div><div class="detail-item">Quarterly tax prep checklist maintained</div></div>
+      </div>
+    </div>
+
+    <div class="pillar-card" id="card-4-5" onclick="toggleCard(4,5)">
+      <div class="pillar-card-top"><div class="pillar-icon red">👥</div><div class="pillar-name">HR &amp; People</div><div class="pillar-sub">Hiring · Roles · Accountability</div></div>
+      <div class="pillar-card-bottom"><div class="pillar-focus">People function runs the business — not just relationships</div><div class="expand-arrow">▾</div></div>
+    </div>
+    <div class="detail-panel" id="detail-4-5">
+      <div class="detail-header"><div class="detail-title">HR &amp; People — Scaling Support</div><button class="detail-close" onclick="closeCard(event,4,5)">✕</button></div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Process</div><div class="detail-item">Annual role and comp review process</div><div class="detail-item">Culture onboarding refined each quarter</div><div class="detail-item">Build succession planning as team matures</div></div>
+        <div class="detail-col"><div class="detail-col-label">Software</div><div class="detail-item">Evaluate HRIS as headcount grows</div><div class="detail-item">Add performance tracking tool if needed</div></div>
+        <div class="detail-col"><div class="detail-col-label">People</div><div class="detail-item">Build manager training program</div><div class="detail-item">Create team development paths per role</div></div>
+      </div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Financials</div><div class="detail-item">Annual headcount planning and budget</div><div class="detail-item">Retention cost vs. turnover cost analysis</div></div>
+        <div class="detail-col"><div class="detail-col-label">Goals</div><div class="detail-item">Annual culture and engagement survey</div><div class="detail-item">3-year team structure roadmap</div></div>
+        <div class="detail-col"><div class="detail-col-label">Project Mgmt</div><div class="detail-item">HR calendar maintained in Asana (reviews, trainings, anniversaries)</div><div class="detail-item">Notion employee wiki updated quarterly</div></div>
+      </div>
+    </div>
+
+    <div class="pillar-card" id="card-4-6" onclick="toggleCard(4,6)">
+      <div class="pillar-card-top"><div class="pillar-icon">🧭</div><div class="pillar-name">Leadership &amp; Vision</div><div class="pillar-sub">Strategy · Decisions · Scorecard</div></div>
+      <div class="pillar-card-bottom"><div class="pillar-focus">Owner working on the business — not in it</div><div class="expand-arrow">▾</div></div>
+    </div>
+    <div class="detail-panel" id="detail-4-6">
+      <div class="detail-header"><div class="detail-title">Leadership &amp; Vision — Scaling Support</div><button class="detail-close" onclick="closeCard(event,4,6)">✕</button></div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Process</div><div class="detail-item">Quarterly 90-day planning cycle institutionalized</div><div class="detail-item">Annual planning retreat or session built in</div><div class="detail-item">Leadership team running independently on daily ops</div></div>
+        <div class="detail-col"><div class="detail-col-label">Software</div><div class="detail-item">Evaluate EOS or OKR tools as team grows</div><div class="detail-item">Build out leadership-level reporting suite</div></div>
+        <div class="detail-col"><div class="detail-col-label">People</div><div class="detail-item">Leadership team developed and accountable</div><div class="detail-item">Succession plan for key roles started</div></div>
+      </div>
+      <div class="detail-cols">
+        <div class="detail-col"><div class="detail-col-label">Financials</div><div class="detail-item">3-year financial model updated annually</div><div class="detail-item">Owner focused on investment decisions — not cost management</div></div>
+        <div class="detail-col"><div class="detail-col-label">Goals</div><div class="detail-item">Vision reviewed and updated annually</div><div class="detail-item">5-year strategic roadmap in place</div></div>
+        <div class="detail-col"><div class="detail-col-label">Project Mgmt</div><div class="detail-item">Quarterly business review (QBR) process built</div><div class="detail-item">Annual goal cascade from vision to team-level targets</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<div class="footer">
+  <div class="footer-brand">PIVOT<span>YES</span> CONSULTING</div>
+  <div class="footer-note">Internal Methodology Reference · Six Functions · Four Phases</div>
+</div>
+
+<script>
+function showPhase(n) {
+  document.querySelectorAll('.detail-panel.open').forEach(p => p.classList.remove('open'));
+  document.querySelectorAll('.pillar-card.expanded').forEach(c => c.classList.remove('expanded'));
+  document.querySelectorAll('.phase-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.phase-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('phase-' + n).classList.add('active');
+  document.getElementById('ptab-' + n).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleCard(phase, card) {
+  const cardEl = document.getElementById('card-' + phase + '-' + card);
+  const detailEl = document.getElementById('detail-' + phase + '-' + card);
+  const grid = document.getElementById('grid-' + phase);
+  const isExpanded = cardEl.classList.contains('expanded');
+
+  // Close all in this phase
+  grid.querySelectorAll('.pillar-card.expanded').forEach(c => c.classList.remove('expanded'));
+  grid.querySelectorAll('.detail-panel.open').forEach(p => p.classList.remove('open'));
+
+  if (!isExpanded) {
+    cardEl.classList.add('expanded');
+    // Insert after the correct row
+    const cards = Array.from(grid.querySelectorAll('.pillar-card'));
+    const idx = cards.indexOf(cardEl);
+    const cols = 3;
+    const rowLastIdx = Math.min(Math.ceil((idx + 1) / cols) * cols - 1, cards.length - 1);
+    const anchor = cards[rowLastIdx];
+    anchor.after(detailEl);
+    detailEl.classList.add('open');
+    setTimeout(() => detailEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+  }
+}
+
+function closeCard(e, phase, card) {
+  e.stopPropagation();
+  document.getElementById('card-' + phase + '-' + card).classList.remove('expanded');
+  document.getElementById('detail-' + phase + '-' + card).classList.remove('open');
+}
+</script>
+</body>
+</html>
