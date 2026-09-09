@@ -454,7 +454,7 @@
 
   <div class="meta-row">
     <span><b>Prepared for</b> Akiva</span>
-    <span><b>Function</b> Sales</span>
+    <span><b>Role</b> COO</span>
     <span><b>Proposed effective</b> <span id="metaDate"></span></span>
     <span><b>First review</b> 12 months in</span>
   </div>
@@ -468,9 +468,9 @@
       <p class="eyebrow">The offer</p>
       <div class="offer-figure">
         <span class="pct">5%</span>
-        <span class="of">of all company sales above $110,000 in a quarter</span>
+        <span class="of">of all company sales above £110,000 in a quarter</span>
       </div>
-      <p>Every dollar Star Plans sells past that quarterly line, <b>you earn a nickel on.</b> No cap, no cliff — the more the company grows past the threshold, the more this pays out, quarter after quarter.</p>
+      <p>Every pound Star Plans sells past that quarterly line, <b>you earn five pence on.</b> No cap, no cliff — the more the company grows past the threshold, the more this pays out, quarter after quarter.</p>
     </div>
   </section>
 
@@ -487,16 +487,16 @@
       <div class="slider-block">
         <div class="slider-label">
           <label for="sales">This quarter's company sales</label>
-          <span class="slider-value" id="salesDisplay">$150,000</span>
+          <span class="slider-value" id="salesDisplay">£150,000</span>
         </div>
         <input type="range" id="sales" min="80000" max="300000" step="1000" value="150000">
-        <div class="scale-ticks"><span>$80K</span><span>$190K</span><span>$300K</span></div>
+        <div class="scale-ticks"><span>£80K</span><span>£190K</span><span>£300K</span></div>
       </div>
 
       <div class="tuners">
         <div class="tuner">
           <label for="threshold">Quarterly threshold</label>
-          <div class="field"><span>$</span><input type="number" id="threshold" value="110000" step="1000"></div>
+          <div class="field"><span>£</span><input type="number" id="threshold" value="110000" step="1000"></div>
         </div>
         <div class="tuner">
           <label for="rate">Incentive rate</label>
@@ -507,9 +507,9 @@
       <div class="result">
         <div>
           <div class="label">Akiva's payout this quarter</div>
-          <div class="sub" id="resultSub">5% of $40,000 above threshold</div>
+          <div class="sub" id="resultSub">5% of £40,000 above threshold</div>
         </div>
-        <div class="amount" id="payout">$2,000<span class="cents">.00</span></div>
+        <div class="amount" id="payout">£2,000<span class="cents">.00</span></div>
       </div>
 
       <div class="annual-note" id="annualNote"></div>
@@ -519,10 +519,10 @@
   <section>
     <h2>How it works</h2>
     <ul class="points">
-      <li><span class="num">01</span><span class="txt"><b>Quarterly threshold.</b> Star Plans' total sales for the quarter are measured against the $110,000 line.</span></li>
+      <li><span class="num">01</span><span class="txt"><b>Quarterly threshold.</b> Star Plans' total sales for the quarter are measured against the £110,000 line.</span></li>
       <li><span class="num">02</span><span class="txt"><b>Everything above it counts.</b> Akiva earns 5% of whatever sales close above that number — not the full quarter's total.</span></li>
       <li><span class="num">03</span><span class="txt"><b>Paid per quarter.</b> This isn't a year-end bonus — it's calculated and paid out at the close of each quarter, so the upside is felt right away.</span></li>
-      <li><span class="num">04</span><span class="txt"><b>Grows as the company grows.</b> There's no cap. As Star Plans scales past $110K by more each quarter, this plan scales with it.</span></li>
+      <li><span class="num">04</span><span class="txt"><b>Grows as the company grows.</b> There's no cap. As Star Plans scales past £110K by more each quarter, this plan scales with it.</span></li>
       <li><span class="num">05</span><span class="txt"><b>Revisited, not set in stone.</b> After 12 months, we sit down together, look at how it's performed, and get Akiva's feedback before deciding what carries forward.</span></li>
     </ul>
   </section>
@@ -530,12 +530,12 @@
   <section>
     <h2>Terms at a glance</h2>
     <div class="terms">
-      <div class="term-row"><div class="k">Threshold</div><div class="v">$110,000 in company sales, per quarter</div></div>
+      <div class="term-row"><div class="k">Threshold</div><div class="v">£110,000 in company sales, per quarter</div></div>
       <div class="term-row"><div class="k">Incentive rate</div><div class="v">5% of sales above the threshold</div></div>
       <div class="term-row"><div class="k">Payout cadence</div><div class="v">Calculated and paid quarterly<span class="fine">Not rolled into annual bonus</span></div></div>
       <div class="term-row"><div class="k">Cap</div><div class="v">None — scales with company growth</div></div>
       <div class="term-row"><div class="k">First review</div><div class="v">12 months from effective date<span class="fine">Structure and rate reassessed with Akiva's input</span></div></div>
-      <div class="term-row"><div class="k">Basis for offer</div><div class="v">Akiva's scope of responsibility and role in driving sales growth</div></div>
+      <div class="term-row"><div class="k">Basis for offer</div><div class="v">Akiva's scope as COO and role in driving company growth</div></div>
     </div>
   </section>
 
@@ -569,11 +569,11 @@
   const annualNote = document.getElementById('annualNote');
 
   function fmt(n){
-    return '$' + Math.round(n).toLocaleString('en-US');
+    return '£' + Math.round(n).toLocaleString('en-GB');
   }
   function fmt2(n){
     const parts = n.toFixed(2).split('.');
-    return { whole: '$' + Number(parts[0]).toLocaleString('en-US'), cents: '.' + parts[1] };
+    return { whole: '£' + Number(parts[0]).toLocaleString('en-GB'), cents: '.' + parts[1] };
   }
 
   function update(){
