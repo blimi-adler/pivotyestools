@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MZS Call Console — Maintenance Intake</title>
+<style>
+  :root{
+    --navy:#152229;
+    --navy-2:#1d323c;
+    --paper:#F2ECDE;
+    --paper-2:#E9E1CC;
+    --ink:#1c1b17;
+    --ink-soft:#5b564a;
+    --line:#cfc6ac;
+    --amber:#C6822A;
+    --amber-deep:#9c5f16;
+    --urgent:#a83c2f;
+    --urgent-bg:#f6e2dd;
+    --emergency:#7a1616;
+    --emergency-bg:#f4d3d3;
+    --routine:#456b4f;
+    --routine-bg:#e2ecdf;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --serif: Georgia, "Times New Roman", serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--navy);color:var(--ink);font-family:var(--sans);}
+  body{min-height:100vh;}
+
+  /* ---------- Emergency ribbon, always visible ---------- */
+  .ribbon{
+    position:sticky; top:0; z-index:50;
+    background:var(--emergency); color:#fff;
+    padding:10px 18px; font-size:13.5px; line-height:1.4;
+    display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    border-bottom:3px solid #4d0d0d;
+  }
+  .ribbon b{font-weight:700;}
+  .ribbon .tag{font-family:var(--mono); background:#4d0d0d; padding:1px 7px; border-radius:3px; font-size:11.5px; letter-spacing:.02em;}
+
+  /* ---------- Shell ---------- */
+  .shell{display:flex; min-height:calc(100vh - 44px); max-width:1320px; margin:0 auto;}
+  .side{
+    width:230px; flex:none; background:var(--navy-2); color:#e7e2d3;
+    padding:22px 0; position:sticky; top:44px; align-self:flex-start; height:calc(100vh - 44px); overflow-y:auto;
+  }
+  .brand{padding:0 20px 18px; border-bottom:1px solid #33474f;}
+  .brand .co{font-family:var(--serif); font-size:19px; color:#f2ecde; margin:0;}
+  .brand .sub{font-family:var(--mono); font-size:11px; color:#9fb0a9; letter-spacing:.03em; margin-top:4px;}
+
+  .steps{list-style:none; margin:0; padding:14px 0;}
+  .steps li{margin:0;}
+  .steps button{
+    all:unset; cursor:pointer; display:flex; gap:10px; align-items:flex-start;
+    width:100%; padding:11px 20px; font-size:13.5px; color:#cdd6cd;
+    border-left:3px solid transparent;
+  }
+  .steps button .n{font-family:var(--mono); font-size:11.5px; color:#8fa79a; min-width:16px;}
+  .steps button.active{background:#233c46; color:#fff; border-left-color:var(--amber);}
+  .steps button.active .n{color:var(--amber);}
+  .steps button .flag{margin-left:auto; font-size:10px; padding:1px 6px; border-radius:8px; font-family:var(--mono);}
+  .steps button .flag.on{background:var(--urgent); color:#fff;}
+
+  .refbox{margin:16px 20px 0; padding:12px; background:#233c46; border-radius:6px;}
+  .refbox summary{cursor:pointer; font-size:12.5px; color:#e7e2d3; font-weight:600;}
+  .refbox input{width:100%; margin-top:8px; padding:6px 8px; font-size:12.5px; border:1px solid #3d5560; border-radius:4px; background:#152229; color:#eee;}
+  .refresults{margin-top:8px; max-height:220px; overflow-y:auto; font-size:12px; color:#cdd6cd;}
+  .refresults .term{padding:6px 0; border-bottom:1px dashed #33474f;}
+  .refresults .term b{color:#f2ecde;}
+
+  main{flex:1; padding:28px 34px 60px; min-width:0;}
+  .panel{background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:26px 30px; max-width:900px;}
+  .panel h2{font-family:var(--serif); font-size:23px; margin:0 0 4px;}
+  .panel .kicker{font-family:var(--mono); font-size:11.5px; color:var(--amber-deep); letter-spacing:.04em; margin-bottom:14px;}
+  .hint{font-size:13px; color:var(--ink-soft); margin:-6px 0 18px; line-height:1.5;}
+
+  label.field{display:block; margin-bottom:14px;}
+  label.field .lbl{display:block; font-size:12.5px; font-weight:600; margin-bottom:5px; color:var(--ink);}
+  label.field .why{font-size:12px; color:var(--ink-soft); margin-top:3px; line-height:1.4;}
+  input[type=text], input[type=tel], select, textarea{
+    width:100%; padding:9px 10px; font-size:14px; border:1px solid var(--line); border-radius:5px;
+    background:#fffdf7; color:var(--ink); font-family:var(--sans);
+  }
+  textarea{resize:vertical; min-height:56px;}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .row3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;}
+  @media (max-width:720px){.row2,.row3{grid-template-columns:1fr;} .shell{flex-direction:column;} .side{width:100%; height:auto; position:relative; top:0;}}
+
+  .chipgrid{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 18px;}
+  .chip{
+    all:unset; cursor:pointer; padding:7px 12px; font-size:13px; border:1px solid var(--line);
+    border-radius:16px; background:#fffdf7; color:var(--ink-soft);
+  }
+  .chip.selected{background:var(--navy); color:#f2ecde; border-color:var(--navy);}
+  .chip.suggest{border-color:var(--amber); color:var(--amber-deep); font-weight:600;}
+
+  .catpill{display:inline-block; font-family:var(--mono); font-size:12px; padding:3px 9px; border-radius:4px; background:var(--paper-2); border:1px solid var(--line); margin-bottom:14px;}
+
+  .banner{border-radius:6px; padding:13px 16px; margin:0 0 18px; font-size:13.5px; line-height:1.5;}
+  .banner.emergency{background:var(--emergency-bg); border:1px solid var(--emergency); color:var(--emergency);}
+  .banner.urgent{background:var(--urgent-bg); border:1px solid var(--urgent); color:var(--urgent);}
+  .banner.routine{background:var(--routine-bg); border:1px solid var(--routine); color:var(--routine);}
+  .banner b{display:block; font-size:13px; margin-bottom:3px;}
+
+  .checklist{list-style:none; margin:0 0 18px; padding:0;}
+  .checklist li{border:1px solid var(--line); border-radius:6px; padding:11px 13px; margin-bottom:9px; background:#fffdf7;}
+  .checklist .q{font-size:13.5px; font-weight:600; margin-bottom:4px;}
+  .checklist .why{font-size:12px; color:var(--ink-soft); margin-bottom:8px;}
+  .seg{display:flex; gap:6px;}
+  .seg button{
+    all:unset; cursor:pointer; font-size:12px; padding:4px 11px; border:1px solid var(--line); border-radius:14px; color:var(--ink-soft);
+  }
+  .seg button.on{background:var(--navy); color:#f2ecde; border-color:var(--navy);}
+
+  .actions{display:flex; justify-content:space-between; margin-top:22px;}
+  .btn{all:unset; cursor:pointer; font-size:13.5px; padding:10px 18px; border-radius:5px; font-weight:600;}
+  .btn.primary{background:var(--navy); color:#f2ecde;}
+  .btn.ghost{background:transparent; color:var(--navy); border:1px solid var(--navy);}
+  .btn.copy{background:var(--amber); color:#241202;}
+  .btn:disabled{opacity:.4; cursor:default;}
+
+  .urgset{display:flex; gap:8px; margin-bottom:16px;}
+  .urgset button{all:unset; cursor:pointer; flex:1; text-align:center; padding:11px; border-radius:6px; font-weight:700; font-size:13px; border:2px solid transparent;}
+  .urgset button.routine{background:var(--routine-bg); color:var(--routine);}
+  .urgset button.urgent{background:var(--urgent-bg); color:var(--urgent);}
+  .urgset button.emergency{background:var(--emergency-bg); color:var(--emergency);}
+  .urgset button.picked{border-color:currentColor;}
+
+  .summarybox{white-space:pre-wrap; font-family:var(--mono); font-size:12.5px; line-height:1.6; background:#fffdf7; border:1px solid var(--line); border-radius:6px; padding:14px; max-height:420px; overflow-y:auto;}
+
+  .toast{position:fixed; bottom:20px; right:20px; background:var(--navy); color:#f2ecde; padding:10px 16px; border-radius:6px; font-size:13px; opacity:0; transform:translateY(6px); transition:opacity .2s, transform .2s; pointer-events:none;}
+  .toast.show{opacity:1; transform:translateY(0);}
+
+  .keyword-line{font-size:12px; color:var(--ink-soft); margin-top:-8px; margin-bottom:16px;}
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+</style>
+</head>
+<body>
+
+<div class="ribbon">
+  <span class="tag">ALWAYS</span>
+  <span><b>Fire, smoke, or a medical emergency</b> — the only reasons to tell a tenant to call 911. Nothing else gets a 911 instruction.</span>
+</div>
+
+<div class="shell">
+  <nav class="side">
+    <div class="brand">
+      <p class="co">MZS Call Console</p>
+      <div class="sub">MAINTENANCE INTAKE · v1</div>
+    </div>
+    <ul class="steps" id="stepList"></ul>
+
+    <details class="refbox">
+      <summary>Glossary lookup</summary>
+      <input type="text" id="glossSearch" placeholder="type a term, e.g. GFCI">
+      <div class="refresults" id="glossResults"></div>
+    </details>
+
+    <details class="refbox">
+      <summary>Category labels</summary>
+      <div class="refresults" style="max-height:160px;">
+        Plumbing · Electric · Appliance · HVAC · Heat · Hot Water · Intercom · Leak · Sewer · Roofing · Pest · Mold · Paint · Window · Gas · Repairs
+      </div>
+    </details>
+  </nav>
+
+  <main>
+    <div class="panel" id="panelRoot"></div>
+  </main>
+</div>
+
+<div class="toast" id="toast">Copied</div>
+
+<script>
+/* ============================= DATA ============================= */
+
+const GLOSSARY = [
+  ["Breaker / breaker panel / \u201cfuse box\u201d","The electrical panel (gray metal box) controlling apartment power. A tripped breaker is the #1 cause of \u201cno power\u201d calls \u2014 tenant can safely flip it back."],
+  ["GFCI outlet","Outlet with TEST/RESET buttons, usually kitchen/bath. Trips near water, tenant can reset."],
+  ["Split unit (ductless mini-split)","Wall heating/cooling unit with indoor panel + outdoor compressor, own remote. Individual heat source."],
+  ["Radiator","Metal heating unit inside an apartment. Every apartment has its own heat source \u2014 no building-wide boiler."],
+  ["Walk-up","Building with no elevator; stairs only."],
+  ["Basement / Cellar","Lowest level \u2014 often main water shut-offs, mechanicals, storage."],
+  ["Shut-off valve","Stops water to one fixture or the whole unit/building. Can limit leak damage."],
+  ["Snake (plumbing)","Long flexible tool used to clear deep clogs a plunger can't reach."],
+  ["Pilot light","Small flame igniting a gas stove/water heater. If it won't light AND gas smell \u2014 Urgent, post WhatsApp, no 911."],
+  ["Vanity","Bathroom sink + cabinet/countertop \u2014 tenant may say \u201cmy vanity.\u201d"],
+  ["Trip lever","Lever on tub overflow plate; wrong position = tub won't drain or hold water."],
+  ["Recessed light (\u201ccan light\u201d)","Ceiling-flush fixture \u2014 tenant may just say \u201cthe light in the ceiling.\u201d"],
+  ["Landlord / Owner","Us \u2014 the company/person owning the building."],
+  ["The Office / Management Company","How tenants refer to us collectively."],
+  ["Heat season","Oct 1 \u2013 May 31 in NYC. Apartments legally required to be kept warm."],
+  ["HPD / 311 / city agencies","NYC housing agencies. We never call, refer, or engage them ourselves."],
+  ["Violation","Official notice (usually HPD) of a code issue. Management's job, not phone staff's."],
+  ["ConEd / utility company","Electric/gas utility. Neighborhood-wide outage \u2014 not something we dispatch for."],
+  ["Work Order (WO)","Rent Manager record documenting an issue start to finish. One per issue."],
+  ["Dispatch","Sending a super, handyman, or vendor to physically handle an issue."],
+  ["Access / Access Request","Permission + usually scheduled window for entry. Tenants normally told in advance, except emergencies."],
+  ["NYCHA","NYC Housing Authority \u2014 public/subsidized housing, different inspection process."],
+  ["Section 8 / Subsidized housing","Government rent-payment program. Doesn't change how you handle the call."],
+  ["Certificate of Occupancy","Legal document defining building use. Not something phone staff explain."],
+  ["Extermination / Pest control","Usually scheduled in advance, not same-day."],
+  ["Notice","Formal written lease communication. Phone staff don't issue \u2014 flag to office if asked."],
+  ["Super / Handyman / Field Technician","Person who physically fixes the problem."],
+  ["Porter","Handles cleaning/light upkeep \u2014 not repairs."],
+  ["Vendor / Contractor","Outside company (plumber, electrician, exterminator, elevator co.) for a specific job."]
+];
+
+// issue types: id, label, category, urgentDefault ('R'|'U'|'E'), urgentNote, keywords, clarifying (extra, beyond generic), checks[{q,why}]
+const ISSUES = [
+  {id:"electrical", label:"Electrical / No Power", category:"Electric", urgentDefault:"R",
+   keywords:["power","electric","outlet","breaker","light","sparking","spark"],
+   note:"Sparking, burning smell, or a burning outlet is Urgent \u2014 stop troubleshooting and escalate.",
+   checks:[
+    {q:"Whole apartment or specific outlets/rooms?", why:"Whole-apartment loss often points to the main breaker or a utility outage; single outlets often point to a tripped GFCI."},
+    {q:"Check the breaker panel \u2014 any switch in the middle/off position? Flip fully off, then back on.", why:"The single most common fix for \u201cno power\u201d calls."},
+    {q:"GFCI outlet nearby (kitchen/bath) with TEST/RESET \u2014 press RESET.", why:"GFCI trips are common and tenant-resolvable."},
+    {q:"Are neighbors also without power? Any visible outage in the area?", why:"A neighborhood-wide ConEd outage is not something we dispatch for \u2014 log and monitor."},
+    {q:"If tenant pays their own electric bill \u2014 has it been paid / service shut off?", why:"Ask tactfully."},
+    {q:"Any sparking, burning smell, or burning outlet?", why:"If yes \u2014 this is Urgent immediately, stop troubleshooting."}
+   ]},
+  {id:"noheat", label:"No Heat", category:"Heat", urgentDefault:"seasonal",
+   keywords:["heat","cold","radiator","freezing"],
+   note:"\u201cNo heat\u201d is never low priority. During heat season (Oct 1\u2013May 31) it is always at least Urgent, even if nothing sounds broken.",
+   checks:[
+    {q:"Which type of heat \u2014 split unit, forced air, or radiator? (check Rent Manager/property notes if unsure)", why:"Every apartment has its own individual heat \u2014 no building-wide boiler. Determines which checks apply."},
+    {q:"Split unit: powered on, set to HEAT (not cool)? Remote batteries OK? Outdoor unit blocked/frozen? Indoor unit blocked?", why:"Commonly left in wrong mode or dead remote \u2014 both tenant-fixable."},
+    {q:"Forced air: thermostat set to HEAT, above room temp, fresh batteries if digital? Vents open, not blocked?", why:"Simple, tenant-checkable settings."},
+    {q:"Radiator: valve open (not closed)? Blocked by furniture/curtains? Hissing, banging, gurgling?", why:"Open valve + clear airflow are simple checks; noise is useful info even if it doesn't resolve the call."},
+    {q:"Is it currently heat season (Oct 1\u2013May 31)?", why:"Affects legal priority \u2014 always Urgent during heat season regardless of outside temperature."}
+   ]},
+  {id:"nohotwater", label:"No Hot Water", category:"Hot Water", urgentDefault:"U",
+   keywords:["hot water"],
+   note:"Hot water is required year-round \u2014 \u201cno hot water\u201d calls are never low priority.",
+   checks:[
+    {q:"Own hot water tank, or on the building's centralized system? (check Rent Manager/property notes if unsure)", why:"Determines whether this is likely isolated to this apartment or building-wide."},
+    {q:"If own tank: any noise, leaking, or completely cold with no change over time?", why:"An individual tank issue is normally isolated to this unit."},
+    {q:"If centralized: just this unit, or are neighbors also without hot water?", why:"If centralized and more than one unit affected \u2014 treat as Urgent."},
+    {q:"Did water ever get warm, or is it stone cold with no change over time?", why:"Helps distinguish slower recovery from a real outage."}
+   ]},
+  {id:"nowater", label:"No Water / Low Pressure", category:"Plumbing", urgentDefault:"R",
+   keywords:["water pressure","no water","low pressure"],
+   note:"No water building-wide is Urgent. Low pressure at one fixture is usually Routine.",
+   checks:[
+    {q:"Every fixture affected (kitchen + bath, hot + cold), or just one faucet?", why:"One fixture usually means a local valve/fixture problem; whole apartment usually means a building-wide supply issue."},
+    {q:"Shut-off valve under sink/behind toilet \u2014 fully open (not stuck halfway)?", why:"A partially closed valve is a common cause of low pressure at one fixture."},
+    {q:"Are neighbors also without water or low pressure?", why:"Building-wide = pump or main supply issue \u2014 escalate as Urgent."}
+   ]},
+  {id:"toilet", label:"Toilet Issues", category:"Plumbing", urgentDefault:"R",
+   keywords:["toilet","flush"],
+   note:"Leaking at the base with water on the floor is treated like a leak, not routine.",
+   checks:[
+    {q:"Clogged (won't flush, water rising) or running/won't stop filling?", why:"A clog is a plunger job; a running toilet is usually a worn part, not urgent but wastes water."},
+    {q:"If clogged: tried a plunger? Anything unusual gone down it (wipes, paper towels, feminine products, toys)?", why:"Non-flushable items are the most common cause \u2014 helpful for the technician to know."},
+    {q:"Rocking, unstable, or leaking at the base \u2014 is water actively on the floor?", why:"Can mean a failed wax seal \u2014 treat like a leak, not routine."},
+    {q:"Is this the only toilet in the apartment?", why:"If the only toilet and unusable, treat as higher priority."}
+   ]},
+  {id:"drain", label:"Clogged / Slow Drains", category:"Plumbing", urgentDefault:"R",
+   keywords:["clog","drain","slow drain"],
+   checks:[
+    {q:"One fixture (one sink/tub) or multiple fixtures/whole apartment?", why:"Multiple fixtures at once often means a bigger building line issue \u2014 more urgent, not routine."},
+    {q:"Has the tenant tried a plunger?", why:"Simple, safe first step for a single slow drain."},
+    {q:"Tub: is the trip lever (on the overflow plate) set to open, not closed?", why:"A closed trip lever is a common, tenant-checkable reason a tub won't drain."},
+    {q:"Any water backing into a different fixture (e.g. tub rises when toilet flushes)?", why:"Strong sign of a shared line issue \u2014 escalate, don't just log routine."}
+   ]},
+  {id:"sewage", label:"Sewage Backup", category:"Sewer", urgentDefault:"U",
+   keywords:["sewage","backup","smell drain"],
+   note:"Sewage backup is Urgent \u2014 escalate directly for same-day dispatch. No city agencies.",
+   checks:[
+    {q:"More than one drain affected (e.g. toilet bubbles when washer drains, basement floor drain backing up)?", why:"Multiple drains together is a strong sign of a main line blockage, not a single-fixture clog."},
+    {q:"Bad odor, standing water, or waste visible (not just slow draining)?", why:"Distinguishes emergency-level backup from an ordinary slow drain."},
+    {q:"Ask the tenant to avoid running water or flushing until assessed, if able.", why:"Reduces the chance of the backup getting worse or spreading."}
+   ]},
+  {id:"leakminor", label:"Minor Leak", category:"Leak", urgentDefault:"R",
+   keywords:["leak","drip","damp","stain"],
+   checks:[
+    {q:"Actively dripping, or a dry stain from something already resolved?", why:"A dry, old stain can usually be routine; anything currently wet needs a closer look."},
+    {q:"Where is it \u2014 under a sink, around a window, a small ceiling spot?", why:"Location changes who needs to respond and how urgently."},
+    {q:"Shut-off valve near the source the tenant could safely turn, if comfortable?", why:"Can limit damage \u2014 only if the tenant is comfortable, never insist."}
+   ]},
+  {id:"leakmajor", label:"Major Leak / Flooding / Ceiling Damage", category:"Leak", urgentDefault:"U",
+   keywords:["flood","flooding","ceiling","pouring","sagging","collapse"],
+   note:"Active flowing water, water through fixtures, or a sagging/bulging/collapsed ceiling is Urgent.",
+   checks:[
+    {q:"Is water actively flowing/pouring (not just dripping)?", why:"Active flooding can damage floors, electrical, and the unit below \u2014 needs same-day attention."},
+    {q:"Coming from the ceiling \u2014 sagging, bubbled, or discolored?", why:"A sagging or bulging ceiling can mean a collapse risk."},
+    {q:"Any water near outlets, light fixtures, or switches?", why:"Water + electrical is a safety concern \u2014 advise avoiding that area until assessed."},
+    {q:"Does the tenant know if water is coming from the unit above?", why:"Helps the technician know if they'll need access to the unit upstairs too."},
+    {q:"Ask for a photo or video immediately.", why:"Lets the Property Manager and technician judge severity before arriving."}
+   ]},
+  {id:"roof", label:"Roof Leak", category:"Roofing", urgentDefault:"U",
+   keywords:["roof leak","top floor"],
+   note:"Active water during/after weather should be treated with the same urgency as a major leak.",
+   checks:[
+    {q:"Top-floor apartment, and did it start during/right after rain or snow?", why:"A classic sign of a roof leak \u2014 useful for the technician before going up on the roof."},
+    {q:"Is water actively coming through right now, or is it a stain from a past storm?", why:"Active water during weather = same urgency as major leak."},
+    {q:"Ask for a photo/video of the ceiling; note if it's still actively raining/snowing.", why:"Helps tell a roof leak apart from a plumbing leak from a unit above."}
+   ]},
+  {id:"fridge", label:"Refrigerator", category:"Appliance", urgentDefault:"R",
+   keywords:["fridge","refrigerator","freezer"],
+   checks:[
+    {q:"Fully plugged in, and breaker for that outlet/kitchen checked?", why:"Common cause."},
+    {q:"Is the thermostat/temperature dial set correctly (not accidentally down or off)?", why:"Easy tenant-checkable setting."},
+    {q:"Is food spoiling, or just running warmer than usual?", why:"Spoiling food is more urgent (health/financial impact) than merely warm."},
+    {q:"If leaking: pooling water underneath, or just a small amount of condensation?", why:"Tells a minor issue apart from something needing prompt attention."}
+   ]},
+  {id:"stove", label:"Stove / Oven", category:"Appliance", urgentDefault:"R",
+   keywords:["stove","oven","gas smell","burner","pilot"],
+   note:"ANY gas smell \u2014 stop troubleshooting immediately. Treat as Urgent (no 911, no city agency), post to WhatsApp right away.",
+   checks:[
+    {q:"Gas stove: burner clicks but doesn't light, OR any smell of gas?", why:"Any gas smell = Urgent immediately, even if the tenant seems calm about it."},
+    {q:"Gas stove: is the pilot light lit (if visible)? Clean around the burner (grease/debris can block ignition)?", why:"Simple causes that don't need a technician."},
+    {q:"Electric stove: is the breaker for the stove/oven checked?", why:"Electric ranges are often on a dedicated breaker that can trip."},
+    {q:"One burner, all burners, or the oven affected?", why:"Helps the technician know what to bring."}
+   ]},
+  {id:"doorswindows", label:"Doors / Windows / Locks", category:"Window / Repairs", urgentDefault:"R",
+   keywords:["door","window","lock","won't lock"],
+   checks:[
+    {q:"Entry door, interior door, or a window?", why:"A tenant unable to lock their own front door is a security priority \u2014 more urgent than an interior door."},
+    {q:"Key turns but door won't open/close, or key doesn't turn at all?", why:"Tells a misaligned door (simple) from a broken lock cylinder (needs locksmith/super)."},
+    {q:"Windows: fails to open, close, or lock \u2014 is weather currently coming in?", why:"A window that won't close in cold/rain is more urgent than one that's just hard to open."}
+   ]},
+  {id:"intercom", label:"Intercom / Buzzer", category:"Intercom", urgentDefault:"R",
+   keywords:["intercom","buzzer","entry system"],
+   checks:[
+    {q:"Just this unit's buzzer, or is the whole building entry system down?", why:"A building-wide outage affects everyone's security and deliveries \u2014 higher priority."},
+    {q:"Can the front door still be locked/secured normally even though the buzzer doesn't work?", why:"If the door itself won't secure, treat this like a door/lock security issue."}
+   ]},
+  {id:"elevator", label:"Elevator", category:"Repairs", urgentDefault:"U",
+   keywords:["elevator","stuck","lift"],
+   note:"If anyone is currently inside: tell them to stay calm, stay in the elevator, and use the alarm/intercom \u2014 do not force doors. Any medical issue, panic, or trouble breathing = life-threatening emergency (911). Otherwise Urgent \u2014 post immediately so the elevator company can be contacted.",
+   checks:[
+    {q:"Is anyone currently inside the elevator right now?", why:"Determines whether this is a true emergency or simply an out-of-service report."},
+    {q:"Stuck between floors, stuck on one floor with doors open, or simply not responding to calls?", why:"Different symptoms for the technician/elevator company to know in advance."},
+    {q:"Is this the only elevator in the building?", why:"A single-elevator building out of service is a bigger access problem, especially for elderly/disabled tenants \u2014 flag to the Property Manager."}
+   ]},
+  {id:"pest", label:"Pest Issues", category:"Pest", urgentDefault:"R",
+   keywords:["roach","mice","mouse","bedbug","pest","bug"],
+   note:"Normally routine (scheduled, not same-day) \u2014 but flag worsening infestations or suspected bedbugs to the Property Manager.",
+   checks:[
+    {q:"What kind of pest, and where is it being seen (kitchen, bath, bedroom, whole apartment)?", why:"Different pests get scheduled with different vendors/frequency."},
+    {q:"New sighting, or ongoing/worsening?", why:"A worsening infestation may need to be flagged to the Property Manager rather than just queued routinely."},
+    {q:"For suspected bedbugs: has the tenant seen bites, or the bugs themselves?", why:"Bedbugs often need prompt scheduling and can involve neighboring units \u2014 flag to the Property Manager."}
+   ]},
+  {id:"moldpaint", label:"Mold / Paint / Ceiling Damage", category:"Mold / Paint", urgentDefault:"R",
+   keywords:["mold","paint","peeling","ceiling damage"],
+   note:"Cracked, bulging, or soft/spongy wall or ceiling = treat with the same urgency as a major leak.",
+   checks:[
+    {q:"Is there a current or recent water source nearby (past leak, condensation, a window that doesn't seal)?", why:"Mold and peeling paint are very often connected to a water issue \u2014 log both together if so."},
+    {q:"What color/texture is it, and how large an area?", why:"A photo is especially useful here \u2014 ask for one whenever possible."},
+    {q:"Is the wall or ceiling cracked, bulging, or does it feel soft/spongy?", why:"Can indicate structural or major water damage \u2014 same urgency as major leak if so."}
+   ]},
+  {id:"ac", label:"AC / Window Units", category:"HVAC", urgentDefault:"R",
+   keywords:["ac","air condition","window unit"],
+   checks:[
+    {q:"Building-provided unit, or did the tenant install their own?", why:"Affects whether it's our responsibility \u2014 check with the Property Manager if unclear."},
+    {q:"Plugged in / breaker checked, and thermostat/dial set correctly?", why:"Common, simple, tenant-checkable causes."},
+    {q:"Is it leaking water inside the apartment?", why:"A leaking AC unit should be treated with the same attention as a minor leak."}
+   ]},
+  {id:"lockout", label:"Lockout", category:"Repairs", urgentDefault:"R",
+   keywords:["locked out","lockout","key"],
+   checks:[
+    {q:"Confirm the caller's identity and that they live in the unit.", why:"Never grant access or send someone for a person who isn't confirmed to live there."},
+    {q:"Is this a building entry door, mailbox, or apartment door?", why:"Changes who needs to respond and how."}
+   ]},
+  {id:"smokeco", label:"Smoke / CO Detector", category:"Repairs", urgentDefault:"R",
+   keywords:["smoke detector","co detector","beeping","chirping","alarm"],
+   note:"Visible smoke or fire = 911 situation, life-threatening emergency. A steady alarm with no smoke/fire (CO alarm or gas-triggered) = Urgent, not 911.",
+   checks:[
+    {q:"Is it a steady alarm, and is there visible smoke or fire?", why:"Visible smoke or fire is a 911 situation."},
+    {q:"Steady alarm with no smoke/fire (e.g. a CO alarm, or triggered by a gas smell)?", why:"Urgent, not 911 \u2014 post to WhatsApp right away."},
+    {q:"Just an intermittent chirp, no alarm, nothing else going on?", why:"Almost always a low battery \u2014 routine, not urgent."}
+   ]}
+];
+
+const EMERGENCY_WORDS = ["fire","smoke","can't breathe","cant breathe","not breathing","chest pain","unconscious","collapsed","seizure","bleeding badly"];
+const GAS_WORDS = ["gas smell","smell gas","smells like gas","rotten egg"];
+
+/* ============================= STATE ============================= */
+const state = {
+  step: 0,
+  company: "MZS Realty & Management",
+  coordinator: "",
+  callerName: "", address: "", unit: "", callback: "", resident: "yes",
+  woSearched: false, woFound: "",
+  saidText: "",
+  issueId: null,
+  clarify: {what:"", where:"", scope:""},
+  timeline: {when:"", before:"", howlong:"", constant:""},
+  checkAnswers: {}, // per issue: array of {status:'', note:''}
+  urgencyOverride: null,
+  photoAsked: null, photoReceived: null,
+  financialFlag: false, cityAgencyFlag: false,
+  woNumber: ""
+};
+
+const STEPS = ["Start the Call","Caller & Work Order","The Issue","Urgency & Escalation","Photos & Work Order"];
+
+/* ============================= RENDER ============================= */
+function el(html){ const d=document.createElement('div'); d.innerHTML=html.trim(); return d.firstChild; }
+function todayInHeatSeason(){ const m=(new Date()).getMonth()+1; return (m>=10 || m<=5); }
+
+function renderSteps(){
+  const ul = document.getElementById('stepList');
+  ul.innerHTML = "";
+  STEPS.forEach((label,i)=>{
+    const li = document.createElement('li');
+    const urgFlag = (i===3 && computedUrgency()!=='R') ? `<span class="flag on">${computedUrgency()}</span>` : "";
+    li.innerHTML = `<button class="${i===state.step?'active':''}" data-i="${i}"><span class="n">${String(i+1).padStart(2,'0')}</span><span>${label}</span>${urgFlag}</button>`;
+    ul.appendChild(li);
+  });
+  ul.querySelectorAll('button').forEach(b=>b.addEventListener('click', ()=>{ state.step = +b.dataset.i; renderAll(); }));
+}
+
+function computedUrgency(){
+  if(state.urgencyOverride) return state.urgencyOverride;
+  const type = ISSUES.find(i=>i.id===state.issueId);
+  const lower = (state.saidText||"").toLowerCase();
+  if(EMERGENCY_WORDS.some(w=>lower.includes(w))) return 'E';
+  if(GAS_WORDS.some(w=>lower.includes(w))) return 'U';
+  const ans = state.checkAnswers[state.issueId] || [];
+  const yesTexts = ans.map(a=>(a && a.status==='yes')?1:0);
+  if(!type) return 'R';
+  // special per-type rules based on check answers (index-based, matches order defined above)
+  if(type.id==="electrical" && ans[5] && ans[5].status==='yes') return 'U'; // sparking
+  if(type.id==="noheat"){ return todayInHeatSeason() ? 'U' : 'R'; }
+  if(type.id==="nohotwater") return 'U';
+  if(type.id==="nowater" && ans[2] && ans[2].status==='yes') return 'U'; // neighbors affected -> building wide
+  if(type.id==="toilet" && ans[2] && ans[2].status==='yes') return 'U'; // leaking at base w/ water on floor
+  if(type.id==="drain" && ans[3] && ans[3].status==='yes') return 'U'; // shared line
+  if(type.id==="sewage") return 'U';
+  if(type.id==="leakmajor") return 'U';
+  if(type.id==="roof" && ans[1] && ans[1].status==='yes') return 'U'; // active now
+  if(type.id==="stove" && ans[0] && ans[0].status==='yes') return 'U'; // gas smell
+  if(type.id==="elevator") return ans[0] && ans[0].status==='yes' ? 'E' : 'U';
+  if(type.id==="moldpaint" && ans[2] && ans[2].status==='yes') return 'U'; // structural
+  if(type.id==="smokeco" && ans[0] && ans[0].status==='yes') return 'E';
+  if(type.id==="smokeco" && ans[1] && ans[1].status==='yes') return 'U';
+  return type.urgentDefault==='seasonal' ? (todayInHeatSeason()?'U':'R') : (type.urgentDefault==='U'?'U':(type.urgentDefault==='E'?'E':'R'));
+}
+
+function urgencyLabel(code){ return code==='E'?'Emergency':code==='U'?'Urgent':'Routine'; }
+
+function renderPanel(){
+  const root = document.getElementById('panelRoot');
+  const active = document.activeElement;
+  const activeId = (active && root.contains(active) && active.id) ? active.id : null;
+  const selStart = active && typeof active.selectionStart === 'number' ? active.selectionStart : null;
+  const selEnd = active && typeof active.selectionEnd === 'number' ? active.selectionEnd : null;
+  root.innerHTML = "";
+  if(state.step===0) root.appendChild(stepStart());
+  if(state.step===1) root.appendChild(stepCaller());
+  if(state.step===2) root.appendChild(stepIssue());
+  if(state.step===3) root.appendChild(stepUrgency());
+  if(state.step===4) root.appendChild(stepSummary());
+
+  if(activeId){
+    const revived = document.getElementById(activeId);
+    if(revived){
+      revived.focus();
+      if(selStart !== null && revived.setSelectionRange){
+        try{ revived.setSelectionRange(selStart, selEnd); }catch(e){}
+      }
+    }
+  }
+}
+
+function nav(prevOK, nextOK){
+  const wrap = el(`<div class="actions">
+    <button class="btn ghost" id="prevBtn" ${state.step===0?'disabled':''}>\u2190 Back</button>
+    <button class="btn primary" id="nextBtn" ${state.step===4?'disabled':''}>${state.step===4?'End':'Continue \u2192'}</button>
+  </div>`);
+  wrap.querySelector('#prevBtn').addEventListener('click', ()=>{ if(state.step>0){state.step--; renderAll();} });
+  wrap.querySelector('#nextBtn').addEventListener('click', ()=>{ if(state.step<4){state.step++; renderAll();} });
+  return wrap;
+}
+
+/* ---- Step 0 ---- */
+function stepStart(){
+  const p = el(`<div>
+    <div class="kicker">STEP 1 OF 5</div>
+    <h2>Start the Call</h2>
+    <p class="hint">Answer promptly and warmly, with the same greeting every time.</p>
+    <div class="row2">
+      <label class="field"><span class="lbl">Company name</span><input type="text" id="company" value="${state.company}"></label>
+      <label class="field"><span class="lbl">Your name</span><input type="text" id="coordinator" value="${state.coordinator}" placeholder="e.g. Grace"></label>
+    </div>
+    <div class="banner routine"><b>Say this:</b>\u201cThank you for calling ${state.company||'[Company Name]'}, this is ${state.coordinator||'[Your Name]'} \u2014 how can I help you today?\u201d</div>
+  </div>`);
+  p.querySelector('#company').addEventListener('input', e=>{state.company=e.target.value; renderPanel();});
+  p.querySelector('#coordinator').addEventListener('input', e=>{state.coordinator=e.target.value; renderPanel();});
+  p.appendChild(nav());
+  return p;
+}
+
+/* ---- Step 1 ---- */
+function stepCaller(){
+  const p = el(`<div>
+    <div class="kicker">STEP 2 OF 5</div>
+    <h2>Caller &amp; Work Order Check</h2>
+    <p class="hint">Confirm who you're speaking to and the unit before discussing the issue. Then search Rent Manager for an existing open work order \u2014 one issue, one work order.</p>
+    <div class="row2">
+      <label class="field"><span class="lbl">Caller's full name</span><input type="text" id="callerName" value="${state.callerName}"></label>
+      <label class="field"><span class="lbl">Best callback number</span><input type="tel" id="callback" value="${state.callback}"></label>
+    </div>
+    <div class="row2">
+      <label class="field"><span class="lbl">Property address</span><input type="text" id="address" value="${state.address}"></label>
+      <label class="field"><span class="lbl">Unit / Apt #</span><input type="text" id="unit" value="${state.unit}"></label>
+    </div>
+    <label class="field"><span class="lbl">Does the caller live in the unit (or is otherwise authorized)?</span>
+      <select id="resident">
+        <option value="yes" ${state.resident==='yes'?'selected':''}>Yes \u2014 confirmed</option>
+        <option value="other" ${state.resident==='other'?'selected':''}>Authorized other (spouse, adult child, home health aide)</option>
+        <option value="unrelated" ${state.resident==='unrelated'?'selected':''}>Unrelated to household \u2014 proceed cautiously</option>
+      </select>
+    </label>
+    <label class="field"><span class="lbl"><input type="checkbox" id="woSearched" ${state.woSearched?'checked':''}> Searched Rent Manager for an existing open work order for this unit/issue</span></label>
+    <label class="field"><span class="lbl">If an open work order already exists, note its number here (update it \u2014 don't create a new one)</span>
+      <input type="text" id="woFound" value="${state.woFound}" placeholder="Existing WO # (leave blank if none found)"></label>
+  </div>`);
+  p.querySelector('#callerName').addEventListener('input', e=>state.callerName=e.target.value);
+  p.querySelector('#callback').addEventListener('input', e=>state.callback=e.target.value);
+  p.querySelector('#address').addEventListener('input', e=>state.address=e.target.value);
+  p.querySelector('#unit').addEventListener('input', e=>state.unit=e.target.value);
+  p.querySelector('#resident').addEventListener('change', e=>state.resident=e.target.value);
+  p.querySelector('#woSearched').addEventListener('change', e=>state.woSearched=e.target.checked);
+  p.querySelector('#woFound').addEventListener('input', e=>state.woFound=e.target.value);
+  p.appendChild(nav());
+  return p;
+}
+
+/* ---- Step 2 ---- */
+function stepIssue(){
+  const lower = (state.saidText||"").toLowerCase();
+  const p = el(`<div>
+    <div class="kicker">STEP 3 OF 5</div>
+    <h2>The Issue</h2>
+    <p class="hint">Let the tenant explain in their own words first. Type it below for your own notes \u2014 write the actual work order in your own words later, don't paste this in.</p>
+    <label class="field"><span class="lbl">What did the tenant say?</span>
+      <textarea id="saidText" placeholder="e.g. my kitchen light isn't working, and now that you mention it the outlet by the sink is out too...">${state.saidText}</textarea>
+    </label>
+    <div class="chipgrid" id="chipgrid"></div>
+    <div id="emergencyScan"></div>
+    <div id="issueBody"></div>
+  </div>`);
+
+  const grid = p.querySelector('#chipgrid');
+  ISSUES.forEach(t=>{
+    const matched = t.keywords.some(k=>lower.includes(k));
+    const chip = el(`<button class="chip ${state.issueId===t.id?'selected':''} ${matched && state.issueId!==t.id?'suggest':''}" data-id="${t.id}">${t.label}</button>`);
+    chip.addEventListener('click', ()=>{ state.issueId=t.id; if(!state.checkAnswers[t.id]) state.checkAnswers[t.id]=t.checks.map(()=>({status:'',note:''})); renderPanel(); });
+    grid.appendChild(chip);
+  });
+
+  const scanBox = p.querySelector('#emergencyScan');
+  if(EMERGENCY_WORDS.some(w=>lower.includes(w))){
+    scanBox.appendChild(el(`<div class="banner emergency"><b>Life-threatening emergency wording detected</b>Tell the tenant: \u201cPlease hang up and call 911 right now.\u201d Do not walk through troubleshooting. As soon as that call ends, post it in the \u201cMZS Repair\u201d WhatsApp group immediately \u2014 this can't wait for normal work order entry. Never contact a city agency.</div>`));
+  } else if(GAS_WORDS.some(w=>lower.includes(w))){
+    scanBox.appendChild(el(`<div class="banner urgent"><b>Gas smell mentioned</b>Urgent, not 911. Do not tell the tenant to call 911 or any city agency. Post it in the \u201cMZS Repair\u201d WhatsApp group right away, then log a complete work order marked Urgent.</div>`));
+  }
+
+  const body = p.querySelector('#issueBody');
+  const type = ISSUES.find(i=>i.id===state.issueId);
+  if(type){
+    body.appendChild(el(`<div class="catpill">Work order category: ${type.category}</div>`));
+    if(type.note){ body.appendChild(el(`<div class="banner urgent"><b>Watch for</b>${type.note}</div>`)); }
+
+    body.appendChild(el(`<label class="field"><span class="lbl">Clarifying \u2014 what exactly is happening?</span><span class="why" style="margin-bottom:5px; display:block;">No power at all or one outlet? Dripping or flooding? A smell, sound, leak?</span><textarea id="clarWhat">${state.clarify.what}</textarea></label>`));
+    body.appendChild(el(`<div class="row2">
+      <label class="field"><span class="lbl">Where exactly?</span><input type="text" id="clarWhere" value="${state.clarify.where}" placeholder="which room / fixture / wall"></label>
+      <label class="field"><span class="lbl">Whole apartment or one area?</span><input type="text" id="clarScope" value="${state.clarify.scope}"></label>
+    </div>`));
+
+    body.appendChild(el(`<div class="kicker" style="margin-top:6px;">STANDARD TIMELINE QUESTIONS</div>`));
+    body.appendChild(el(`<div class="row2">
+      <label class="field"><span class="lbl">When did it start?</span><input type="text" id="tWhen" value="${state.timeline.when}"></label>
+      <label class="field"><span class="lbl">Has this happened before?</span><input type="text" id="tBefore" value="${state.timeline.before}"></label>
+    </div>`));
+    body.appendChild(el(`<div class="row2">
+      <label class="field"><span class="lbl">How long has it been going on?</span><input type="text" id="tHow" value="${state.timeline.howlong}"></label>
+      <label class="field"><span class="lbl">Constant, or does it come and go?</span><input type="text" id="tConst" value="${state.timeline.constant}"></label>
+    </div>`));
+
+    body.appendChild(el(`<div class="kicker" style="margin-top:6px;">QUICK CHECKS \u2014 ${type.label.toUpperCase()}</div>`));
+    const list = el(`<ul class="checklist"></ul>`);
+    type.checks.forEach((c,idx)=>{
+      const ans = state.checkAnswers[type.id][idx];
+      const li = el(`<li>
+        <div class="q">${c.q}</div>
+        <div class="why">${c.why}</div>
+        <div class="seg" data-idx="${idx}">
+          <button data-v="yes" class="${ans.status==='yes'?'on':''}">Yes</button>
+          <button data-v="no" class="${ans.status==='no'?'on':''}">No</button>
+          <button data-v="na" class="${ans.status==='na'?'on':''}">N/A</button>
+        </div>
+        <input type="text" style="margin-top:8px;" data-noteidx="${idx}" placeholder="note (optional)" value="${ans.note}">
+      </li>`);
+      li.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click', ()=>{
+        state.checkAnswers[type.id][idx].status = b.dataset.v; renderPanel();
+      }));
+      li.querySelector('input').addEventListener('input', e=>{ state.checkAnswers[type.id][idx].note = e.target.value; });
+      list.appendChild(li);
+    });
+    body.appendChild(list);
+  } else {
+    body.appendChild(el(`<p class="hint">Pick the issue type above (highlighted chips are suggested from what you typed) to load its clarifying questions and quick-check list.</p>`));
+  }
+
+  p.querySelector('#saidText').addEventListener('input', e=>{ state.saidText=e.target.value; renderPanel(); });
+  const w1=p.querySelector('#clarWhat'); if(w1) w1.addEventListener('input', e=>state.clarify.what=e.target.value);
+  const w2=p.querySelector('#clarWhere'); if(w2) w2.addEventListener('input', e=>state.clarify.where=e.target.value);
+  const w3=p.querySelector('#clarScope'); if(w3) w3.addEventListener('input', e=>state.clarify.scope=e.target.value);
+  const t1=p.querySelector('#tWhen'); if(t1) t1.addEventListener('input', e=>state.timeline.when=e.target.value);
+  const t2=p.querySelector('#tBefore'); if(t2) t2.addEventListener('input', e=>state.timeline.before=e.target.value);
+  const t3=p.querySelector('#tHow'); if(t3) t3.addEventListener('input', e=>state.timeline.howlong=e.target.value);
+  const t4=p.querySelector('#tConst'); if(t4) t4.addEventListener('input', e=>state.timeline.constant=e.target.value);
+
+  p.appendChild(nav());
+  return p;
+}
+
+/* ---- Step 3 ---- */
+function stepUrgency(){
+  const type = ISSUES.find(i=>i.id===state.issueId);
+  const auto = computedUrgency();
+  const p = el(`<div>
+    <div class="kicker">STEP 4 OF 5</div>
+    <h2>Urgency &amp; Escalation</h2>
+    <p class="hint">Suggested from the issue and quick checks. Override if your judgment says otherwise \u2014 when in doubt, escalate, don't guess.</p>
+    <div class="urgset">
+      <button data-v="R" class="routine ${auto==='R'?'picked':''}">Routine</button>
+      <button data-v="U" class="urgent ${auto==='U'?'picked':''}">Urgent</button>
+      <button data-v="E" class="emergency ${auto==='E'?'picked':''}">Emergency (911)</button>
+    </div>
+    <div id="urgBanner"></div>
+    <label class="field"><span class="lbl"><input type="checkbox" id="finFlag" ${state.financialFlag?'checked':''}> Tenant raised a money question (rent balance, back charges, repair cost, reimbursement, deposit)</span></label>
+    <div id="finBanner"></div>
+    <label class="field"><span class="lbl"><input type="checkbox" id="cityFlag" ${state.cityAgencyFlag?'checked':''}> Tenant threatened to call 311 / HPD / file a complaint</span></label>
+    <div id="cityBanner"></div>
+  </div>`);
+
+  p.querySelectorAll('.urgset button').forEach(b=>b.addEventListener('click', ()=>{ state.urgencyOverride=b.dataset.v; renderPanel(); }));
+
+  const ub = p.querySelector('#urgBanner');
+  if(auto==='E'){
+    ub.appendChild(el(`<div class="banner emergency"><b>Emergency \u2014 fire/smoke or medical only</b>Tell the tenant: \u201cPlease hang up and call 911 right now.\u201d Do not troubleshoot. As soon as that call ends, post immediately in the \u201cMZS Repair\u201d WhatsApp group. Never contact a city agency. Log the work order afterward, noting it was a 911 situation and when it was posted.</div>`));
+  } else if(auto==='U'){
+    ub.appendChild(el(`<div class="banner urgent"><b>Urgent \u2014 not 911, but serious</b>Do NOT tell the tenant to call 911 or any city agency. Post immediately in the \u201cMZS Repair\u201d WhatsApp group for priority dispatch. Reassure the tenant it's flagged as urgent \u2014 without promising a specific time. Still log a complete work order.</div>
+    <div class="summarybox" id="waMsg"></div>
+    <button class="btn copy" id="copyWA" style="margin-top:8px;">Copy WhatsApp message</button>`));
+    const waText = buildWhatsApp();
+    ub.querySelector('#waMsg').textContent = waText;
+    ub.querySelector('#copyWA').addEventListener('click', ()=>copyText(waText));
+  } else {
+    ub.appendChild(el(`<div class="banner routine"><b>Routine</b>Log a standard work order. No immediate escalation needed \u2014 goes into the normal queue.</div>`));
+  }
+
+  p.querySelector('#finFlag').addEventListener('change', e=>{ state.financialFlag=e.target.checked; renderPanel(); });
+  if(state.financialFlag){
+    p.querySelector('#finBanner').appendChild(el(`<div class="banner urgent"><b>Don't resolve on the call</b>Tell the tenant this needs to be reviewed by the office and someone will follow up. Then email the details to Nate or Chili \u2014 never handle or promise anything financial on the call.</div>`));
+  }
+  p.querySelector('#cityFlag').addEventListener('change', e=>{ state.cityAgencyFlag=e.target.checked; renderPanel(); });
+  if(state.cityAgencyFlag){
+    p.querySelector('#cityBanner').appendChild(el(`<div class="banner urgent"><b>Say this</b>\u201cI completely understand your frustration \u2014 I'm going to flag this for our manager right away so it gets the attention it needs.\u201d Stay calm, don't argue. Post it in the \u201cMZS Repair\u201d WhatsApp group immediately and note the tenant's statement in the work order.</div>`));
+  }
+
+  p.appendChild(nav());
+  return p;
+}
+
+function buildWhatsApp(){
+  const type = ISSUES.find(i=>i.id===state.issueId);
+  const desc = state.clarify.what || (type?type.label:"");
+  return `MZS Repair \u2014 ${urgencyLabel(computedUrgency())}
+Tenant: ${state.callerName||'[name]'}
+Address: ${state.address||'[address]'}, Unit ${state.unit||'[unit]'}
+Callback: ${state.callback||'[callback #]'}
+Issue: ${desc}${state.clarify.where?(' \u2014 '+state.clarify.where):''}`;
+}
+
+/* ---- Step 4 ---- */
+function stepSummary(){
+  const type = ISSUES.find(i=>i.id===state.issueId);
+  const p = el(`<div>
+    <div class="kicker">STEP 5 OF 5</div>
+    <h2>Photos &amp; Work Order</h2>
+    <p class="hint">Ask for a photo or video whenever the issue is visual. Never hold up the call waiting on it.</p>
+    <label class="field"><span class="lbl">Say this:</span></label>
+    <div class="banner routine">\u201cWould you be able to send us a quick photo or video of that on WhatsApp? It really helps us understand exactly what's going on.\u201d</div>
+    <div class="row2">
+      <label class="field"><span class="lbl">Photo/video requested?</span>
+        <select id="photoAsked"><option value="">\u2014</option><option value="yes" ${state.photoAsked==='yes'?'selected':''}>Yes</option><option value="no" ${state.photoAsked==='no'?'selected':''}>No / not able</option></select></label>
+      <label class="field"><span class="lbl">Received?</span>
+        <select id="photoReceived"><option value="">\u2014</option><option value="yes" ${state.photoReceived==='yes'?'selected':''}>Yes</option><option value="no" ${state.photoReceived==='no'?'selected':''}>No</option></select></label>
+    </div>
+    <label class="field"><span class="lbl">Work order number (once created in Rent Manager)</span><input type="text" id="woNumber" value="${state.woNumber}"></label>
+
+    <div class="kicker" style="margin-top:14px;">WORK ORDER \u2014 READY TO ENTER IN RENT MANAGER</div>
+    <div class="summarybox" id="woText"></div>
+    <button class="btn copy" id="copyWO" style="margin-top:10px;">Copy work order text</button>
+
+    <div class="kicker" style="margin-top:20px;">CLOSING SCRIPT</div>
+    <div class="banner routine" id="closeScript"></div>
+  </div>`);
+
+  p.querySelector('#photoAsked').addEventListener('change', e=>{state.photoAsked=e.target.value; renderPanel();});
+  p.querySelector('#photoReceived').addEventListener('change', e=>{state.photoReceived=e.target.value; renderPanel();});
+  p.querySelector('#woNumber').addEventListener('input', e=>{state.woNumber=e.target.value; renderPanel();});
+
+  const woText = buildWorkOrder();
+  p.querySelector('#woText').textContent = woText;
+  p.querySelector('#copyWO').addEventListener('click', ()=>copyText(woText));
+
+  p.querySelector('#closeScript').textContent = `\u201cJust to confirm \u2014 ${state.clarify.what || (type?type.label:'the issue')}${state.clarify.where?(' at '+state.clarify.where):''}. I've logged that as work order number ${state.woNumber||'[#]'}. Our team will follow up to take care of it. Is there anything else I can help you with today?\u201d`;
+
+  p.appendChild(nav());
+  return p;
+}
+
+function buildWorkOrder(){
+  const type = ISSUES.find(i=>i.id===state.issueId);
+  const ans = state.checkAnswers[state.issueId] || [];
+  const checkLines = (type?type.checks:[]).map((c,idx)=>{
+    const a = ans[idx] || {};
+    if(!a.status) return null;
+    return `- ${c.q} \u2014 ${a.status.toUpperCase()}${a.note?(' ('+a.note+')'):''}`;
+  }).filter(Boolean).join("\n");
+
+  return `Tenant: ${state.callerName||'[name]'}
+Property: ${state.address||'[address]'}, Unit ${state.unit||'[unit]'}
+Callback: ${state.callback||'[callback #]'}
+
+Issue: ${state.clarify.what||'[what is happening]'}
+Location: ${state.clarify.where||'[where]'} \u2014 ${state.clarify.scope||'[whole apt / one area]'}
+
+Timeline: started ${state.timeline.when||'[when]'}; ${state.timeline.before||'[happened before?]'}; ongoing ${state.timeline.howlong||'[how long]'}; ${state.timeline.constant||'[constant/intermittent]'}
+
+Quick checks:
+${checkLines || '(none recorded)'}
+
+Photo/video: requested ${state.photoAsked||'[?]'}, received ${state.photoReceived||'[?]'}
+
+Priority: ${urgencyLabel(computedUrgency())}
+Category: ${type?type.category:'[category]'}${state.woFound?`\nExisting WO updated: ${state.woFound}`:''}`;
+}
+
+function copyText(t){
+  navigator.clipboard.writeText(t).then(()=>{
+    const toast=document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(()=>toast.classList.remove('show'), 1400);
+  }).catch(()=>{});
+}
+
+/* ---- Glossary ---- */
+function renderGlossary(){
+  const input = document.getElementById('glossSearch');
+  const out = document.getElementById('glossResults');
+  function draw(){
+    const q = input.value.trim().toLowerCase();
+    const matches = q ? GLOSSARY.filter(([t,d])=>t.toLowerCase().includes(q)||d.toLowerCase().includes(q)) : [];
+    out.innerHTML = matches.slice(0,8).map(([t,d])=>`<div class="term"><b>${t}</b><br>${d}</div>`).join("") || (q?'<div class="term">No match.</div>':'');
+  }
+  input.addEventListener('input', draw);
+}
+
+function renderAll(){ renderSteps(); renderPanel(); }
+renderAll();
+renderGlossary();
+</script>
+</body>
+</html>
