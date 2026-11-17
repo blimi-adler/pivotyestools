@@ -602,7 +602,7 @@ var S = {
 };
 
 var FREQ_OPTS = ['Daily','Multiple/week','Weekly','Bi-weekly','Monthly','Ad hoc'];
-var BELONGS_OPTS = ['Yes &ndash; core role','Scope creep','Unclear'];
+var BELONGS_OPTS = ['Yes \u2013 core role','Scope creep','Unclear'];
 var REDIST_OPTS = ['Stays','Moves to team','Drop it','Need a hire'];
 
 function startTool() {
@@ -687,7 +687,7 @@ function renderMemberAvatars() {
 /* ── TASKS ── */
 function addTask() {
   var id = 'task_'+Date.now();
-  S.tasks.push({id:id, desc:'', freq:'Weekly', belongs:'Yes &ndash; core role'});
+  S.tasks.push({id:id, desc:'', freq:'Weekly', belongs:'Yes \u2013 core role'});
   renderTasks();
 }
 
@@ -713,7 +713,7 @@ function renderTasks() {
 
 function renderTaskStats() {
   var total = S.tasks.length;
-  var belongs = S.tasks.filter(function(t){return t.belongs==='Yes &ndash; core role';}).length;
+  var belongs = S.tasks.filter(function(t){return t.belongs==='Yes \u2013 core role';}).length;
   var creep = S.tasks.filter(function(t){return t.belongs==='Scope creep';}).length;
   document.getElementById('statTotal').textContent = total;
   document.getElementById('statBelongs').textContent = belongs;
