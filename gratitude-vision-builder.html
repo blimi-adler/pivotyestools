@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gratitude Vision Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: warm, direct, calm — a coach's notebook, not a dashboard
+   IDEA: a morning journal page — what's wrong gets crossed out, what's true gets written in
+   PICTURE: the working tool itself; each worry visibly struck through and rewritten
+   COLOUR and TYPE: PivotYes brand — white, ink, #c8452a accent; Cormorant Garamond + Outfit
+   LAYOUT: one calm column, four steps across the top, stacks on phones */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#16110f);--ink:light-dark(#1d1a18,#f3ece8);--mut:light-dark(#6d6560,#b3a8a2);--line:light-dark(#e8e2de,#3a302c);--soft:light-dark(#faf6f4,#211a17);--acc:#c8452a;--acc2:light-dark(#fbeae5,#3a1e16)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Outfit,system-ui,sans-serif;overflow-x:clip}
+.wrap{max-width:900px;margin:0 auto;padding:clamp(24px,4vw,56px) max(5vw,16px) 64px}
+h1,h2{font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;line-height:1.05;text-wrap:balance;margin:0}
+h1{font-size:clamp(34px,5vw,50px)}h2{font-size:32px;margin-bottom:6px}
+.lede{color:var(--mut);max-width:62ch;margin:12px 0 0}
+nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:28px 0 32px}
+nav a{display:block;padding:12px 10px;border-top:3px solid var(--line);color:var(--mut);text-decoration:none;font-size:14px;min-height:44px}
+nav a b{display:block;font-weight:500;color:var(--ink);font-size:15px}
+nav a.on{border-color:var(--acc)}nav a.on b{color:var(--acc)}
+nav a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.step{display:none}.step.on{display:block}
+.sub{color:var(--mut);margin:0 0 20px;max-width:64ch}
+input,select,textarea{font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-height:44px;width:100%}
+textarea{resize:vertical;min-height:72px;line-height:1.5}
+button{font:inherit;font-size:15px;font-weight:500;min-height:44px;padding:10px 18px;border-radius:8px;border:1px solid var(--acc);background:var(--acc);color:#fff;cursor:pointer}
+button.ghost{background:transparent;color:var(--acc)}button.plain{background:transparent;border-color:var(--line);color:var(--ink)}
+button:disabled{opacity:.5;cursor:default}
+.add{display:grid;grid-template-columns:150px 130px minmax(0,1fr) auto;gap:8px;margin-bottom:22px}
+.cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.col{background:var(--soft);border-radius:12px;padding:16px}
+.col h3{font-size:15px;font-weight:600;margin:0 0 2px}.col p{font-size:13px;color:var(--mut);margin:0 0 10px}
+.col ul{list-style:none;margin:0;padding:0}
+.col li{display:flex;gap:8px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--line);font-size:15px}
+.col li span{flex:1}.tag{font-size:12px;color:var(--acc);white-space:nowrap}
+.x{background:none;border:0;color:var(--mut);min-height:28px;padding:0 4px;font-size:18px;line-height:1}
+.empty{font-size:14px;color:var(--mut);padding:8px 0}
+.note{font-size:13px;color:var(--mut);margin:14px 0 0}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:24px}
+.flip{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:16px;padding:18px 0;border-top:1px solid var(--line)}
+.from{font-size:15px}.from s{color:var(--mut);text-decoration-color:var(--acc);text-decoration-thickness:2px}
+.from .k{display:block;font-size:12px;color:var(--acc);margin-bottom:4px}
+.to label{display:block;font-size:13px;color:var(--mut);margin-bottom:6px}
+.to .ctl{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}.to .ctl select{width:auto}
+.meter{height:8px;background:var(--line);border-radius:8px;overflow:hidden;margin:4px 0 6px}.meter i{display:block;height:100%;background:var(--acc);transition:width .4s}
+.page{background:var(--soft);border-radius:14px;padding:clamp(20px,3vw,36px);margin-top:16px}
+.page h4{font-family:"Cormorant Garamond",Georgia,serif;font-size:24px;font-weight:600;margin:22px 0 6px}.page h4:first-child{margin-top:0}
+.aff{font-family:"Cormorant Garamond",Georgia,serif;font-size:21px;line-height:1.35;margin:0 0 8px}
+.north{font-family:"Cormorant Garamond",Georgia,serif;font-style:italic;font-size:26px;line-height:1.25;margin:0 0 6px}
+.field{margin-top:20px}.field label{display:block;font-weight:500;margin-bottom:6px}
+.today{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:20px;align-items:start}
+.timer{background:var(--acc2);border-radius:14px;padding:20px;text-align:center}
+.timer .n{font-family:"Cormorant Garamond",Georgia,serif;font-size:56px;line-height:1;color:var(--acc)}
+.timer p{font-size:13px;color:var(--mut);margin:8px 0 12px}
+.streak{font-size:14px;color:var(--mut);margin-top:16px;text-align:center}.streak b{color:var(--ink);font-size:20px}
+.hist{margin-top:28px}.hist details{border-top:1px solid var(--line);padding:12px 0}
+.hist summary{cursor:pointer;font-weight:500;min-height:28px}.hist pre{white-space:pre-wrap;font:inherit;margin:8px 0 0;color:var(--mut)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:8px;font-size:14px;opacity:0;transition:opacity .3s;pointer-events:none}.toast.on{opacity:1}
+.ai{display:none}.ai.on{display:inline-flex}
+@media(max-width:700px){.cols{grid-template-columns:minmax(0,1fr)}.add{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.add input{grid-column:1/-1}.add button{grid-column:1/-1}.flip{grid-template-columns:minmax(0,1fr);gap:10px}.today{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:480px){nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Turn what's wrong into what you're grateful for</h1>
+  <p class="lede">Empty out the fears, wants and complaints about your business and your team. Rewrite each one as if it's already true. Then read it, picture it and write it every morning, starting with "I am grateful."</p>
+
+  <nav id="nav">
+    <a href="#unload" data-s="unload"><b>1. Unload</b>Get it all out</a>
+    <a href="#flip" data-s="flip"><b>2. Flip</b>Write the opposite</a>
+    <a href="#vision" data-s="vision"><b>3. Vision</b>See the whole business</a>
+    <a href="#morning" data-s="morning"><b>4. Morning</b>Read, picture, write</a>
+  </nav>
+
+  <section class="step" id="s-unload">
+    <h2>What's keeping you up at night?</h2>
+    <p class="sub">Don't filter. Write what you'd never say to your team. Tag each one Product (what you sell), Process (how work gets done) or People (who does it).</p>
+    <form class="add" id="addForm">
+      <select id="aType" aria-label="Type"><option value="fear">Fear</option><option value="want">Want</option><option value="complaint">Complaint</option></select>
+      <select id="aP" aria-label="Area"><option>People</option><option>Process</option><option>Product</option></select>
+      <input id="aText" placeholder="e.g. My team waits for me to make every decision" aria-label="What's on your mind">
+      <button type="submit">Add</button>
+    </form>
+    <div class="cols" id="cols"></div>
+    <p class="note" id="exNote">This page is loaded with an example so you can see how it works. <button class="plain" id="clearEx" type="button" style="min-height:36px;padding:6px 12px;margin-left:6px">Clear and start mine</button></p>
+    <div class="row"><button type="button" data-go="flip">Next: flip them →</button></div>
+  </section>
+
+  <section class="step" id="s-flip">
+    <h2>Write what's true when it's solved</h2>
+    <p class="sub">Present tense, as if it already happened. Not "I want a team that…" but "My team…". Be specific enough to picture it.</p>
+    <div class="meter"><i id="meterBar" style="width:0"></i></div>
+    <p class="note" id="meterTxt" style="margin:0 0 8px"></p>
+    <div id="flips"></div>
+    <div class="row"><button type="button" class="plain" data-go="unload">← Back</button><button type="button" data-go="vision">Next: see the vision →</button></div>
+  </section>
+
+  <section class="step" id="s-vision">
+    <h2>The business you're building</h2>
+    <p class="sub">Your flipped statements, grouped by Product, Process and People. Add a one-line north star and a short vision paragraph to read each morning.</p>
+    <div class="field"><label for="north">In one sentence, the business I'm building is…</label>
+      <input id="north" placeholder="A company that runs without me in every room"></div>
+    <div class="field"><label for="visionTxt">My vision (a short paragraph, present tense)</label>
+      <textarea id="visionTxt" rows="5" placeholder="It's a Monday morning and I walk in to a team that already knows the plan…"></textarea>
+      <div class="row" style="margin-top:10px"><button type="button" class="ghost ai" id="aiVision">Draft my vision from my statements</button><span class="note" id="aiMsg" style="margin:0"></span></div>
+    </div>
+    <div class="page" id="visionPage"></div>
+    <div class="row"><button type="button" class="plain" data-go="flip">← Back</button><button type="button" class="ghost" id="copyVision">Copy all</button><button type="button" data-go="morning">Start my morning practice →</button></div>
+  </section>
+
+  <section class="step" id="s-morning">
+    <h2 id="todayH">This morning</h2>
+    <p class="sub">Three steps, about ten minutes. Read it out loud. Close your eyes and see it. Then write it in your own hand, starting with "I am grateful."</p>
+    <div class="today">
+      <div>
+        <div class="page" id="readPage" style="margin-top:0"></div>
+        <div class="field"><label for="entry">Write it out</label>
+          <textarea id="entry" rows="7"></textarea></div>
+        <div class="row" style="margin-top:12px"><button type="button" id="saveEntry">Save today's entry</button><span class="note" id="savedMsg" style="margin:0"></span></div>
+      </div>
+      <div>
+        <div class="timer"><div class="n" id="tN">60</div><p>See it. Walk through a normal day in this business. Who's there? What are they doing without you?</p><button type="button" id="tBtn">Start 60 seconds</button></div>
+        <div class="streak" id="streak"></div>
+      </div>
+    </div>
+    <div class="hist" id="hist"></div>
+  </section>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+{
+const KEY='gratitude-vision-v1';
+const TYPES={fear:{label:'Fears',one:'Fear',hint:'What\'s true when this fear is gone?'},want:{label:'Wants',one:'Want',hint:'Describe it as already done.'},complaint:{label:'Complaints',one:'Complaint',hint:'What happens instead?'}};
+const PS=['Product','Process','People'];
+const EXAMPLE={example:true,northStar:'A business that runs on clear roles and a team that owns the outcome.',vision:'',entries:[],items:[
+ {type:'fear',p:'People',text:'Losing my best tech to a competitor',flip:'My best people stay because they see a future here and know exactly how to grow.'},
+ {type:'fear',p:'Process',text:'Cash running out in slow season',flip:'We plan for slow season months ahead and always have three months of cash in the bank.'},
+ {type:'want',p:'People',text:'A team that solves problems without calling me',flip:'My team handles problems on their own and tells me after it\'s fixed.'},
+ {type:'want',p:'Process',text:'Weekends off',flip:''},
+ {type:'complaint',p:'People',text:'Nobody follows the checklist',flip:'My crew uses the checklist because they helped build it and see why it matters.'},
+ {type:'complaint',p:'Product',text:'Clients complain about callbacks',flip:''},
+ {type:'complaint',p:'Process',text:'Jobs get double-booked',flip:''}]};
+let S;
+try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+if(!S||!Array.isArray(S.items))S=JSON.parse(JSON.stringify(EXAMPLE));
+S.items.forEach((it,i)=>{if(!it.id)it.id='i'+Date.now().toString(36)+i});
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const toast=m=>{const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),1800)};
+const todayKey=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const aff=f=>{let t=f.trim().replace(/[.!]+$/,'');if(!t)return '';if(/^i am grateful/i.test(t))return t+'.';if(!/^(I\b|I'm|I've)/.test(t))t=t.charAt(0).toLowerCase()+t.slice(1);return 'I am grateful that '+t+'.'};
+const flipped=()=>S.items.filter(i=>i.flip&&i.flip.trim());
+
+/* Step 1 */
+function renderCols(){
+  $('cols').innerHTML=Object.keys(TYPES).map(k=>{
+    const list=S.items.filter(i=>i.type===k);
+    return `<div class="col"><h3>${TYPES[k].label}</h3><p>${k==='fear'?'What could go wrong':k==='want'?'What you wish you had':'What drives you crazy'}</p><ul>${list.length?list.map(i=>`<li><span>${esc(i.text)}</span><em class="tag">${esc(i.p)}</em><button class="x" type="button" data-del="${esc(i.id)}" aria-label="Remove">×</button></li>`).join(''):'<li class="empty">Nothing yet</li>'}</ul></div>`}).join('');
+  $('exNote').style.display=S.example?'':'none';
+}
+$('addForm').addEventListener('submit',e=>{e.preventDefault();const t=$('aText').value.trim();if(!t)return;
+  S.items.push({id:'i'+Date.now().toString(36),type:$('aType').value,p:$('aP').value,text:t,flip:''});S.example=false;$('aText').value='';save();renderCols();$('aText').focus()});
+$('cols').addEventListener('click',e=>{const id=e.target.dataset.del;if(!id)return;S.items=S.items.filter(i=>i.id!==id);save();renderCols()});
+$('clearEx').addEventListener('click',()=>{S={example:false,northStar:'',vision:'',entries:S.example?[]:S.entries,items:[]};save();renderAll();$('aText').focus()});
+
+/* Step 2 */
+function renderFlips(){
+  if(!S.items.length){$('flips').innerHTML='<p class="empty">Add a few fears, wants or complaints in step 1 first.</p>';meter();return}
+  $('flips').innerHTML=S.items.map(i=>`<div class="flip"><div class="from"><span class="k">${TYPES[i.type].one} · ${esc(i.p)}</span><s>${esc(i.text)}</s></div>
+   <div class="to"><label for="f-${esc(i.id)}">${TYPES[i.type].hint}</label><textarea id="f-${esc(i.id)}" data-flip="${esc(i.id)}" rows="2" placeholder="Write it as if it's already true">${esc(i.flip)}</textarea>
+   <div class="ctl"><select data-p="${esc(i.id)}" aria-label="Area">${PS.map(p=>`<option${p===i.p?' selected':''}>${p}</option>`).join('')}</select><button type="button" class="plain ai${AI?' on':''}" data-sug="${esc(i.id)}">Suggest a flip</button></div></div></div>`).join('');
+  meter();
+}
+function meter(){const n=S.items.length,d=flipped().length;$('meterBar').style.width=(n?d/n*100:0)+'%';$('meterTxt').textContent=n?`${d} of ${n} flipped`:''}
+$('flips').addEventListener('input',e=>{const id=e.target.dataset.flip;if(!id)return;const it=S.items.find(i=>i.id===id);it.flip=e.target.value;S.example=false;save();meter()});
+$('flips').addEventListener('change',e=>{const id=e.target.dataset.p;if(!id)return;S.items.find(i=>i.id===id).p=e.target.value;save()});
+$('flips').addEventListener('click',async e=>{const id=e.target.dataset.sug;if(!id||!AI)return;const it=S.items.find(i=>i.id===id);const b=e.target;b.disabled=true;b.textContent='Thinking…';
+  try{const r=await AI(`A small business owner wrote this ${TYPES[it.type].one.toLowerCase()} about their business (area: ${it.p}): "${it.text}"\n\nRewrite it as the positive outcome they want, stated in present tense as if it is already true. One sentence, under 22 words, plain language a business owner would say. Start with "My", "Our", "We" or "I". Reply with the sentence only.`,{modelTier:'quick'});
+    const t=(r.text||'').trim().replace(/^"|"$/g,'');if(t){it.flip=t;$('f-'+id).value=t;save();meter()}}
+  catch(err){toast(err&&err.code==='rate_limited'?'Too many requests, try again in a minute':'Couldn\'t get a suggestion')}
+  b.disabled=false;b.textContent='Suggest a flip'});
+
+/* Step 3 */
+function affBlock(withNorth){
+  const f=flipped();let h='';
+  if(withNorth&&S.northStar.trim())h+=`<p class="north">${esc(S.northStar.trim())}</p>`;
+  if(withNorth&&S.vision.trim())h+=`<p style="margin:10px 0 0;white-space:pre-wrap">${esc(S.vision.trim())}</p>`;
+  PS.forEach(p=>{const g=f.filter(i=>i.p===p);if(g.length)h+=`<h4>${p}</h4>`+g.map(i=>`<p class="aff">${esc(aff(i.flip))}</p>`).join('')});
+  return h||'<p class="empty">Your "I am grateful" statements will appear here once you flip a few items in step 2.</p>';
+}
+function renderVision(){$('north').value=S.northStar||'';$('visionTxt').value=S.vision||'';$('visionPage').innerHTML=affBlock(false)}
+$('north').addEventListener('input',e=>{S.northStar=e.target.value;save()});
+$('visionTxt').addEventListener('input',e=>{S.vision=e.target.value;save()});
+const allText=()=>{const f=flipped();let t='';if(S.northStar.trim())t+=S.northStar.trim()+'\n\n';if(S.vision.trim())t+=S.vision.trim()+'\n\n';
+  PS.forEach(p=>{const g=f.filter(i=>i.p===p);if(g.length)t+=p.toUpperCase()+'\n'+g.map(i=>aff(i.flip)).join('\n')+'\n\n'});return t.trim()};
+$('copyVision').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(allText());toast('Copied')}catch(e){toast('Copy not allowed here, select and copy the text instead')}});
+$('aiVision').addEventListener('click',async()=>{if(!AI)return;const f=flipped();if(!f.length){$('aiMsg').textContent='Flip a few items first.';return}
+  const b=$('aiVision');b.disabled=true;$('aiMsg').textContent='Writing…';
+  const list=PS.map(p=>{const g=f.filter(i=>i.p===p);return g.length?p+':\n'+g.map(i=>'- '+i.flip).join('\n'):''}).filter(Boolean).join('\n');
+  try{const r=await AI(`Write a vision statement for a small business owner to read aloud every morning.\n\nTheir north star: ${S.northStar||'(none given)'}\nWhat is true in their ideal business:\n${list}\n\nRules: first person, present tense, as if it's already real. 100 to 140 words, one paragraph. Warm and direct, plain language, no jargon, no hype words. Paint a concrete picture of an ordinary great day: the team, the clients, the owner's own time. Reply with the paragraph only.`,{modelTier:'default',onText:({text})=>{$('visionTxt').value=text}});
+    S.vision=(r.text||'').trim();$('visionTxt').value=S.vision;save();$('aiMsg').textContent='Edit it until it sounds like you.'}
+  catch(err){$('aiMsg').textContent=err&&err.code==='rate_limited'?'Too many requests, try again in a minute.':'Couldn\'t write it right now.'}
+  b.disabled=false});
+
+/* Step 4 */
+function renderMorning(){
+  const d=new Date();$('todayH').textContent='This morning, '+d.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
+  $('readPage').innerHTML='<h4 style="margin-top:0">Read it out loud</h4>'+affBlock(true);
+  const ex=S.entries.find(x=>x.date===todayKey());
+  $('entry').value=ex?ex.text:'I am grateful ';
+  $('savedMsg').textContent=ex?'Saved for today. You can keep editing.':'';
+  const dates=new Set(S.entries.map(x=>x.date));let n=0;const c=new Date();
+  if(!dates.has(todayKey()))c.setDate(c.getDate()-1);
+  while(true){const k=c.getFullYear()+'-'+String(c.getMonth()+1).padStart(2,'0')+'-'+String(c.getDate()).padStart(2,'0');if(!dates.has(k))break;n++;c.setDate(c.getDate()-1)}
+  $('streak').innerHTML=`<b>${n}</b> day${n===1?'':'s'} in a row`;
+  const past=S.entries.filter(x=>x.date!==todayKey()).slice(-14).reverse();
+  $('hist').innerHTML=past.length?'<h4 style="font-family:Cormorant Garamond,Georgia,serif;font-size:24px;margin:0 0 4px">Past mornings</h4>'+past.map(x=>`<details><summary>${esc(new Date(x.date+'T12:00').toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'}))}</summary><pre>${esc(x.text)}</pre></details>`).join(''):'';
+}
+$('saveEntry').addEventListener('click',()=>{const t=$('entry').value.trim();if(!t||t==='I am grateful')return;const k=todayKey();
+  const ex=S.entries.find(x=>x.date===k);if(ex)ex.text=t;else S.entries.push({date:k,text:t});S.example=false;save();renderMorning();toast('Saved')});
+let tH=null;
+$('tBtn').addEventListener('click',()=>{if(tH){clearInterval(tH);tH=null;$('tN').textContent='60';$('tBtn').textContent='Start 60 seconds';return}
+  let s=60;$('tBtn').textContent='Stop';tH=setInterval(()=>{s--;$('tN').textContent=s;if(s<=0){clearInterval(tH);tH=null;$('tN').textContent='✓';$('tBtn').textContent='Again';$('entry').focus()}},1000)});
+
+/* Routing */
+const steps=['unload','flip','vision','morning'];
+function show(){const h=location.hash.slice(1);const s=steps.includes(h)?h:'unload';
+  steps.forEach(x=>{$('s-'+x).classList.toggle('on',x===s)});
+  document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.s===s));
+  if(s==='unload')renderCols();if(s==='flip')renderFlips();if(s==='vision')renderVision();if(s==='morning')renderMorning()}
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>{location.hash=b.dataset.go;window.scrollTo({top:0})}));
+window.addEventListener('hashchange',show);
+function renderAll(){show()}
+
+/* Optional Claude help (only where available) */
+let AI=null;
+if(window.claude&&typeof window.claude.use==='function'){
+  window.claude.use('sample').then(s=>{if(!s)return;AI=s;document.querySelectorAll('.ai').forEach(b=>b.classList.add('on'))}).catch(()=>{});
+}
+show();
+}
+</script>
+</body>
+</html>
