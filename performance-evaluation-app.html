@@ -809,6 +809,128 @@
     white-space: pre-wrap;
   }
 
+  /* TEAM REVIEWS */
+  .team-bar { max-width: 640px; margin: 0 auto 20px; padding: 0 24px; }
+  .team-bar[hidden] { display: none !important; }
+  .team-bar-card {
+    background: var(--bg2);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 12px;
+    display: grid;
+    gap: 10px;
+  }
+  .team-top, .team-nav { display: flex; align-items: center; gap: 8px; }
+  .session-name-btn {
+    flex: 1;
+    min-width: 0;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 4px 2px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .session-name-btn:hover { color: var(--accent); }
+  .save-pill, .status-pill {
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 999px;
+    padding: 3px 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .save-pill, .save-pill.saved { background: var(--green-bg); color: var(--green); }
+  .save-pill.saving { background: var(--bg4); color: var(--text2); }
+  .save-pill.error { background: var(--red-bg); color: var(--red); }
+  .team-nav .who { flex: 1; min-width: 0; text-align: center; }
+  .who-name {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .who-meta { font-size: 13px; color: var(--text2); }
+  .team-nav .btn-secondary, .team-top .btn-secondary { padding: 8px 12px; font-size: 14px; }
+  .team-nav .btn-secondary:disabled { opacity: 0.4; cursor: default; }
+  .status-pill.done { background: var(--green-bg); color: var(--green); }
+  .status-pill.progress { background: var(--amber-bg); color: var(--amber); }
+  .status-pill.notstarted { background: var(--bg4); color: var(--text2); }
+  .team-progress { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; margin: -8px 0 20px; }
+  .hint { font-size: 14px; color: var(--text2); line-height: 1.5; }
+  .action-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .add-person-row { display: flex; gap: 8px; margin-top: 12px; }
+  .add-person-row input { flex: 1; min-width: 0; }
+  .person-row {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 8px;
+    background: var(--bg2);
+  }
+  .person-row.active-person { border-color: var(--text); }
+  .person-layout { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+  .person-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .person-main input { font-weight: 600; }
+  .person-meta { font-size: 13px; color: var(--text2); }
+  .person-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+  .compare-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .compare-row:last-child { border-bottom: 0; }
+  .compare-name { font-weight: 600; }
+  .compare-detail { color: var(--text2); font-size: 14px; text-align: right; }
+  .saved-home { margin: 0 auto 28px; }
+  .saved-item {
+    width: 100%;
+    text-align: left;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-family: inherit;
+    cursor: pointer;
+    margin-top: 8px;
+    color: var(--text);
+  }
+  .saved-item:hover { border-color: var(--text); }
+  .saved-item strong { display: block; font-size: 15px; }
+  .saved-item span { display: block; font-size: 13px; color: var(--text2); margin-top: 2px; }
+  .intro-save-note {
+    text-align: center;
+    font-size: 14px;
+    color: var(--text2);
+    max-width: 460px;
+    margin: 12px auto 0;
+    line-height: 1.5;
+  }
+  .file-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+  #personEndNav:empty { display: none; }
+  #personEndNav .btn-primary { margin-top: 20px; }
+  #continueBtn[hidden] { display: none !important; }
+
   /* RESPONSIVE */
   @media (max-width: 560px) {
     .site-header { padding: 32px 20px 0; }
@@ -824,6 +946,16 @@
     .score-strip { grid-template-columns: 1fr 1fr; }
     .feedback-pair { grid-template-columns: 1fr; }
     .metrics-row { grid-template-columns: 1fr 1fr; }
+    .team-bar { padding: 0 20px; }
+    .team-nav { flex-wrap: wrap; }
+    .team-nav .who { order: -1; flex: 1 1 100%; }
+    .team-nav .btn-secondary { flex: 1; justify-content: center; }
+    .add-person-row, .person-layout { flex-direction: column; }
+    .person-actions { width: 100%; }
+    .person-actions .btn-secondary { flex: 1; justify-content: center; }
+    .action-row .btn-secondary, .action-row .btn-primary { flex: 1 1 100%; justify-content: center; }
+    .compare-row { flex-direction: column; gap: 2px; }
+    .compare-detail { text-align: left; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -844,7 +976,7 @@
       font-family: 'DM Sans', sans-serif !important;
     }
 
-    .site-header, .progress-wrap, #progressWrap,
+    .site-header, .progress-wrap, #progressWrap, #teamBar, #s-team, .no-print,
     .btn-row, .btn-restart, .analysis-loading,
     input, textarea, select, button,
     .tag-area, .list-row, .add-link { display: none !important; }
@@ -1045,6 +1177,24 @@
   <img class="logo" src="data:image/png;base64,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" alt="Structure">
 </header>
 
+<div id="teamBar" class="team-bar" hidden>
+  <div class="team-bar-card">
+    <div class="team-top">
+      <button type="button" class="session-name-btn" id="sessionNameBtn" onclick="focusSessionName()">Review</button>
+      <span class="save-pill" id="savePill" aria-live="polite">Saved</span>
+      <button type="button" class="btn-secondary" onclick="showTeam()">Team</button>
+    </div>
+    <div class="team-nav">
+      <button type="button" class="btn-secondary" id="prevEmpBtn" onclick="shiftEmployee(-1)">Previous person</button>
+      <div class="who">
+        <div class="who-name" id="whoName">Employee</div>
+        <div class="who-meta" id="whoMeta">0 of 0 done</div>
+      </div>
+      <button type="button" class="btn-secondary" id="nextEmpBtn" onclick="shiftEmployee(1)">Next person</button>
+    </div>
+  </div>
+</div>
+
 <div class="progress-wrap" id="progressWrap" style="display:none">
   <div class="progress-track">
     <div class="progress-line"></div>
@@ -1073,6 +1223,13 @@
       <div style="text-align:center;margin-bottom:32px">
         <button class="btn-primary" onclick="start()" style="padding:13px 28px">I'm ready &rarr;</button>
         <div style="font-size:13px;color:var(--text3);margin-top:8px">or keep reading below</div>
+        <p class="intro-save-note">You can review one person or a whole team. Work saves on this browser as you go, and you can download a copy to finish on another computer.</p>
+      </div>
+
+      <div id="savedHome" class="card saved-home" style="display:none">
+        <div class="card-title">Pick up where you left off</div>
+        <p class="hint">These reviews stay on this browser. Open one to continue, or download a copy from the team page if you want it somewhere else.</p>
+        <div id="savedHomeList"></div>
       </div>
 
       <!-- WHEN TO USE -->
@@ -1171,6 +1328,7 @@
     <div class="screen-eyebrow">Step 1 of 5 · Role setup</div>
     <h2 class="screen-title">Define the <em>role</em><br>before judging the person.</h2>
     <p class="screen-sub">You can't evaluate performance without clarity. Start here.</p>
+    <p class="hint no-print" style="margin:-16px 0 24px">Reviewing more than one person? Use Team, above, to add people or upload a list.</p>
 
     <div class="card">
       <div class="card-title">Employee information</div>
@@ -1471,8 +1629,78 @@
       </div>
     </div>
 
+    <div id="personEndNav"></div>
     <div style="text-align:center">
-      <button class="btn-restart" onclick="restart()">↺ Start a new evaluation</button>
+      <button class="btn-restart" onclick="showTeam()">Back to the team</button>
+    </div>
+  </div>
+
+  <!-- TEAM: several employees in one saved review -->
+  <div class="screen" id="s-team">
+    <div class="screen-eyebrow">The team</div>
+    <h2 class="screen-title">Who are you <em>reviewing?</em></h2>
+    <p class="screen-sub">Add your people and go through them one by one. This review saves on this browser, so you can close the page and come back.</p>
+    <p class="team-progress" id="rosterProgress">Add the people you want to review</p>
+
+    <div class="card">
+      <div class="field">
+        <label for="sessionNameInput">Name this review</label>
+        <input type="text" id="sessionNameInput" placeholder="e.g. Q4 2026 reviews" oninput="renameSessionLive(this.value)">
+      </div>
+      <p class="hint">Something you'll recognize later, like a quarter or a round of reviews.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">People in this review</div>
+      <button type="button" class="btn-primary" id="continueBtn" onclick="continueNextUp()">Continue</button>
+      <div id="rosterList" style="margin-top:16px"></div>
+      <div class="add-person-row">
+        <input type="text" id="newPersonName" placeholder="Name of someone to add" onkeydown="if(event.key==='Enter'){event.preventDefault();addEmployeeFromInput();}">
+        <button type="button" class="btn-secondary" onclick="addEmployeeFromInput()">Add person</button>
+      </div>
+      <p class="hint" style="margin-top:12px">Done means the scores and the three yes-or-no questions are answered. Pay and feedback can wait.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">How the team looks</div>
+      <div id="compareList"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Bring in a list of employees</div>
+      <p class="hint">Upload a spreadsheet, or paste names. Role and department are optional. The blank list opens in Excel or Google Sheets and includes two sample names — replace them with your people. Everyone you add joins this review.</p>
+      <div class="action-row">
+        <button type="button" class="btn-secondary" onclick="downloadEmployeeTemplate()">Download a blank list</button>
+        <button type="button" class="btn-secondary" onclick="document.getElementById('employeeFile').click()">Upload CSV or Excel</button>
+      </div>
+      <input class="file-input" id="employeeFile" type="file" accept=".csv,.txt,.tsv,.xlsx,.xls,text/csv" onchange="onEmployeeFile(this)">
+      <div class="field" style="margin-top:16px">
+        <label for="employeePaste">Or paste names, one person per line</label>
+        <textarea id="employeePaste" placeholder="Jordan Lee, Operations Manager, Production&#10;Sam Patel, Bookkeeper, Finance"></textarea>
+      </div>
+      <div class="action-row">
+        <button type="button" class="btn-primary" onclick="importPastedEmployees()">Add these people</button>
+      </div>
+      <p class="hint" id="importMsg" aria-live="polite"></p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Keep a copy</div>
+      <p class="hint">The browser copy updates on its own. Download a file if you want this review on another computer, or to share it with someone you trust.</p>
+      <div class="action-row">
+        <button type="button" class="btn-secondary" onclick="exportSessionFile()">Download this review</button>
+        <button type="button" class="btn-secondary" onclick="document.getElementById('sessionFile').click()">Open a review file</button>
+      </div>
+      <input class="file-input" id="sessionFile" type="file" accept="application/json,.json" onchange="onSessionFile(this)">
+      <p class="hint" id="fileMsg" aria-live="polite"></p>
+      <div class="action-row">
+        <button type="button" class="btn-secondary" onclick="startNewSession()">Start another review</button>
+        <button type="button" class="btn-restart" style="margin-top:0" onclick="deleteActiveSession()">Delete this review</button>
+      </div>
+      <div id="otherSessions"></div>
+      <div style="text-align:center">
+        <button type="button" class="btn-restart" onclick="showIntro()">Back to the introduction</button>
+      </div>
     </div>
   </div>
 
@@ -1486,6 +1714,9 @@ var S = {
   values: [],
   current: -1
 };
+var loading = false;
+var formLoadedFor = null;
+var currentAnalysis = '';
 
 var CV_QS = [
   'Does the employee take ownership of their responsibilities and fulfill them in a timely manner?',
@@ -1501,9 +1732,14 @@ var PF_QS = [
 ];
 
 function start() {
-  document.getElementById('s-preintro').classList.remove('active');
-  document.getElementById('progressWrap').style.display = 'block';
-  goTo(0);
+  var session = activeSession();
+  if (!session) {
+    createSession(defaultQuarterName());
+    return;
+  }
+  var empId = session.activeEmployeeId || (session.employees[0] && session.employees[0].id);
+  if (empId) openEmployee(empId);
+  else showTeam();
 }
 
 function goTo(n) {
@@ -1511,27 +1747,24 @@ function goTo(n) {
   var el = document.getElementById('s' + n);
   if (el) el.classList.add('active');
   S.current = n;
+  var emp = formLoadedFor ? employeeById(formLoadedFor) : null;
+  if (emp && !loading) emp.step = n;
   updateProgress(n);
   if (n === 1) buildEvalTables();
   if (n === 3) calcPay();
-  window.scrollTo({top: 0, behavior: 'smooth'});
+  var bar = document.getElementById('teamBar');
+  if (bar) bar.hidden = false;
+  var pw = document.getElementById('progressWrap');
+  if (pw) pw.style.display = 'block';
+  DB.view = 'form';
+  updateTeamBar();
+  if (!loading) scheduleSave();
+  window.scrollTo({top: 0, behavior: loading ? 'auto' : 'smooth'});
 }
 
 function jumpTo(n) { if (n <= S.current || S.current >= 0) goTo(n); }
 
-function restart() {
-  S = {gwc:{g:null,w:null,c:null}, evalState:{}, customQs:[], values:[], current:-1};
-  document.querySelectorAll('input[type=text], input[type=number], textarea').forEach(function(i){i.value='';});
-  document.getElementById('respList').innerHTML = '';
-  document.getElementById('metricList').innerHTML = '';
-  document.getElementById('valueTagArea').querySelectorAll('.tag').forEach(function(t){t.remove();});
-  document.getElementById('analysisResult').style.display = 'none';
-  document.getElementById('analysisLoading').style.display = 'none';
-  document.getElementById('progressWrap').style.display = 'none';
-  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
-  document.getElementById('s-preintro').classList.add('active');
-  S.current = -1;
-}
+function restart() { showTeam(); }
 
 function updateProgress(n) {
   for (var i = 0; i <= 4; i++) {
@@ -1545,13 +1778,15 @@ function updateProgress(n) {
   if (fill) fill.style.width = (n / 4 * 100) + '%';
 }
 
-function addRow(listId, key) {
+function addRow(listId, key, value) {
   var c = document.getElementById(listId);
   var d = document.createElement('div');
   d.className = 'list-row';
   var ph = key === 'resp' ? 'e.g. Manage daily production schedule' : key === 'metric' ? 'e.g. Tasks completed per week' : '';
-  d.innerHTML = '<input type="text" placeholder="' + ph + '" style="font-size:13px"><button class="remove-btn" onclick="this.parentNode.remove()">×</button>';
+  d.innerHTML = '<input type="text" placeholder="' + ph + '" style="font-size:13px"><button type="button" class="remove-btn" onclick="this.parentNode.remove();scheduleSave()">×</button>';
   c.appendChild(d);
+  if (value != null) d.querySelector('input').value = value;
+  if (!loading) scheduleSave();
 }
 
 function getRows(listId) {
@@ -1566,6 +1801,7 @@ function addTag(e, inputId, key) {
   S[key].push(v);
   document.getElementById(inputId).value = '';
   renderTags(inputId, key);
+  scheduleSave();
 }
 
 function renderTags(inputId, key) {
@@ -1575,7 +1811,7 @@ function renderTags(inputId, key) {
   (S[key] || []).forEach(function(v, i) {
     var t = document.createElement('span');
     t.className = 'tag';
-    t.innerHTML = esc(v) + '<button onclick="S.' + key + '.splice(' + i + ',1);renderTags(\'' + inputId + '\',\'' + key + '\')">×</button>';
+    t.innerHTML = esc(v) + '<button type="button" onclick="S.' + key + '.splice(' + i + ',1);renderTags(\'' + inputId + '\',\'' + key + '\');scheduleSave()">×</button>';
     area.insertBefore(t, inp);
   });
 }
@@ -1588,6 +1824,7 @@ function buildEvalTables() {
   S.customQs.forEach(function(q){rsQs.push(q);});
   if (!rsQs.length) rsQs = ['Define responsibilities in Step 1 to generate role-specific questions.'];
   buildBlock('rsBlock', 'rs', rsQs);
+  updateEvalScores();
 }
 
 function buildBlock(blockId, prefix, questions) {
@@ -1601,10 +1838,11 @@ function buildBlock(blockId, prefix, questions) {
     var key = prefix + '_' + i;
     var row = document.createElement('div');
     row.className = 'eval-row';
+    var on = function(val){ return Number(S.evalState[key]) === val ? ' checked' : ''; };
     row.innerHTML = '<div class="q-text">' + esc(q) + '</div>' +
-      '<div class="radio-cell"><input type="radio" name="' + key + '" value="2" onchange="setEval(\'' + key + '\',2)"></div>' +
-      '<div class="radio-cell"><input type="radio" name="' + key + '" value="1" onchange="setEval(\'' + key + '\',1)"></div>' +
-      '<div class="radio-cell"><input type="radio" name="' + key + '" value="0" onchange="setEval(\'' + key + '\',0)"></div>';
+      '<div class="radio-cell"><input type="radio" name="' + key + '" value="2" onchange="setEval(\'' + key + '\',2)"' + on(2) + '></div>' +
+      '<div class="radio-cell"><input type="radio" name="' + key + '" value="1" onchange="setEval(\'' + key + '\',1)"' + on(1) + '></div>' +
+      '<div class="radio-cell"><input type="radio" name="' + key + '" value="0" onchange="setEval(\'' + key + '\',0)"' + on(0) + '></div>';
     block.appendChild(row);
   });
 }
@@ -1612,11 +1850,12 @@ function buildBlock(blockId, prefix, questions) {
 function setEval(key, val) {
   S.evalState[key] = val;
   updateEvalScores();
+  scheduleSave();
 }
 
 function addCustomQ() {
   var q = prompt('Enter your custom question:');
-  if (q && q.trim()) { S.customQs.push(q.trim()); buildEvalTables(); }
+  if (q && q.trim()) { S.customQs.push(q.trim()); buildEvalTables(); scheduleSave(); }
 }
 
 function evalAvg(prefix, count) {
@@ -1675,6 +1914,7 @@ function setGWC(key, val) {
     if(el) el.className = 'toggle-btn' + (v === val ? ' ' + val : '');
   });
   renderGWCVerdict();
+  scheduleSave();
 }
 
 function renderGWCVerdict() {
@@ -1821,9 +2061,11 @@ Be direct. No filler. No disclaimers. Write for a business owner who has limited
     });
     var data = await resp.json();
     var text = (data.content || []).filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join('');
+    currentAnalysis = text;
     document.getElementById('analysisLoading').style.display = 'none';
     document.getElementById('analysisResult').style.display = 'block';
     document.getElementById('analysisBody').textContent = text;
+    scheduleSave();
   } catch(e) {
     document.getElementById('analysisLoading').style.display = 'none';
     document.getElementById('analysisResult').style.display = 'block';
@@ -1834,6 +2076,7 @@ Be direct. No filler. No disclaimers. Write for a business owner who has limited
 function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 function exportPDF() {
+  persistNow();
   // Inject printed values for form fields so they show in print
   var fields = [
     ['empName','Employee name'],['jobTitle','Job title'],['dept','Department'],
@@ -1889,8 +2132,10 @@ function exportPDF() {
   }
 
   // Make all screens visible for print
-  document.querySelectorAll('.screen').forEach(function(s){s.classList.add('active');});
-  document.getElementById('s-preintro').classList.remove('active');
+  document.querySelectorAll('.screen').forEach(function(s){
+    if (s.id === 's-team' || s.id === 's-preintro') s.classList.remove('active');
+    else s.classList.add('active');
+  });
 
   // Set document title to employee name for PDF filename
   var name = document.getElementById('empName').value || 'Evaluation';
@@ -1907,6 +2152,1065 @@ function exportPDF() {
     document.querySelectorAll('.pdf-val').forEach(function(e){e.remove();});
   }, 1000);
 }
+
+/* Saved team reviews. One browser holds several named reviews.
+   Each review holds many employees. The form on screen is one person at a time. */
+var saveTimer = null;
+var xlsxPromise = null;
+var STORE_KEY = 'structure.performanceEval.v1';
+var DB = { version: 1, activeSessionId: null, view: 'intro', sessions: [] };
+var FIELD_IDS = ['empName','jobTitle','dept','reportsTo','startDate','reviewPeriod','evalDate','rolePurpose','payType','currentPay','hoursWeek','weeksYear','mktLow','mktHigh','raiseAmt','yearsRole','fbGeneral','fbPositive','fbImprove','fbComms','vision','empSuccess','qtrGoals'];
+
+function uid(prefix) {
+  return prefix + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+
+function defaultQuarterName(d) {
+  d = d || new Date();
+  return 'Q' + (Math.floor(d.getMonth() / 3) + 1) + ' ' + d.getFullYear() + ' reviews';
+}
+
+function numOrNull(v) {
+  if (v == null || v === '') return null;
+  var n = Number(v);
+  return isNaN(n) ? null : n;
+}
+
+function activeSession() {
+  for (var i = 0; i < DB.sessions.length; i++) {
+    if (DB.sessions[i].id === DB.activeSessionId) return DB.sessions[i];
+  }
+  return null;
+}
+
+function employeeById(id) {
+  var session = activeSession();
+  if (!session || !id) return null;
+  for (var i = 0; i < session.employees.length; i++) {
+    if (session.employees[i].id === id) return session.employees[i];
+  }
+  return null;
+}
+
+function normalizeEmployee(e) {
+  e = e || {};
+  e.id = e.id || uid('e');
+  e.fields = e.fields || {};
+  e.rows = e.rows || {};
+  if (!Array.isArray(e.rows.respList)) e.rows.respList = [];
+  if (!Array.isArray(e.rows.metricList)) e.rows.metricList = [];
+  e.state = e.state || {};
+  e.state.gwc = e.state.gwc || {};
+  if (!('g' in e.state.gwc)) e.state.gwc.g = null;
+  if (!('w' in e.state.gwc)) e.state.gwc.w = null;
+  if (!('c' in e.state.gwc)) e.state.gwc.c = null;
+  e.state.evalState = e.state.evalState || {};
+  if (!Array.isArray(e.state.customQs)) e.state.customQs = [];
+  if (!Array.isArray(e.state.values)) e.state.values = [];
+  if (e.step == null || e.step < 0 || e.step > 4) e.step = 0;
+  e.analysis = e.analysis || '';
+  return e;
+}
+
+function loadDB() {
+  try {
+    var raw = localStorage.getItem(STORE_KEY);
+    if (!raw) return;
+    var data = JSON.parse(raw);
+    if (!data || !Array.isArray(data.sessions)) return;
+    data.sessions = data.sessions.filter(function(s){ return s && Array.isArray(s.employees); }).map(function(s){
+      s.id = s.id || uid('s');
+      s.name = s.name || defaultQuarterName();
+      s.employees = s.employees.filter(function(e){ return e && typeof e === 'object'; }).map(normalizeEmployee);
+      return s;
+    });
+    DB = data;
+    if (!DB.view) DB.view = 'intro';
+    DB.version = 1;
+  } catch (e) {}
+}
+
+function setSavePill(text, kind) {
+  var pill = document.getElementById('savePill');
+  if (!pill) return;
+  pill.textContent = text;
+  pill.className = 'save-pill' + (kind ? ' ' + kind : ' saved');
+  pill.title = kind === 'error'
+    ? 'This browser blocked saving. Download a copy from Team so you don\'t lose the review.'
+    : 'Saved on this browser';
+}
+
+function scheduleSave() {
+  if (loading) return;
+  setSavePill('Saving…', 'saving');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(persistNow, 400);
+}
+
+function persistNow() {
+  if (loading) return;
+  clearTimeout(saveTimer);
+  saveTimer = null;
+  captureCurrent();
+  try {
+    localStorage.setItem(STORE_KEY, JSON.stringify(DB));
+    setSavePill('Saved', 'saved');
+  } catch (e) {
+    setSavePill('Not saved in this browser', 'error');
+  }
+  updateTeamBar();
+  if (DB.view === 'team') {
+    var typingRoster = document.activeElement && document.activeElement.closest && document.activeElement.closest('#rosterList');
+    if (!typingRoster) renderTeam();
+  }
+  renderSavedHome();
+}
+
+function getRawRows(listId) {
+  return Array.from(document.querySelectorAll('#' + listId + ' .list-row input')).map(function(i){ return i.value; });
+}
+
+function captureCurrent() {
+  if (loading || !formLoadedFor) return;
+  var emp = employeeById(formLoadedFor);
+  if (!emp) return;
+  var fields = {};
+  FIELD_IDS.forEach(function(fid){
+    var el = document.getElementById(fid);
+    fields[fid] = el ? el.value : '';
+  });
+  emp.fields = fields;
+  emp.rows = { respList: getRawRows('respList'), metricList: getRawRows('metricList') };
+  emp.state = {
+    gwc: { g: S.gwc.g, w: S.gwc.w, c: S.gwc.c },
+    evalState: JSON.parse(JSON.stringify(S.evalState || {})),
+    customQs: (S.customQs || []).slice(),
+    values: (S.values || []).slice(),
+    current: S.current
+  };
+  emp.analysis = currentAnalysis || '';
+  if (S.current >= 0 && S.current <= 4) emp.step = S.current;
+  var session = activeSession();
+  if (session) session.updatedAt = new Date().toISOString();
+}
+
+function setRows(listId, key, values) {
+  var c = document.getElementById(listId);
+  if (!c) return;
+  c.innerHTML = '';
+  (values || []).forEach(function(v){ addRow(listId, key, v); });
+}
+
+function paintGwc() {
+  ['g','w','c'].forEach(function(key){
+    var val = S.gwc[key];
+    ['yes','no'].forEach(function(v){
+      var el = document.getElementById(key + '-' + v);
+      if (!el) return;
+      el.className = 'toggle-btn' + (val === v ? ' ' + val : '');
+    });
+  });
+  renderGWCVerdict();
+}
+
+function applyAnalysis(text) {
+  var loadingEl = document.getElementById('analysisLoading');
+  var result = document.getElementById('analysisResult');
+  var body = document.getElementById('analysisBody');
+  if (loadingEl) loadingEl.style.display = 'none';
+  if (!result || !body) return;
+  if (text) {
+    result.style.display = 'block';
+    body.textContent = text;
+  } else {
+    result.style.display = 'none';
+    body.textContent = '';
+  }
+}
+
+function applyEmployee(emp) {
+  emp = normalizeEmployee(emp);
+  var st = emp.state;
+  S = {
+    gwc: { g: st.gwc.g || null, w: st.gwc.w || null, c: st.gwc.c || null },
+    evalState: JSON.parse(JSON.stringify(st.evalState || {})),
+    customQs: (st.customQs || []).slice(),
+    values: (st.values || []).slice(),
+    current: emp.step || 0
+  };
+  FIELD_IDS.forEach(function(fid){
+    var el = document.getElementById(fid);
+    if (!el) return;
+    el.value = emp.fields[fid] != null ? emp.fields[fid] : '';
+  });
+  var pay = document.getElementById('payType');
+  if (pay && !pay.value) pay.value = 'salary';
+  var hw = document.getElementById('hoursWeek');
+  if (hw && !hw.value) hw.value = '40';
+  var wy = document.getElementById('weeksYear');
+  if (wy && !wy.value) wy.value = '52';
+  setRows('respList', 'resp', emp.rows.respList);
+  setRows('metricList', 'metric', emp.rows.metricList);
+  var valueInput = document.getElementById('valueInput');
+  if (valueInput) valueInput.value = '';
+  renderTags('valueInput', 'values');
+  buildEvalTables();
+  paintGwc();
+  calcPay();
+  currentAnalysis = emp.analysis || '';
+  applyAnalysis(currentAnalysis);
+}
+
+function openEmployee(id) {
+  if (formLoadedFor && formLoadedFor !== id) captureCurrent();
+  else if (formLoadedFor === id) captureCurrent();
+  var session = activeSession();
+  var emp = employeeById(id);
+  if (!session || !emp) return;
+  loading = true;
+  formLoadedFor = id;
+  session.activeEmployeeId = id;
+  applyEmployee(emp);
+  goTo(emp.step || 0);
+  loading = false;
+  updateTeamBar();
+  scheduleSave();
+}
+
+function blankEmployee(partial, seed) {
+  partial = partial || {};
+  if (seed === undefined) {
+    seed = formLoadedFor ? employeeById(formLoadedFor) : null;
+    if (!seed) {
+      var current = activeSession();
+      if (current && current.employees.length) seed = current.employees[current.employees.length - 1];
+    }
+  }
+  var fields = {};
+  FIELD_IDS.forEach(function(id){ fields[id] = ''; });
+  fields.payType = 'salary';
+  fields.hoursWeek = '40';
+  fields.weeksYear = '52';
+  if (seed && seed.fields) {
+    ['reportsTo','reviewPeriod','evalDate'].forEach(function(k){
+      if (seed.fields[k]) fields[k] = seed.fields[k];
+    });
+  }
+  var pf = partial.fields || {};
+  Object.keys(pf).forEach(function(k){ if (pf[k]) fields[k] = pf[k]; });
+  return normalizeEmployee({
+    id: uid('e'),
+    step: 0,
+    fields: fields,
+    rows: { respList: [], metricList: [] },
+    state: {
+      gwc: { g: null, w: null, c: null },
+      evalState: {},
+      customQs: [],
+      values: (seed && seed.state && seed.state.values) ? seed.state.values.slice() : [],
+      current: 0
+    },
+    analysis: ''
+  });
+}
+
+function createSession(name, silent) {
+  if (!loading && formLoadedFor) captureCurrent();
+  var session = {
+    id: uid('s'),
+    name: (name || '').trim() || defaultQuarterName(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    activeEmployeeId: null,
+    employees: []
+  };
+  var emp = blankEmployee();
+  session.employees.push(emp);
+  session.activeEmployeeId = emp.id;
+  DB.sessions.unshift(session);
+  DB.activeSessionId = session.id;
+  if (silent) { persistNow(); return session; }
+  openEmployee(emp.id);
+  return session;
+}
+
+function hasNarrative(emp) {
+  var f = emp.fields || {};
+  var keys = ['rolePurpose','currentPay','mktLow','mktHigh','raiseAmt','yearsRole','fbGeneral','fbPositive','fbImprove','fbComms','vision','empSuccess','qtrGoals'];
+  for (var i = 0; i < keys.length; i++) if (String(f[keys[i]] || '').trim()) return true;
+  var rows = emp.rows || {};
+  if ((rows.respList || []).some(function(r){ return String(r).trim(); })) return true;
+  if ((rows.metricList || []).some(function(r){ return String(r).trim(); })) return true;
+  if (String(emp.analysis || '').trim()) return true;
+  if (emp.state && emp.state.customQs && emp.state.customQs.length) return true;
+  return false;
+}
+
+function countCoreAnswers(emp) {
+  var ev = (emp.state && emp.state.evalState) || {};
+  var n = 0;
+  var i;
+  for (i = 0; i < CV_QS.length; i++) if (numOrNull(ev['cv_' + i]) != null) n++;
+  for (i = 0; i < PF_QS.length; i++) if (numOrNull(ev['pf_' + i]) != null) n++;
+  var g = (emp.state && emp.state.gwc) || {};
+  if (g.g) n++;
+  if (g.w) n++;
+  if (g.c) n++;
+  return n;
+}
+
+function hasAnyScore(emp) {
+  var ev = (emp.state && emp.state.evalState) || {};
+  for (var k in ev) {
+    if (Object.prototype.hasOwnProperty.call(ev, k) && numOrNull(ev[k]) != null) return true;
+  }
+  var g = (emp.state && emp.state.gwc) || {};
+  return !!(g.g || g.w || g.c);
+}
+
+function employeeStatus(emp) {
+  var needed = CV_QS.length + PF_QS.length + 3;
+  if (countCoreAnswers(emp) >= needed) return { key: 'done', label: 'Done' };
+  if (hasAnyScore(emp) || hasNarrative(emp)) return { key: 'progress', label: 'In progress' };
+  return { key: 'notstarted', label: 'Not started' };
+}
+
+function progressPhrase(session) {
+  var total = session && session.employees ? session.employees.length : 0;
+  if (!total) return 'No employees yet';
+  var done = session.employees.filter(function(e){ return employeeStatus(e).key === 'done'; }).length;
+  return done + ' of ' + total + ' done';
+}
+
+function isBlankPlaceholder(emp) {
+  if (!emp) return false;
+  var f = emp.fields || {};
+  if (String(f.empName || '').trim() || String(f.jobTitle || '').trim() || String(f.dept || '').trim()) return false;
+  return employeeStatus(emp).key === 'notstarted';
+}
+
+function savedWhen(iso) {
+  if (!iso) return 'Saved on this browser';
+  var d = new Date(iso);
+  if (isNaN(d.getTime())) return 'Saved on this browser';
+  if (d.toDateString() === new Date().toDateString()) return 'Saved today';
+  return 'Saved ' + d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function displayName(emp) {
+  return String((emp.fields && emp.fields.empName) || '').trim() || 'Unnamed employee';
+}
+
+function scoreSummary(emp) {
+  var ev = (emp.state && emp.state.evalState) || {};
+  function avg(prefix, count) {
+    var vals = [];
+    for (var i = 0; i < count; i++) {
+      var n = numOrNull(ev[prefix + '_' + i]);
+      if (n != null) vals.push(n);
+    }
+    if (!vals.length) return null;
+    return vals.reduce(function(a, b){ return a + b; }, 0) / vals.length;
+  }
+  var resps = ((emp.rows && emp.rows.respList) || []).filter(function(r){ return String(r).trim(); }).length;
+  var custom = (emp.state && emp.state.customQs) ? emp.state.customQs.length : 0;
+  var parts = [avg('cv', CV_QS.length), avg('pf', PF_QS.length), avg('rs', Math.max(resps + custom, 1))].filter(function(x){ return x !== null; });
+  var ov = parts.length ? parts.reduce(function(a, b){ return a + b; }, 0) / parts.length : null;
+  return scoreLabel(ov);
+}
+
+function gwcSummary(emp) {
+  var g = (emp.state && emp.state.gwc) || {};
+  var parts = [g.g, g.w, g.c];
+  var answered = parts.filter(Boolean).length;
+  if (!answered) return 'GWC not answered';
+  var yes = parts.filter(function(x){ return x === 'yes'; }).length;
+  if (answered < 3) return 'GWC ' + yes + ' of ' + answered + ' yes';
+  return yes === 3 ? 'GWC all yes' : 'GWC ' + yes + ' of 3 yes';
+}
+
+function nextUpId(session) {
+  var list = session.employees || [];
+  for (var i = 0; i < list.length; i++) {
+    if (employeeStatus(list[i]).key !== 'done') return list[i].id;
+  }
+  if (session.activeEmployeeId && employeeById(session.activeEmployeeId)) return session.activeEmployeeId;
+  return list[0] ? list[0].id : null;
+}
+
+function updateTeamBar() {
+  var session = activeSession();
+  var nameBtn = document.getElementById('sessionNameBtn');
+  var whoName = document.getElementById('whoName');
+  var whoMeta = document.getElementById('whoMeta');
+  var prev = document.getElementById('prevEmpBtn');
+  var next = document.getElementById('nextEmpBtn');
+  if (!session || !whoName) return;
+  if (nameBtn) nameBtn.textContent = String(session.name || '').trim() || 'Untitled review';
+  var list = session.employees || [];
+  var currentId = formLoadedFor || session.activeEmployeeId;
+  var idx = -1;
+  for (var i = 0; i < list.length; i++) if (list[i].id === currentId) idx = i;
+  var emp = idx >= 0 ? list[idx] : null;
+  whoName.textContent = emp ? displayName(emp) : (list.length ? 'Choose someone' : 'No one yet');
+  var doneLine = progressPhrase(session);
+  if (idx >= 0 && list.length > 1) doneLine += ' · person ' + (idx + 1);
+  whoMeta.textContent = doneLine;
+  if (prev) prev.disabled = idx <= 0;
+  if (next) next.disabled = !list.length || idx >= list.length - 1;
+  renderEndNav(list, idx);
+}
+
+function renderEndNav(list, idx) {
+  var host = document.getElementById('personEndNav');
+  if (!host) return;
+  host.innerHTML = '';
+  if (!list || idx < 0 || !list[idx + 1]) return;
+  var btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'btn-primary';
+  btn.textContent = 'Next person: ' + displayName(list[idx + 1]);
+  btn.onclick = function(){ shiftEmployee(1); };
+  host.appendChild(btn);
+}
+
+function shiftEmployee(delta) {
+  var session = activeSession();
+  if (!session || !session.employees.length) return;
+  var currentId = formLoadedFor || session.activeEmployeeId;
+  var idx = -1;
+  for (var i = 0; i < session.employees.length; i++) if (session.employees[i].id === currentId) idx = i;
+  if (idx < 0) {
+    if (delta > 0) openEmployee(session.employees[0].id);
+    return;
+  }
+  var next = session.employees[idx + delta];
+  if (next) openEmployee(next.id);
+}
+
+function showIntro() {
+  if (!loading) captureCurrent();
+  DB.view = 'intro';
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById('s-preintro').classList.add('active');
+  var bar = document.getElementById('teamBar');
+  if (bar) bar.hidden = true;
+  var pw = document.getElementById('progressWrap');
+  if (pw) pw.style.display = 'none';
+  renderSavedHome();
+  if (!loading) scheduleSave();
+  window.scrollTo({ top: 0, behavior: loading ? 'auto' : 'smooth' });
+}
+
+function showTeam() {
+  if (!loading) captureCurrent();
+  if (!activeSession()) createSession(defaultQuarterName(), true);
+  DB.view = 'team';
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById('s-team').classList.add('active');
+  var bar = document.getElementById('teamBar');
+  if (bar) bar.hidden = false;
+  var pw = document.getElementById('progressWrap');
+  if (pw) pw.style.display = 'none';
+  renderTeam();
+  updateTeamBar();
+  if (!loading) scheduleSave();
+  window.scrollTo({ top: 0, behavior: loading ? 'auto' : 'smooth' });
+}
+
+function focusSessionName() {
+  showTeam();
+  var input = document.getElementById('sessionNameInput');
+  if (input) { input.focus(); input.select(); }
+}
+
+function renameSessionLive(name) {
+  var session = activeSession();
+  if (!session || loading) return;
+  session.name = name;
+  session.updatedAt = new Date().toISOString();
+  var btn = document.getElementById('sessionNameBtn');
+  if (btn) btn.textContent = name.trim() || 'Untitled review';
+  scheduleSave();
+}
+
+function renderSavedHome() {
+  var card = document.getElementById('savedHome');
+  var list = document.getElementById('savedHomeList');
+  if (!card || !list) return;
+  list.innerHTML = '';
+  var sessions = DB.sessions.slice().sort(function(a, b){
+    return String(b.updatedAt || '').localeCompare(String(a.updatedAt || ''));
+  });
+  if (!sessions.length) { card.style.display = 'none'; return; }
+  card.style.display = 'block';
+  sessions.forEach(function(s){
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'saved-item';
+    var strong = document.createElement('strong');
+    strong.textContent = String(s.name || '').trim() || 'Untitled review';
+    var span = document.createElement('span');
+    span.textContent = progressPhrase(s) + ' · ' + savedWhen(s.updatedAt);
+    btn.appendChild(strong);
+    btn.appendChild(span);
+    btn.onclick = function(){ resumeSession(s.id); };
+    list.appendChild(btn);
+  });
+  var neu = document.createElement('button');
+  neu.type = 'button';
+  neu.className = 'btn-secondary';
+  neu.style.marginTop = '12px';
+  neu.textContent = 'Start a new review';
+  neu.onclick = function(){ startNewSession(); };
+  list.appendChild(neu);
+}
+
+function renderTeam() {
+  var session = activeSession();
+  if (!session) return;
+  var nameInput = document.getElementById('sessionNameInput');
+  if (nameInput && nameInput.value !== (session.name || '')) nameInput.value = session.name || '';
+  var progress = document.getElementById('rosterProgress');
+  if (progress) {
+    progress.textContent = session.employees.length ? progressPhrase(session) : 'Add the people you want to review';
+  }
+  var cont = document.getElementById('continueBtn');
+  if (cont) {
+    var upId = nextUpId(session);
+    if (!upId) cont.hidden = true;
+    else {
+      cont.hidden = false;
+      var up = employeeById(upId);
+      var st = employeeStatus(up).key;
+      var nm = displayName(up);
+      cont.textContent = st === 'notstarted' ? ('Start with ' + nm) : st === 'done' ? ('Review ' + nm) : ('Continue with ' + nm);
+    }
+  }
+  var host = document.getElementById('rosterList');
+  if (host) {
+    host.innerHTML = '';
+    if (!session.employees.length) {
+      var empty = document.createElement('p');
+      empty.className = 'hint';
+      empty.textContent = 'No one is on this review yet. Add a person, or upload a list.';
+      host.appendChild(empty);
+    }
+    session.employees.forEach(function(emp){
+      var status = employeeStatus(emp);
+      var row = document.createElement('div');
+      row.className = 'person-row' + (emp.id === session.activeEmployeeId ? ' active-person' : '');
+      var layout = document.createElement('div');
+      layout.className = 'person-layout';
+      var main = document.createElement('div');
+      main.className = 'person-main';
+      var nameField = document.createElement('input');
+      nameField.type = 'text';
+      nameField.value = (emp.fields && emp.fields.empName) || '';
+      nameField.placeholder = 'Employee name';
+      nameField.setAttribute('aria-label', 'Employee name');
+      nameField.addEventListener('input', function(){ renameEmployee(emp.id, nameField.value); });
+      nameField.addEventListener('keydown', function(e){
+        if (e.key === 'Enter') { e.preventDefault(); openEmployee(emp.id); }
+      });
+      var meta = document.createElement('div');
+      meta.className = 'person-meta';
+      var role = String((emp.fields && emp.fields.jobTitle) || '').trim();
+      var dept = String((emp.fields && emp.fields.dept) || '').trim();
+      var where = [role, dept].filter(Boolean).join(' · ');
+      var stepBit = status.key === 'progress' ? (' · Step ' + ((emp.step || 0) + 1) + ' of 5') : '';
+      meta.textContent = (where ? where + ' · ' : '') + status.label + stepBit;
+      main.appendChild(nameField);
+      main.appendChild(meta);
+      var actions = document.createElement('div');
+      actions.className = 'person-actions';
+      var pill = document.createElement('span');
+      pill.className = 'status-pill ' + status.key;
+      pill.textContent = status.label;
+      var openBtn = document.createElement('button');
+      openBtn.type = 'button';
+      openBtn.className = 'btn-secondary';
+      openBtn.textContent = status.key === 'notstarted' ? 'Start' : 'Open';
+      openBtn.onclick = function(){ openEmployee(emp.id); };
+      var removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'remove-btn';
+      removeBtn.setAttribute('aria-label', 'Remove ' + displayName(emp));
+      removeBtn.textContent = '×';
+      removeBtn.onclick = function(){ removeEmployee(emp.id); };
+      actions.appendChild(pill);
+      actions.appendChild(openBtn);
+      actions.appendChild(removeBtn);
+      layout.appendChild(main);
+      layout.appendChild(actions);
+      row.appendChild(layout);
+      host.appendChild(row);
+    });
+  }
+  renderCompare();
+  renderOtherSessions();
+}
+
+function renderCompare() {
+  var host = document.getElementById('compareList');
+  var session = activeSession();
+  if (!host || !session) return;
+  host.innerHTML = '';
+  var any = false;
+  session.employees.forEach(function(emp){
+    var score = scoreSummary(emp);
+    var gwc = gwcSummary(emp);
+    if (score.text === '—' && gwc === 'GWC not answered') return;
+    any = true;
+    var row = document.createElement('div');
+    row.className = 'compare-row';
+    var name = document.createElement('div');
+    name.className = 'compare-name';
+    name.textContent = displayName(emp);
+    var detail = document.createElement('div');
+    detail.className = 'compare-detail';
+    detail.textContent = 'Overall: ' + score.text + ' · ' + gwc;
+    row.appendChild(name);
+    row.appendChild(detail);
+    host.appendChild(row);
+  });
+  if (!any) {
+    var p = document.createElement('p');
+    p.className = 'hint';
+    p.textContent = 'Scores show up here after you answer the evaluation questions.';
+    host.appendChild(p);
+  }
+}
+
+function renderOtherSessions() {
+  var host = document.getElementById('otherSessions');
+  if (!host) return;
+  host.innerHTML = '';
+  var others = DB.sessions.filter(function(s){ return s.id !== DB.activeSessionId; });
+  if (!others.length) return;
+  others.sort(function(a, b){ return String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')); });
+  var title = document.createElement('div');
+  title.className = 'card-title';
+  title.style.marginTop = '20px';
+  title.textContent = 'Other reviews on this browser';
+  host.appendChild(title);
+  others.forEach(function(s){
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'saved-item';
+    var strong = document.createElement('strong');
+    strong.textContent = String(s.name || '').trim() || 'Untitled review';
+    var span = document.createElement('span');
+    span.textContent = progressPhrase(s) + ' · ' + savedWhen(s.updatedAt);
+    btn.appendChild(strong);
+    btn.appendChild(span);
+    btn.onclick = function(){ resumeSession(s.id); };
+    host.appendChild(btn);
+  });
+}
+
+function renameEmployee(id, name) {
+  var emp = employeeById(id);
+  if (!emp) return;
+  if (!emp.fields) emp.fields = {};
+  emp.fields.empName = name;
+  if (formLoadedFor === id) {
+    var el = document.getElementById('empName');
+    if (el && el.value !== name) el.value = name;
+  }
+  var session = activeSession();
+  if (session) session.updatedAt = new Date().toISOString();
+  updateTeamBar();
+  renderCompare();
+  scheduleSave();
+}
+
+function addEmployee(partial) {
+  if (!loading && formLoadedFor) captureCurrent();
+  var session = activeSession();
+  if (!session) session = createSession(defaultQuarterName(), true);
+  var emp = blankEmployee(partial);
+  session.employees.push(emp);
+  session.activeEmployeeId = emp.id;
+  session.updatedAt = new Date().toISOString();
+  return emp;
+}
+
+function addEmployeeFromInput() {
+  var input = document.getElementById('newPersonName');
+  var name = input ? input.value.trim() : '';
+  if (!name) {
+    if (input) input.focus();
+    setImportMsg('Type a name, then add them.');
+    return;
+  }
+  addEmployee({ fields: { empName: name } });
+  if (input) input.value = '';
+  setImportMsg('');
+  showTeam();
+  var again = document.getElementById('newPersonName');
+  if (again) again.focus();
+}
+
+function removeEmployee(id) {
+  var session = activeSession();
+  var emp = employeeById(id);
+  if (!session || !emp) return;
+  var label = displayName(emp);
+  if (!window.confirm('Remove ' + label + ' from this review?')) return;
+  if (formLoadedFor === id) formLoadedFor = null;
+  else if (!loading) captureCurrent();
+  session.employees = session.employees.filter(function(e){ return e.id !== id; });
+  if (session.activeEmployeeId === id) session.activeEmployeeId = session.employees.length ? session.employees[0].id : null;
+  session.updatedAt = new Date().toISOString();
+  showTeam();
+  persistNow();
+}
+
+function continueNextUp() {
+  var session = activeSession();
+  if (!session) return;
+  var id = nextUpId(session);
+  if (id) openEmployee(id);
+}
+
+function resumeSession(id) {
+  if (!loading) captureCurrent();
+  DB.activeSessionId = id;
+  formLoadedFor = null;
+  var session = activeSession();
+  if (!session) return;
+  var empId = session.activeEmployeeId && employeeById(session.activeEmployeeId)
+    ? session.activeEmployeeId
+    : (session.employees[0] && session.employees[0].id);
+  if (empId) openEmployee(empId);
+  else showTeam();
+}
+
+function startNewSession() {
+  var suggested = defaultQuarterName();
+  var name = window.prompt('Name this review. For example, ' + suggested + '.', suggested);
+  if (name == null) return;
+  createSession(name.trim() || suggested);
+}
+
+function deleteActiveSession() {
+  var session = activeSession();
+  if (!session) return;
+  var label = String(session.name || '').trim() || 'this review';
+  if (!window.confirm('Delete “' + label + '” from this browser? A file you already downloaded is not affected.')) return;
+  DB.sessions = DB.sessions.filter(function(s){ return s.id !== session.id; });
+  DB.activeSessionId = DB.sessions.length ? DB.sessions[0].id : null;
+  formLoadedFor = null;
+  if (DB.activeSessionId) showTeam();
+  else showIntro();
+  persistNow();
+}
+
+function setImportMsg(text) {
+  var el = document.getElementById('importMsg');
+  if (el) el.textContent = text || '';
+}
+
+function setFileMsg(text) {
+  var el = document.getElementById('fileMsg');
+  if (el) el.textContent = text || '';
+}
+
+function downloadBlob(content, filename, type) {
+  var blob = content instanceof Blob ? content : new Blob([content], { type: type || 'application/octet-stream' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 0);
+}
+
+function slug(s) {
+  return String(s || 'review').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'review';
+}
+
+function downloadEmployeeTemplate() {
+  var csv = '\uFEFFName,Role,Department\r\nJordan Lee,Operations Manager,Production\r\nSam Patel,Bookkeeper,Finance\r\n';
+  downloadBlob(csv, 'employee-list-template.csv', 'text/csv;charset=utf-8');
+}
+
+function exportSessionFile() {
+  captureCurrent();
+  var session = activeSession();
+  if (!session) return;
+  var payload = {
+    app: 'structure-performance-evaluation',
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    session: session
+  };
+  downloadBlob(JSON.stringify(payload, null, 2), slug(session.name) + '.json', 'application/json');
+  setFileMsg('Downloaded. Keep that file if you want to open this review on another computer.');
+  persistNow();
+}
+
+function onSessionFile(input) {
+  var file = input.files && input.files[0];
+  input.value = '';
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function() {
+    try {
+      var data = JSON.parse(String(reader.result || ''));
+      var sessions = [];
+      if (data && Array.isArray(data.sessions)) sessions = data.sessions;
+      else if (data && data.session && Array.isArray(data.session.employees)) sessions = [data.session];
+      else if (data && Array.isArray(data.employees)) sessions = [data];
+      else throw new Error('bad');
+      sessions = sessions.filter(function(s){ return s && Array.isArray(s.employees); });
+      if (!sessions.length) throw new Error('bad');
+      if (!loading) captureCurrent();
+      var lastId = null;
+      sessions.forEach(function(s){
+        s.id = s.id || uid('s');
+        s.name = s.name || 'Imported review';
+        s.employees = s.employees.filter(function(e){ return e && typeof e === 'object'; }).map(normalizeEmployee);
+        var idx = -1;
+        for (var i = 0; i < DB.sessions.length; i++) if (DB.sessions[i].id === s.id) idx = i;
+        if (idx >= 0) DB.sessions[idx] = s;
+        else DB.sessions.unshift(s);
+        lastId = s.id;
+      });
+      DB.activeSessionId = lastId;
+      formLoadedFor = null;
+      setFileMsg('Opened the review. Everyone in that file is here.');
+      showTeam();
+      persistNow();
+    } catch (err) {
+      setFileMsg('That file isn\'t a review this page can open. Use a file you downloaded from here.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function detectDelim(text) {
+  var line = String(text || '').split(/\r?\n/).filter(function(l){ return l.trim(); })[0] || '';
+  var commas = (line.match(/,/g) || []).length;
+  var semis = (line.match(/;/g) || []).length;
+  var tabs = (line.match(/\t/g) || []).length;
+  if (tabs >= commas && tabs >= semis && tabs > 0) return '\t';
+  if (semis > commas) return ';';
+  return ',';
+}
+
+function parseDelimited(text, delim) {
+  if (!delim) delim = detectDelim(text);
+  var rows = [];
+  var row = [];
+  var cur = '';
+  var quoted = false;
+  text = String(text || '').replace(/^\uFEFF/, '');
+  for (var i = 0; i < text.length; i++) {
+    var c = text[i];
+    if (quoted) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { cur += '"'; i++; }
+        else quoted = false;
+      } else cur += c;
+    } else if (c === '"') quoted = true;
+    else if (c === delim) { row.push(cur); cur = ''; }
+    else if (c === '\n') { row.push(cur); rows.push(row); row = []; cur = ''; }
+    else if (c !== '\r') cur += c;
+  }
+  if (cur.length || row.length) { row.push(cur); rows.push(row); }
+  return rows.filter(function(r){ return r.some(function(cell){ return String(cell).trim(); }); });
+}
+
+function headerIndex(header, names) {
+  for (var i = 0; i < header.length; i++) {
+    if (names.indexOf(header[i]) >= 0) return i;
+  }
+  return -1;
+}
+
+function cellAt(row, idx) {
+  if (!row || idx < 0 || idx >= row.length || row[idx] == null) return '';
+  return String(row[idx]).trim();
+}
+
+function peopleFromRows(rows) {
+  if (!rows || !rows.length) return [];
+  var header = rows[0].map(function(c){ return String(c || '').trim().toLowerCase(); });
+  var nameIdx = headerIndex(header, ['name','employee','employee name','full name','staff name','team member','person']);
+  var roleIdx = headerIndex(header, ['role','title','job title','job','position','job role']);
+  var deptIdx = headerIndex(header, ['department','dept','team','division','area']);
+  var start = 0;
+  if (nameIdx >= 0) start = 1;
+  else { nameIdx = 0; roleIdx = rows[0].length > 1 ? 1 : -1; deptIdx = rows[0].length > 2 ? 2 : -1; }
+  var people = [];
+  for (var i = start; i < rows.length; i++) {
+    people.push({
+      name: cellAt(rows[i], nameIdx),
+      role: cellAt(rows[i], roleIdx),
+      dept: cellAt(rows[i], deptIdx)
+    });
+  }
+  return people;
+}
+
+function parsePeopleText(text) {
+  var trimmed = String(text || '').replace(/^\uFEFF/, '').trim();
+  if (!trimmed) return [];
+  if (/[,\t;]/.test(trimmed)) return peopleFromRows(parseDelimited(trimmed));
+  return trimmed.split(/\r?\n/).map(function(line){ return { name: line.trim(), role: '', dept: '' }; }).filter(function(p){ return p.name; });
+}
+
+function addPeople(people) {
+  if (!loading && formLoadedFor) captureCurrent();
+  var session = activeSession();
+  if (!session) session = createSession(defaultQuarterName(), true);
+  var seed = session.employees.length ? session.employees[session.employees.length - 1] : null;
+  if (session.employees.length === 1 && isBlankPlaceholder(session.employees[0])) {
+    seed = session.employees[0];
+    if (formLoadedFor === seed.id) formLoadedFor = null;
+    session.employees = [];
+    session.activeEmployeeId = null;
+  }
+  var existing = {};
+  session.employees.forEach(function(e){
+    var n = String((e.fields && e.fields.empName) || '').trim().toLowerCase();
+    if (n) existing[n] = true;
+  });
+  var added = 0;
+  var skipped = 0;
+  (people || []).forEach(function(p){
+    var name = String((p && p.name) || '').trim();
+    if (!name) return;
+    var key = name.toLowerCase();
+    if (existing[key]) { skipped++; return; }
+    var emp = blankEmployee({
+      fields: {
+        empName: name,
+        jobTitle: String((p && p.role) || '').trim(),
+        dept: String((p && p.dept) || '').trim()
+      }
+    }, seed);
+    session.employees.push(emp);
+    existing[key] = true;
+    added++;
+  });
+  if (!session.activeEmployeeId && session.employees[0]) session.activeEmployeeId = session.employees[0].id;
+  session.updatedAt = new Date().toISOString();
+  persistNow();
+  return { added: added, skipped: skipped };
+}
+
+function finishPeopleImport(people, clearPaste) {
+  var result = addPeople(people);
+  showTeam();
+  if (!result.added && !result.skipped) {
+    setImportMsg('No names found. Put one person on each row, or download the blank list and use that.');
+    return;
+  }
+  var msg = result.added === 1 ? 'Added 1 person.' : ('Added ' + result.added + ' people.');
+  if (result.skipped) {
+    msg += result.skipped === 1
+      ? ' 1 person was already on this review, so they were left as they are.'
+      : ' ' + result.skipped + ' people were already on this review, so they were left as they are.';
+  }
+  msg += ' Choose someone below, or use Next person to go through the list.';
+  if (clearPaste) {
+    var box = document.getElementById('employeePaste');
+    if (box) box.value = '';
+  }
+  setImportMsg(msg);
+}
+
+function importPastedEmployees() {
+  var box = document.getElementById('employeePaste');
+  finishPeopleImport(parsePeopleText(box ? box.value : ''), true);
+}
+
+function loadXlsx() {
+  if (window.XLSX) return Promise.resolve(window.XLSX);
+  if (xlsxPromise) return xlsxPromise;
+  xlsxPromise = new Promise(function(resolve, reject){
+    var s = document.createElement('script');
+    s.src = 'https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js';
+    s.onload = function(){ if (window.XLSX) resolve(window.XLSX); else reject(new Error('xlsx')); };
+    s.onerror = function(){ xlsxPromise = null; reject(new Error('xlsx')); };
+    document.head.appendChild(s);
+  });
+  return xlsxPromise;
+}
+
+function onEmployeeFile(input) {
+  var file = input.files && input.files[0];
+  input.value = '';
+  if (!file) return;
+  var lower = file.name.toLowerCase();
+  if (/\.xlsx$|\.xls$/.test(lower)) {
+    setImportMsg('Reading the spreadsheet…');
+    var reader = new FileReader();
+    reader.onload = function() {
+      loadXlsx().then(function(XLSX){
+        try {
+          var wb = XLSX.read(new Uint8Array(reader.result), { type: 'array' });
+          var sheet = wb.Sheets[wb.SheetNames[0]];
+          var rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false, defval: '' });
+          finishPeopleImport(peopleFromRows(rows), false);
+        } catch (err) {
+          setImportMsg('Couldn\'t read that Excel file. In Excel, use Save As and choose CSV, then upload the CSV.');
+        }
+      }).catch(function(){
+        setImportMsg('Couldn\'t read that Excel file. In Excel, use Save As and choose CSV, then upload the CSV.');
+      });
+    };
+    reader.onerror = function(){
+      setImportMsg('Couldn\'t read that file. Try the blank list, or paste the names instead.');
+    };
+    reader.readAsArrayBuffer(file);
+    return;
+  }
+  var textReader = new FileReader();
+  textReader.onload = function(){ finishPeopleImport(parsePeopleText(String(textReader.result || '')), false); };
+  textReader.onerror = function(){ setImportMsg('Couldn\'t read that file. Try pasting the names instead.'); };
+  textReader.readAsText(file);
+}
+
+function onFormEdit(e) {
+  if (loading) return;
+  var t = e.target;
+  if (!t || !t.closest) return;
+  if (t.closest('#s-team') || t.closest('#savedHome') || t.closest('#teamBar')) return;
+  if (t.id === 'empName' || t.id === 'jobTitle' || t.id === 'dept') {
+    captureCurrent();
+    updateTeamBar();
+  }
+  scheduleSave();
+}
+
+function boot() {
+  var session = activeSession();
+  if (session && DB.view === 'form') {
+    var id = (session.activeEmployeeId && employeeById(session.activeEmployeeId))
+      ? session.activeEmployeeId
+      : (session.employees[0] && session.employees[0].id);
+    if (id) openEmployee(id);
+    else showTeam();
+  } else if (session && DB.view === 'team') {
+    showTeam();
+  } else {
+    DB.view = 'intro';
+    showIntro();
+  }
+}
+
+loadDB();
+boot();
+document.addEventListener('input', onFormEdit);
+document.addEventListener('change', onFormEdit);
+window.addEventListener('pagehide', function(){ if (!loading) persistNow(); });
+document.addEventListener('visibilitychange', function(){
+  if (document.visibilityState === 'hidden' && !loading) persistNow();
+});
 </script>
 </body>
 </html>
