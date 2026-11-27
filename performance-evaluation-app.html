@@ -882,7 +882,42 @@
   .person-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
   .person-main input { font-weight: 600; }
   .person-meta { font-size: 13px; color: var(--text2); }
-  .person-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+  .person-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
+  .order-btn { padding: 6px 10px; font-size: 13px; flex: 0 0 auto; }
+  .order-btn:disabled { opacity: 0.35; cursor: default; }
+  .privacy-note {
+    background: var(--bg2);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px 20px;
+    margin: 0 auto 28px;
+  }
+  .privacy-note p { font-size: 15px; color: var(--text2); line-height: 1.5; }
+  .backup-wrap { max-width: 640px; margin: -8px auto 16px; padding: 0 24px; }
+  .backup-wrap[hidden] { display: none !important; }
+  .backup-nudge {
+    background: var(--amber-bg);
+    border: 1px solid var(--amber-border);
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+  }
+  .backup-nudge[hidden] { display: none !important; }
+  .backup-nudge p { font-size: 14px; color: var(--text); line-height: 1.5; margin-bottom: 10px; }
+  .backup-nudge .action-row { margin-top: 0; }
+  .text-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  .field-source { margin-top: 8px; }
   .compare-row {
     display: flex;
     justify-content: space-between;
@@ -951,8 +986,10 @@
     .team-nav .who { order: -1; flex: 1 1 100%; }
     .team-nav .btn-secondary { flex: 1; justify-content: center; }
     .add-person-row, .person-layout { flex-direction: column; }
-    .person-actions { width: 100%; }
+    .person-actions { width: 100%; justify-content: flex-start; }
     .person-actions .btn-secondary { flex: 1; justify-content: center; }
+    .person-actions .order-btn { flex: 0 0 auto; }
+    .backup-wrap { padding: 0 20px; }
     .action-row .btn-secondary, .action-row .btn-primary { flex: 1 1 100%; justify-content: center; }
     .compare-row { flex-direction: column; gap: 2px; }
     .compare-detail { text-align: left; }
@@ -1163,12 +1200,31 @@
     #s1, #s2, #s3, #s4 { page-break-before: always; }
 
     .section-print-divider { display: block !important; border: none; border-top: 0.5pt solid #E3D9CA; margin: 10pt 0; }
+
+    #printAll { display: none !important; }
+    body.printing-all .main > .screen,
+    body.printing-all #teamBar,
+    body.printing-all .backup-wrap { display: none !important; }
+    body.printing-all #printAll { display: block !important; }
+    body.printing-all #printAll .screen { display: block !important; }
+    body.printing-all .print-packet { page-break-after: always; }
+    body.printing-all .print-packet:last-child { page-break-after: auto; }
+    body.printing-all .print-person-heading {
+      display: block !important;
+      font-size: 18pt !important;
+      font-weight: 600;
+      color: #292D30 !important;
+      margin: 0 0 10pt;
+    }
+    body.printing-all .print-packet .print-clone { page-break-before: always; }
+    body.printing-all .print-packet .print-clone:first-of-type { page-break-before: auto; }
   }
 
   /* Hide print-only elements on screen */
   .print-header { display: none; }
   .section-print-divider { display: none; }
   .pdf-val { display: none; }
+  #printAll { display: none; }
 </style>
 </head>
 <body>
@@ -1195,6 +1251,8 @@
   </div>
 </div>
 
+<div id="backupBar" class="backup-wrap no-print" hidden></div>
+
 <div class="progress-wrap" id="progressWrap" style="display:none">
   <div class="progress-track">
     <div class="progress-line"></div>
@@ -1219,6 +1277,11 @@
       <div class="intro-eyebrow" style="text-align:center">Owner tool · HR & people</div>
       <h1 class="intro-title" style="text-align:center">The <em>Performance</em><br>Evaluation</h1>
       <p style="text-align:center;font-size:15px;color:var(--text2);margin-bottom:24px;line-height:1.6">Before you begin, read this. It takes 2 minutes and will change how you show up in this conversation.</p>
+
+      <div class="privacy-note">
+        <div class="intro-section-title" style="font-size:17px;margin-bottom:8px">This stays on this computer</div>
+        <p>Pay, scores, and what you write stay in this browser on this computer. Saving does not send them anywhere. Download a file only when you want a copy to keep or to open somewhere else. The one exception is Get AI analysis: that sends the review you are looking at so it can write a summary.</p>
+      </div>
 
       <div style="text-align:center;margin-bottom:32px">
         <button class="btn-primary" onclick="start()" style="padding:13px 28px">I'm ready &rarr;</button>
@@ -1345,6 +1408,7 @@
         <div class="field"><label>Review period</label><input type="text" id="reviewPeriod" placeholder="Annual / 90-day"></div>
         <div class="field"><label>Evaluation date</label><input type="text" id="evalDate" placeholder="MM/DD/YYYY"></div>
       </div>
+      <p class="hint field-source no-print" id="sharedFieldsNote"></p>
     </div>
 
     <div class="card">
@@ -1366,6 +1430,7 @@
       <div class="tag-area" id="valueTagArea">
         <input type="text" id="valueInput" placeholder="Type a value and press Enter" onkeydown="addTag(event,'valueInput','values')">
       </div>
+      <p class="hint field-source no-print" id="valuesSource"></p>
     </div>
 
     <div class="btn-row">
@@ -1607,6 +1672,7 @@
     <div class="btn-row">
       <button class="btn-secondary" onclick="goTo(3)">&larr; Back</button>
       <div class="spacer"></div>
+      <button class="btn-secondary" type="button" onclick="printAll()">Print everyone</button>
       <button class="btn-secondary" onclick="exportPDF()" id="pdfBtn" style="display:flex;align-items:center;gap:7px">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
         Export PDF
@@ -1641,6 +1707,7 @@
     <h2 class="screen-title">Who are you <em>reviewing?</em></h2>
     <p class="screen-sub">Add your people and go through them one by one. This review saves on this browser, so you can close the page and come back.</p>
     <p class="team-progress" id="rosterProgress">Add the people you want to review</p>
+    <div id="backupNudge" class="backup-nudge no-print" hidden></div>
 
     <div class="card">
       <div class="field">
@@ -1648,6 +1715,27 @@
         <input type="text" id="sessionNameInput" placeholder="e.g. Q4 2026 reviews" oninput="renameSessionLive(this.value)">
       </div>
       <p class="hint">Something you'll recognize later, like a quarter or a round of reviews.</p>
+    </div>
+
+    <div class="card" id="sharedCard">
+      <div class="card-title">For everyone in this review</div>
+      <p class="hint">Set these once. Each person starts with them. You can still change them on a single person.</p>
+      <div class="field-group col2" style="margin-top:16px">
+        <div class="field">
+          <label for="sharedReviewPeriod">Review period</label>
+          <input type="text" id="sharedReviewPeriod" placeholder="Annual / Q4 / 90-day" oninput="onSharedText('reviewPeriod', this.value)">
+        </div>
+        <div class="field">
+          <label for="sharedEvalDate">Evaluation date</label>
+          <input type="text" id="sharedEvalDate" placeholder="MM/DD/YYYY" oninput="onSharedText('evalDate', this.value)">
+        </div>
+      </div>
+      <div class="field">
+        <label for="sharedValueInput">Company values</label>
+        <div class="tag-area" id="sharedValueArea">
+          <input type="text" id="sharedValueInput" placeholder="Type a value and press Enter" onkeydown="addSharedValue(event)">
+        </div>
+      </div>
     </div>
 
     <div class="card">
@@ -1658,7 +1746,10 @@
         <input type="text" id="newPersonName" placeholder="Name of someone to add" onkeydown="if(event.key==='Enter'){event.preventDefault();addEmployeeFromInput();}">
         <button type="button" class="btn-secondary" onclick="addEmployeeFromInput()">Add person</button>
       </div>
-      <p class="hint" style="margin-top:12px">Done means the scores and the three yes-or-no questions are answered. Pay and feedback can wait.</p>
+      <p class="hint" style="margin-top:12px">Done means the scores and the three yes-or-no questions are answered. Pay and feedback can wait. Use Up and Down to change the order.</p>
+      <div class="action-row">
+        <button type="button" class="btn-secondary" onclick="printAll()">Print everyone's evaluation</button>
+      </div>
     </div>
 
     <div class="card">
@@ -1705,6 +1796,8 @@
   </div>
 
 </div><!-- /main -->
+
+<div id="printAll"></div>
 
 <script>
 var S = {
@@ -2075,9 +2168,7 @@ Be direct. No filler. No disclaimers. Write for a business owner who has limited
 
 function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-function exportPDF() {
-  persistNow();
-  // Inject printed values for form fields so they show in print
+function injectPrintValues() {
   var fields = [
     ['empName','Employee name'],['jobTitle','Job title'],['dept','Department'],
     ['reportsTo','Reports to'],['startDate','Start date'],['reviewPeriod','Review period'],
@@ -2088,8 +2179,7 @@ function exportPDF() {
     ['qtrGoals','Quarterly goals']
   ];
 
-  // Remove old injected print vals
-  document.querySelectorAll('.pdf-val').forEach(function(e){e.remove();});
+  clearLivePrintValues();
 
   fields.forEach(function(pair) {
     var el = document.getElementById(pair[0]);
@@ -2130,26 +2220,89 @@ function exportPDF() {
     dv.textContent = S.values.join(', ');
     ta.parentNode.insertBefore(dv, ta.nextSibling);
   }
+}
 
-  // Make all screens visible for print
+function exportPDF() {
+  persistNow();
+  document.body.classList.remove('printing-all');
+  var host = document.getElementById('printAll');
+  if (host) host.innerHTML = '';
+  injectPrintValues();
   document.querySelectorAll('.screen').forEach(function(s){
     if (s.id === 's-team' || s.id === 's-preintro') s.classList.remove('active');
     else s.classList.add('active');
   });
-
-  // Set document title to employee name for PDF filename
   var name = document.getElementById('empName').value || 'Evaluation';
   var origTitle = document.title;
   document.title = 'Performance Evaluation · ' + name;
-
   window.print();
-
-  // Restore after print dialog closes
   setTimeout(function(){
     document.title = origTitle;
     document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
     document.getElementById('s4').classList.add('active');
-    document.querySelectorAll('.pdf-val').forEach(function(e){e.remove();});
+    document.querySelectorAll('.main .pdf-val').forEach(function(e){e.remove();});
+  }, 1000);
+}
+
+function clearLivePrintValues() {
+  ['s0','s1','s2','s3','s4'].forEach(function(id){
+    var screen = document.getElementById(id);
+    if (!screen) return;
+    screen.querySelectorAll('.pdf-val').forEach(function(n){ n.remove(); });
+  });
+}
+
+function printAll() {
+  var session = activeSession();
+  if (!session || !session.employees.length) return;
+  if (!loading) captureCurrent();
+  var returnId = formLoadedFor;
+  var returnView = DB.view;
+  var returnStep = S.current;
+  loading = true;
+  var host = document.getElementById('printAll');
+  host.innerHTML = '';
+  session.employees.forEach(function(emp){
+    applyEmployee(emp);
+    injectPrintValues();
+    var packet = document.createElement('section');
+    packet.className = 'print-packet';
+    var heading = document.createElement('h2');
+    heading.className = 'print-person-heading';
+    heading.textContent = displayName(emp);
+    packet.appendChild(heading);
+    ['s0','s1','s2','s3','s4'].forEach(function(id){
+      var src = document.getElementById(id);
+      var clone = src.cloneNode(true);
+      clone.removeAttribute('id');
+      clone.classList.add('active', 'print-clone');
+      clone.querySelectorAll('[id]').forEach(function(n){ n.removeAttribute('id'); });
+      packet.appendChild(clone);
+    });
+    host.appendChild(packet);
+    clearLivePrintValues();
+  });
+  document.body.classList.add('printing-all');
+  var origTitle = document.title;
+  document.title = 'Performance Evaluation · ' + (session.name || 'Team');
+  window.print();
+  setTimeout(function(){
+    document.title = origTitle;
+    document.body.classList.remove('printing-all');
+    host.innerHTML = '';
+    clearLivePrintValues();
+    loading = true;
+    if (returnId && employeeById(returnId)) {
+      formLoadedFor = returnId;
+      applyEmployee(employeeById(returnId));
+      loading = false;
+      if (returnView === 'team') showTeam();
+      else goTo(returnStep >= 0 ? returnStep : 0);
+    } else {
+      loading = false;
+      formLoadedFor = null;
+      showTeam();
+    }
   }, 1000);
 }
 
@@ -2212,6 +2365,82 @@ function normalizeEmployee(e) {
   return e;
 }
 
+function defaultShared() {
+  return { values: [], reviewPeriod: '', evalDate: '' };
+}
+
+function normText(v) { return String(v || '').trim(); }
+
+function sameList(a, b) {
+  a = a || [];
+  b = b || [];
+  if (a.length !== b.length) return false;
+  for (var i = 0; i < a.length; i++) if (normText(a[i]) !== normText(b[i])) return false;
+  return true;
+}
+
+function ensureShared(session) {
+  if (!session.shared) session.shared = defaultShared();
+  if (!Array.isArray(session.shared.values)) session.shared.values = [];
+  if (session.shared.reviewPeriod == null) session.shared.reviewPeriod = '';
+  if (session.shared.evalDate == null) session.shared.evalDate = '';
+  if (!session.exportedAt) session.exportedAt = null;
+  if (session.backupNudgeDismissed == null) session.backupNudgeDismissed = false;
+}
+
+function migrateSession(session) {
+  if (!session || !Array.isArray(session.employees)) return session;
+  session.employees = session.employees.filter(function(e){ return e && typeof e === 'object'; }).map(normalizeEmployee);
+  var derive = !session.shared;
+  ensureShared(session);
+  if (derive) {
+    session.employees.forEach(function(emp){
+      if (!normText(session.shared.reviewPeriod) && normText(emp.fields.reviewPeriod)) session.shared.reviewPeriod = emp.fields.reviewPeriod;
+      if (!normText(session.shared.evalDate) && normText(emp.fields.evalDate)) session.shared.evalDate = emp.fields.evalDate;
+      if (!session.shared.values.length && emp.state.values && emp.state.values.length) session.shared.values = emp.state.values.slice();
+    });
+  }
+  session.employees.forEach(function(emp){
+    if (!emp.overrides) {
+      var period = normText(emp.fields.reviewPeriod);
+      var date = normText(emp.fields.evalDate);
+      var values = emp.state.values || [];
+      emp.overrides = {
+        reviewPeriod: !!period && period !== normText(session.shared.reviewPeriod),
+        evalDate: !!date && date !== normText(session.shared.evalDate),
+        values: values.length > 0 && !sameList(values, session.shared.values)
+      };
+      if (!period) emp.fields.reviewPeriod = session.shared.reviewPeriod || '';
+      if (!date) emp.fields.evalDate = session.shared.evalDate || '';
+      if (!values.length) emp.state.values = (session.shared.values || []).slice();
+    } else {
+      emp.overrides.reviewPeriod = !!emp.overrides.reviewPeriod;
+      emp.overrides.evalDate = !!emp.overrides.evalDate;
+      emp.overrides.values = !!emp.overrides.values;
+    }
+  });
+  return session;
+}
+
+function materializeShared(emp) {
+  var session = activeSession();
+  if (!session || !emp) return;
+  ensureShared(session);
+  emp.overrides = emp.overrides || { reviewPeriod: false, evalDate: false, values: false };
+  if (!emp.overrides.reviewPeriod) emp.fields.reviewPeriod = session.shared.reviewPeriod || '';
+  if (!emp.overrides.evalDate) emp.fields.evalDate = session.shared.evalDate || '';
+  if (!emp.overrides.values) emp.state.values = (session.shared.values || []).slice();
+}
+
+function syncOverrides(emp, session) {
+  if (!emp || !session) return;
+  ensureShared(session);
+  emp.overrides = emp.overrides || {};
+  emp.overrides.reviewPeriod = normText(emp.fields.reviewPeriod) !== normText(session.shared.reviewPeriod);
+  emp.overrides.evalDate = normText(emp.fields.evalDate) !== normText(session.shared.evalDate);
+  emp.overrides.values = !sameList(emp.state.values || [], session.shared.values || []);
+}
+
 function loadDB() {
   try {
     var raw = localStorage.getItem(STORE_KEY);
@@ -2222,6 +2451,7 @@ function loadDB() {
       s.id = s.id || uid('s');
       s.name = s.name || defaultQuarterName();
       s.employees = s.employees.filter(function(e){ return e && typeof e === 'object'; }).map(normalizeEmployee);
+      migrateSession(s);
       return s;
     });
     DB = data;
@@ -2259,9 +2489,12 @@ function persistNow() {
     setSavePill('Not saved in this browser', 'error');
   }
   updateTeamBar();
+  renderBackupNudge();
   if (DB.view === 'team') {
-    var typingRoster = document.activeElement && document.activeElement.closest && document.activeElement.closest('#rosterList');
-    if (!typingRoster) renderTeam();
+    var focus = document.activeElement;
+    var typingRoster = focus && focus.closest && focus.closest('#rosterList');
+    var typingShared = focus && focus.closest && focus.closest('#sharedCard');
+    if (!typingRoster && !typingShared) renderTeam();
   }
   renderSavedHome();
 }
@@ -2291,7 +2524,10 @@ function captureCurrent() {
   emp.analysis = currentAnalysis || '';
   if (S.current >= 0 && S.current <= 4) emp.step = S.current;
   var session = activeSession();
-  if (session) session.updatedAt = new Date().toISOString();
+  if (session) {
+    syncOverrides(emp, session);
+    session.updatedAt = new Date().toISOString();
+  }
 }
 
 function setRows(listId, key, values) {
@@ -2330,6 +2566,7 @@ function applyAnalysis(text) {
 
 function applyEmployee(emp) {
   emp = normalizeEmployee(emp);
+  materializeShared(emp);
   var st = emp.state;
   S = {
     gwc: { g: st.gwc.g || null, w: st.gwc.w || null, c: st.gwc.c || null },
@@ -2359,6 +2596,7 @@ function applyEmployee(emp) {
   calcPay();
   currentAnalysis = emp.analysis || '';
   applyAnalysis(currentAnalysis);
+  updateFieldSources();
 }
 
 function openEmployee(id) {
@@ -2391,14 +2629,22 @@ function blankEmployee(partial, seed) {
   fields.payType = 'salary';
   fields.hoursWeek = '40';
   fields.weeksYear = '52';
-  if (seed && seed.fields) {
-    ['reportsTo','reviewPeriod','evalDate'].forEach(function(k){
-      if (seed.fields[k]) fields[k] = seed.fields[k];
-    });
+  if (seed && seed.fields && seed.fields.reportsTo) fields.reportsTo = seed.fields.reportsTo;
+  var session = activeSession();
+  var shared = session && session.shared;
+  if (shared) {
+    fields.reviewPeriod = shared.reviewPeriod || '';
+    fields.evalDate = shared.evalDate || '';
+  } else if (seed && seed.fields) {
+    if (seed.fields.reviewPeriod) fields.reviewPeriod = seed.fields.reviewPeriod;
+    if (seed.fields.evalDate) fields.evalDate = seed.fields.evalDate;
   }
   var pf = partial.fields || {};
   Object.keys(pf).forEach(function(k){ if (pf[k]) fields[k] = pf[k]; });
-  return normalizeEmployee({
+  var values = [];
+  if (shared && Array.isArray(shared.values)) values = shared.values.slice();
+  else if (seed && seed.state && seed.state.values) values = seed.state.values.slice();
+  var emp = normalizeEmployee({
     id: uid('e'),
     step: 0,
     fields: fields,
@@ -2407,28 +2653,50 @@ function blankEmployee(partial, seed) {
       gwc: { g: null, w: null, c: null },
       evalState: {},
       customQs: [],
-      values: (seed && seed.state && seed.state.values) ? seed.state.values.slice() : [],
+      values: values,
       current: 0
     },
     analysis: ''
   });
+  emp.overrides = { reviewPeriod: false, evalDate: false, values: false };
+  if (shared) {
+    if (normText(emp.fields.reviewPeriod) !== normText(shared.reviewPeriod)) emp.overrides.reviewPeriod = true;
+    if (normText(emp.fields.evalDate) !== normText(shared.evalDate)) emp.overrides.evalDate = true;
+    if (!sameList(emp.state.values, shared.values || [])) emp.overrides.values = true;
+  }
+  return emp;
 }
 
 function createSession(name, silent) {
   if (!loading && formLoadedFor) captureCurrent();
+  var prev = activeSession();
+  var shared = defaultShared();
+  var reportsTo = '';
+  if (prev) {
+    migrateSession(prev);
+    shared.values = (prev.shared.values || []).slice();
+    shared.reviewPeriod = prev.shared.reviewPeriod || '';
+    shared.evalDate = prev.shared.evalDate || '';
+    var prevEmp = null;
+    for (var i = 0; i < prev.employees.length; i++) if (prev.employees[i].id === formLoadedFor) prevEmp = prev.employees[i];
+    if (prevEmp && prevEmp.fields) reportsTo = prevEmp.fields.reportsTo || '';
+  }
   var session = {
     id: uid('s'),
     name: (name || '').trim() || defaultQuarterName(),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     activeEmployeeId: null,
+    exportedAt: null,
+    backupNudgeDismissed: false,
+    shared: shared,
     employees: []
   };
-  var emp = blankEmployee();
-  session.employees.push(emp);
-  session.activeEmployeeId = emp.id;
   DB.sessions.unshift(session);
   DB.activeSessionId = session.id;
+  var emp = blankEmployee(reportsTo ? { fields: { reportsTo: reportsTo } } : null);
+  session.employees.push(emp);
+  session.activeEmployeeId = emp.id;
   if (silent) { persistNow(); return session; }
   openEmployee(emp.id);
   return session;
@@ -2559,6 +2827,7 @@ function updateTeamBar() {
   if (prev) prev.disabled = idx <= 0;
   if (next) next.disabled = !list.length || idx >= list.length - 1;
   renderEndNav(list, idx);
+  renderBackupNudge();
 }
 
 function renderEndNav(list, idx) {
@@ -2598,6 +2867,7 @@ function showIntro() {
   var pw = document.getElementById('progressWrap');
   if (pw) pw.style.display = 'none';
   renderSavedHome();
+  renderBackupNudge();
   if (!loading) scheduleSave();
   window.scrollTo({ top: 0, behavior: loading ? 'auto' : 'smooth' });
 }
@@ -2669,6 +2939,9 @@ function renderSavedHome() {
 function renderTeam() {
   var session = activeSession();
   if (!session) return;
+  migrateSession(session);
+  renderSharedForm();
+  renderBackupNudge();
   var nameInput = document.getElementById('sessionNameInput');
   if (nameInput && nameInput.value !== (session.name || '')) nameInput.value = session.name || '';
   var progress = document.getElementById('rosterProgress');
@@ -2696,7 +2969,7 @@ function renderTeam() {
       empty.textContent = 'No one is on this review yet. Add a person, or upload a list.';
       host.appendChild(empty);
     }
-    session.employees.forEach(function(emp){
+    session.employees.forEach(function(emp, index){
       var status = employeeStatus(emp);
       var row = document.createElement('div');
       row.className = 'person-row' + (emp.id === session.activeEmployeeId ? ' active-person' : '');
@@ -2724,6 +2997,20 @@ function renderTeam() {
       main.appendChild(meta);
       var actions = document.createElement('div');
       actions.className = 'person-actions';
+      var upBtn = document.createElement('button');
+      upBtn.type = 'button';
+      upBtn.className = 'btn-secondary order-btn';
+      upBtn.textContent = 'Up';
+      upBtn.disabled = index === 0;
+      upBtn.setAttribute('aria-label', 'Move ' + displayName(emp) + ' up');
+      upBtn.onclick = function(){ moveEmployee(emp.id, -1); };
+      var downBtn = document.createElement('button');
+      downBtn.type = 'button';
+      downBtn.className = 'btn-secondary order-btn';
+      downBtn.textContent = 'Down';
+      downBtn.disabled = index === session.employees.length - 1;
+      downBtn.setAttribute('aria-label', 'Move ' + displayName(emp) + ' down');
+      downBtn.onclick = function(){ moveEmployee(emp.id, 1); };
       var pill = document.createElement('span');
       pill.className = 'status-pill ' + status.key;
       pill.textContent = status.label;
@@ -2738,6 +3025,8 @@ function renderTeam() {
       removeBtn.setAttribute('aria-label', 'Remove ' + displayName(emp));
       removeBtn.textContent = '×';
       removeBtn.onclick = function(){ removeEmployee(emp.id); };
+      actions.appendChild(upBtn);
+      actions.appendChild(downBtn);
       actions.appendChild(pill);
       actions.appendChild(openBtn);
       actions.appendChild(removeBtn);
@@ -2807,6 +3096,245 @@ function renderOtherSessions() {
     btn.onclick = function(){ resumeSession(s.id); };
     host.appendChild(btn);
   });
+}
+
+function renderSharedForm() {
+  var session = activeSession();
+  if (!session) return;
+  ensureShared(session);
+  var period = document.getElementById('sharedReviewPeriod');
+  var date = document.getElementById('sharedEvalDate');
+  if (period && document.activeElement !== period && period.value !== (session.shared.reviewPeriod || '')) {
+    period.value = session.shared.reviewPeriod || '';
+  }
+  if (date && document.activeElement !== date && date.value !== (session.shared.evalDate || '')) {
+    date.value = session.shared.evalDate || '';
+  }
+  renderSharedTags();
+}
+
+function renderSharedTags() {
+  var area = document.getElementById('sharedValueArea');
+  var input = document.getElementById('sharedValueInput');
+  var session = activeSession();
+  if (!area || !input || !session) return;
+  ensureShared(session);
+  area.querySelectorAll('.tag').forEach(function(t){ t.remove(); });
+  (session.shared.values || []).forEach(function(v, i){
+    var tag = document.createElement('span');
+    tag.className = 'tag';
+    tag.appendChild(document.createTextNode(v));
+    var remove = document.createElement('button');
+    remove.type = 'button';
+    remove.textContent = '×';
+    remove.setAttribute('aria-label', 'Remove ' + v);
+    remove.onclick = function(){ removeSharedValue(i); };
+    tag.appendChild(remove);
+    area.insertBefore(tag, input);
+  });
+}
+
+function onSharedText(key, value) {
+  var session = activeSession();
+  if (!session || loading) return;
+  ensureShared(session);
+  session.shared[key] = value;
+  applySharedToPeople();
+  updateFieldSources();
+  scheduleSave();
+}
+
+function addSharedValue(e) {
+  if (!e || e.key !== 'Enter') return;
+  e.preventDefault();
+  var input = e.target;
+  var value = input.value.trim();
+  if (!value) return;
+  var session = activeSession();
+  if (!session) return;
+  ensureShared(session);
+  session.shared.values.push(value);
+  input.value = '';
+  applySharedToPeople();
+  renderSharedTags();
+  updateFieldSources();
+  scheduleSave();
+}
+
+function removeSharedValue(index) {
+  var session = activeSession();
+  if (!session) return;
+  ensureShared(session);
+  session.shared.values.splice(index, 1);
+  applySharedToPeople();
+  renderSharedTags();
+  updateFieldSources();
+  scheduleSave();
+}
+
+function applySharedToPeople() {
+  var session = activeSession();
+  if (!session) return;
+  ensureShared(session);
+  session.employees.forEach(function(emp){
+    emp.overrides = emp.overrides || { reviewPeriod: false, evalDate: false, values: false };
+    if (!emp.overrides.reviewPeriod) emp.fields.reviewPeriod = session.shared.reviewPeriod || '';
+    if (!emp.overrides.evalDate) emp.fields.evalDate = session.shared.evalDate || '';
+    if (!emp.overrides.values) emp.state.values = (session.shared.values || []).slice();
+  });
+  var open = formLoadedFor && employeeById(formLoadedFor);
+  if (!open || loading) return;
+  if (!open.overrides.reviewPeriod) {
+    var period = document.getElementById('reviewPeriod');
+    if (period && document.activeElement !== period) period.value = session.shared.reviewPeriod || '';
+  }
+  if (!open.overrides.evalDate) {
+    var date = document.getElementById('evalDate');
+    if (date && document.activeElement !== date) date.value = session.shared.evalDate || '';
+  }
+  if (!open.overrides.values) {
+    S.values = (session.shared.values || []).slice();
+    renderTags('valueInput', 'values');
+  }
+}
+
+function useSharedSetting(which) {
+  var session = activeSession();
+  var emp = formLoadedFor && employeeById(formLoadedFor);
+  if (!session || !emp) return;
+  ensureShared(session);
+  emp.overrides = emp.overrides || {};
+  if (which === 'dates') {
+    emp.overrides.reviewPeriod = false;
+    emp.overrides.evalDate = false;
+    emp.fields.reviewPeriod = session.shared.reviewPeriod || '';
+    emp.fields.evalDate = session.shared.evalDate || '';
+    var period = document.getElementById('reviewPeriod');
+    var date = document.getElementById('evalDate');
+    if (period) period.value = emp.fields.reviewPeriod;
+    if (date) date.value = emp.fields.evalDate;
+  }
+  if (which === 'values') {
+    emp.overrides.values = false;
+    emp.state.values = (session.shared.values || []).slice();
+    S.values = emp.state.values.slice();
+    renderTags('valueInput', 'values');
+  }
+  updateFieldSources();
+  scheduleSave();
+}
+
+function updateFieldSources() {
+  var note = document.getElementById('sharedFieldsNote');
+  var valuesNote = document.getElementById('valuesSource');
+  if (!note || !valuesNote) return;
+  note.innerHTML = '';
+  valuesNote.innerHTML = '';
+  var session = activeSession();
+  if (!session || !session.shared || !formLoadedFor) return;
+  var shared = session.shared;
+  var periodEl = document.getElementById('reviewPeriod');
+  var dateEl = document.getElementById('evalDate');
+  var periodDiff = periodEl && normText(periodEl.value) !== normText(shared.reviewPeriod);
+  var dateDiff = dateEl && normText(dateEl.value) !== normText(shared.evalDate);
+  if (!periodDiff && !dateDiff) {
+    note.textContent = 'Review period and evaluation date are set for the whole review. Change them here only for this person.';
+  } else {
+    note.appendChild(document.createTextNode('This person has their own review period or evaluation date. '));
+    var dateBtn = document.createElement('button');
+    dateBtn.type = 'button';
+    dateBtn.className = 'text-btn';
+    dateBtn.textContent = 'Use the review\'s period and date';
+    dateBtn.onclick = function(){ useSharedSetting('dates'); };
+    note.appendChild(dateBtn);
+  }
+  var valuesDiff = !sameList(S.values || [], shared.values || []);
+  if (!valuesDiff && !(shared.values || []).length) {
+    valuesNote.textContent = 'Add company values on the Team page to use them for everyone, or type them here for this person only.';
+  } else if (!valuesDiff) {
+    valuesNote.textContent = 'These are the company values for the whole review. Change them here only for this person.';
+  } else {
+    valuesNote.appendChild(document.createTextNode('These values are only for this person. '));
+    var valueBtn = document.createElement('button');
+    valueBtn.type = 'button';
+    valueBtn.className = 'text-btn';
+    valueBtn.textContent = 'Use the review\'s values';
+    valueBtn.onclick = function(){ useSharedSetting('values'); };
+    valuesNote.appendChild(valueBtn);
+  }
+}
+
+function shouldNudgeBackup(session) {
+  if (!session || session.exportedAt || session.backupNudgeDismissed) return false;
+  var count = (session.employees || []).length;
+  if (count >= 3) return true;
+  var created = Date.parse(session.createdAt || '');
+  return count >= 1 && !isNaN(created) && (Date.now() - created) >= 24 * 60 * 60 * 1000;
+}
+
+function fillBackupNudge(el) {
+  el.innerHTML = '';
+  var p = document.createElement('p');
+  p.textContent = 'This review is only saved in this browser. Download a copy so you still have it if this browser is cleared.';
+  var row = document.createElement('div');
+  row.className = 'action-row';
+  var download = document.createElement('button');
+  download.type = 'button';
+  download.className = 'btn-secondary';
+  download.textContent = 'Download a copy';
+  download.onclick = function(){ exportSessionFile(); };
+  var later = document.createElement('button');
+  later.type = 'button';
+  later.className = 'btn-restart';
+  later.style.marginTop = '0';
+  later.textContent = 'Not now';
+  later.onclick = function(){ dismissBackupNudge(); };
+  row.appendChild(download);
+  row.appendChild(later);
+  el.appendChild(p);
+  el.appendChild(row);
+}
+
+function renderBackupNudge() {
+  var session = activeSession();
+  var show = !!(session && DB.view !== 'intro' && shouldNudgeBackup(session));
+  var card = document.getElementById('backupNudge');
+  var bar = document.getElementById('backupBar');
+  if (card) {
+    var showCard = show && DB.view === 'team';
+    card.hidden = !showCard;
+    if (showCard && !card.firstChild) fillBackupNudge(card);
+  }
+  if (bar) {
+    var showBar = show && DB.view === 'form';
+    bar.hidden = !showBar;
+    if (showBar && !bar.firstChild) fillBackupNudge(bar);
+  }
+}
+
+function dismissBackupNudge() {
+  var session = activeSession();
+  if (!session) return;
+  session.backupNudgeDismissed = true;
+  session.updatedAt = new Date().toISOString();
+  renderBackupNudge();
+  persistNow();
+}
+
+function moveEmployee(id, delta) {
+  if (!loading) captureCurrent();
+  var session = activeSession();
+  if (!session) return;
+  var index = -1;
+  for (var i = 0; i < session.employees.length; i++) if (session.employees[i].id === id) index = i;
+  var next = index + delta;
+  if (index < 0 || next < 0 || next >= session.employees.length) return;
+  var moved = session.employees.splice(index, 1)[0];
+  session.employees.splice(next, 0, moved);
+  session.updatedAt = new Date().toISOString();
+  renderTeam();
+  updateTeamBar();
+  persistNow();
 }
 
 function renameEmployee(id, name) {
@@ -2946,8 +3474,10 @@ function exportSessionFile() {
     exportedAt: new Date().toISOString(),
     session: session
   };
+  session.exportedAt = new Date().toISOString();
   downloadBlob(JSON.stringify(payload, null, 2), slug(session.name) + '.json', 'application/json');
   setFileMsg('Downloaded. Keep that file if you want to open this review on another computer.');
+  renderBackupNudge();
   persistNow();
 }
 
@@ -2972,6 +3502,7 @@ function onSessionFile(input) {
         s.id = s.id || uid('s');
         s.name = s.name || 'Imported review';
         s.employees = s.employees.filter(function(e){ return e && typeof e === 'object'; }).map(normalizeEmployee);
+        migrateSession(s);
         var idx = -1;
         for (var i = 0; i < DB.sessions.length; i++) if (DB.sessions[i].id === s.id) idx = i;
         if (idx >= 0) DB.sessions[idx] = s;
@@ -3184,6 +3715,7 @@ function onFormEdit(e) {
     captureCurrent();
     updateTeamBar();
   }
+  updateFieldSources();
   scheduleSave();
 }
 
